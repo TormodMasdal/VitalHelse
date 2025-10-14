@@ -1,6 +1,16 @@
-﻿namespace VitalHelse.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class ProductPictures
+namespace VitalHelse.Models;
+
+public class ProductPicture
 {
+    ProductPicture(){}
+    
     public int ProductPictureId { get; set; }
+
+    [StringLength(500)] public string PicturePath { get; set; }
+
+    public int ProductId { get; set; }
+    public Product Product { get; set; } = null!;
+    
 }

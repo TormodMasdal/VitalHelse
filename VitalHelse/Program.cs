@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VitalHelse.Data;
+using VitalHelse.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,11 +12,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<AspNetUsers>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+// Call the database initializer
+using (var services = app.Services.CreateScope())
+{
+    var um = services.ServiceProvider.GetRequiredService<UserManager<AspNetUsers>>();
+    var rm = services.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var db = services.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    
+    ApplicationDbInitializer.Initialize(db, um, rm);
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

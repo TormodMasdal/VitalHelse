@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\roem0\\Jottacloud\\Skole\\3.Semester\\IKT201 - Internettjenester\\Exam\\group-15\\VitalHelse\\VitalHelse.csproj": {}
+    "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj": {}
   },
   "projects": {
-    "C:\\Users\\roem0\\Jottacloud\\Skole\\3.Semester\\IKT201 - Internettjenester\\Exam\\group-15\\VitalHelse\\VitalHelse.csproj": {
+    "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\roem0\\Jottacloud\\Skole\\3.Semester\\IKT201 - Internettjenester\\Exam\\group-15\\VitalHelse\\VitalHelse.csproj",
+        "projectUniqueName": "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj",
         "projectName": "VitalHelse",
-        "projectPath": "C:\\Users\\roem0\\Jottacloud\\Skole\\3.Semester\\IKT201 - Internettjenester\\Exam\\group-15\\VitalHelse\\VitalHelse.csproj",
-        "packagesPath": "C:\\Users\\roem0\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\roem0\\Jottacloud\\Skole\\3.Semester\\IKT201 - Internettjenester\\Exam\\group-15\\VitalHelse\\obj\\",
+        "projectPath": "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj",
+        "packagesPath": "C:\\Users\\tormo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\roem0\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\tormo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -62,6 +62,10 @@
               "target": "Package",
               "version": "[9.0.8, )"
             },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.8, )"
+            },
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[9.0.8, )"
@@ -69,6 +73,10 @@
             "Microsoft.EntityFrameworkCore.Tools": {
               "target": "Package",
               "version": "[9.0.8, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.4, )"
             }
           },
           "imports": [
