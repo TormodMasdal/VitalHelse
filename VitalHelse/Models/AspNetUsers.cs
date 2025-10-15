@@ -2,6 +2,7 @@
 
 namespace VitalHelse.Models;
 
+// Test comment
 public class AspNetUsers : IdentityUser
 {
     public ICollection<ProductReview> ProductReviews { get; } = new List<ProductReview>();
