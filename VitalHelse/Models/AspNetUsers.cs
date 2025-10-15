@@ -6,7 +6,9 @@ namespace VitalHelse.Models;
 
 public class AspNetUsers : IdentityUser
 {
-    [StringLength(200)] public string? Address { get; set; }
+    [StringLength(200)]
+    [Display(Name = "Address")]
+    public string? Address { get; set; }
     public PostalCode? PostalCode { get; set; }
     
     [MinLength(4), MaxLength(4)]
