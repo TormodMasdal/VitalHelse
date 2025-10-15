@@ -4,7 +4,7 @@ namespace VitalHelse.Models;
 
 public class Category
 {
-    Category() {}
+    public Category() {}
     
     public int CategoryId { get; set; }
     

@@ -6,7 +6,7 @@ namespace VitalHelse.Models;
 [PrimaryKey(nameof(ProductId), nameof(ShoppingCartId))]
 public class CartProduct
 {
-    CartProduct(){}
+    public CartProduct(){}
 
     public Product Product { get; set; }
     public ShoppingCart ShoppingCart { get; set; }

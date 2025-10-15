@@ -4,8 +4,9 @@ namespace VitalHelse.Models;
 
 public class DiscountUsage
 {
+    public DiscountUsage(){}
+    
     public int DiscountUsageId { get; set; }
-
 
     [Required] public DiscountCode DiscountCode { get; set; } = null!;
     [StringLength(500)] public string DiscountCodeId { get; set; } = null!;

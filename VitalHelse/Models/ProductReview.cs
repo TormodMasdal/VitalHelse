@@ -6,13 +6,13 @@ namespace VitalHelse.Models;
 
 public class ProductReview
 {
-    ProductReview() {}
+    public ProductReview() {}
     
     public int ProductReviewId { get; set; }
 
     // Every user can leave a review, therefore a little more strict on their flexibility
-    [MaxLength(300, ErrorMessage = "Innholdet kan ikke overstige 300 tegn")]
-    public string Content { get; set; } = string.Empty;
+    [MaxLength(300)]
+    public string? Content { get; set; } = string.Empty;
     
     [Required]
     [Range(0, 5)]

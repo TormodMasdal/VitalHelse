@@ -4,7 +4,7 @@ namespace VitalHelse.Models;
 
 public class PhysicalAttribute
 {
-    PhysicalAttribute() {}
+    public PhysicalAttribute() {}
     
     public int PhysicalAttributeId { get; set; }
     [Required][StringLength(200)] public string Attribute { get; set; } = null!;

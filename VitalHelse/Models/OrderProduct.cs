@@ -6,7 +6,7 @@ namespace VitalHelse.Models;
 [PrimaryKey(nameof(ProductId), nameof(OrderId))]
 public class OrderProduct
 {
-    OrderProduct(){}
+    public OrderProduct(){}
     
     [Required] public Product Product { get; set; } = null!;
     [Required] public Order Order { get; set; } = null!;

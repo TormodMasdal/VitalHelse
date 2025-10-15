@@ -6,7 +6,7 @@ namespace VitalHelse.Models;
 [PrimaryKey(nameof(ProductId), nameof(PhysicalAttributeId))]
 public class PhysicalProductAttribute
 {
-    PhysicalProductAttribute() {}
+    public PhysicalProductAttribute() {}
     
     [Required] public Product Product { get; set; } = null!;
     [Required] public PhysicalAttribute PhysicalAttribute { get; set; } = null!;
