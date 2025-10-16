@@ -328,3 +328,5 @@ C:\Users\tormo\IKT201Exam\VitalHelse\bin\Debug\net9.0\runtimes\win\lib\net6.0\Sy
 C:\Users\tormo\IKT201Exam\VitalHelse\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\tormo\IKT201Exam\VitalHelse\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 C:\Users\tormo\IKT201Exam\VitalHelse\bin\Debug\net9.0\System.Text.Json.dll
+C:\Users\tormo\IKT201Exam\VitalHelse\obj\Debug\net9.0\compressed\h679rd1tbz-59nynjgyp0.gz
+C:\Users\tormo\IKT201Exam\VitalHelse\obj\Debug\net9.0\compressed\44z55q0nze-jpt8yivctl.gz

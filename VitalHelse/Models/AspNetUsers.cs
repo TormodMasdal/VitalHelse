@@ -9,10 +9,18 @@ public class AspNetUsers : IdentityUser
     [StringLength(200)]
     [Display(Name = "Address")]
     public string? Address { get; set; }
-    public PostalCode? PostalCode { get; set; }
     
     [MinLength(4), MaxLength(4)]
-    public string? PostalCodeId { get; set; }
+    [Display(Name = "Postal Code")]
+    public string? PostalCode { get; set; }
+    
+    [StringLength(100)]
+    [Display(Name = "First name")]
+    public string? FirstName { get; set; }
+     
+    [StringLength(100)] 
+    [Display(Name = "Last name")]
+    public string? LastName { get; set; }
 
     [MinLength(9), MaxLength(9)] public string? OrgNr { get; set; }
     
