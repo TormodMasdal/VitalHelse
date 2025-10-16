@@ -4,7 +4,7 @@ namespace VitalHelse.Models;
 
 public class ShoppingCart
 {
-    ShoppingCart(){}
+    public ShoppingCart(){}
     
     public int ShoppingCartId { get; set; }
 

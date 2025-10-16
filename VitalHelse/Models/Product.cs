@@ -5,7 +5,7 @@ namespace VitalHelse.Models;
 
 public class Product
 {
-    Product(){}
+    public Product(){}
     
     public int ProductId { get; set; }
 
@@ -14,14 +14,14 @@ public class Product
     
     [Required]
     [StringLength(500)] public string ProductName { get; set; }
-    public int StockCount { get; set; }
-    [StringLength(1000)] public string ProductDescription { get; set; }
-    [StringLength(1000)] public string ProductIngredients { get; set; }
+    public int? StockCount { get; set; }
+    [StringLength(1000)] public string? ProductDescription { get; set; }
+    [StringLength(1000)] public string? ProductIngredients { get; set; }
     
     [Required]
     public double ProductPrice { get; set; }
-    public double ProductCampaignPrice { get; set; }
-    [StringLength(30)] public string LabelDescription { get; set; }
+    public double? ProductCampaignPrice { get; set; }
+    [StringLength(30)] public string? LabelDescription { get; set; }
 
     public ICollection<ProductTags> ProductTags { get; } = new List<ProductTags>();
     public ICollection<ProductPicture> ProductPictures { get; } = new List<ProductPicture>();

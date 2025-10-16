@@ -7,7 +7,7 @@ namespace VitalHelse.Models;
 
 public class FavoriteProduct
 {
-    FavoriteProduct() {}
+    public FavoriteProduct() {}
     
     [Required] public Product Product { get; set; }
     [Required] public AspNetUsers AspNetUsers { get; set; }

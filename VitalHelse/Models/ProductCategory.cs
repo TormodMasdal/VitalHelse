@@ -6,7 +6,7 @@ namespace VitalHelse.Models;
 [PrimaryKey(nameof(ProductId), nameof(CategoryId))]
 public class ProductCategory
 {
-    ProductCategory(){}
+    public ProductCategory(){}
 
     public int CategoryId { get; set; }
     public int ProductId { get; set; }

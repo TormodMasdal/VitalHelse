@@ -5,7 +5,7 @@ namespace VitalHelse.Models;
 
 public class DiscountCode
 {
-    DiscountCode(){}
+    public DiscountCode(){}
 
     [StringLength(500)]
     public string DiscountCodeId { get; set; }

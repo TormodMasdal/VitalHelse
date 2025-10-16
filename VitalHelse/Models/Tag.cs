@@ -4,7 +4,7 @@ namespace VitalHelse.Models;
 
 public class Tag
 {
-    Tag(){}
+    public Tag(){}
     
     public int TagId { get; set; }
     [Required][StringLength(50)] public string Tags { get; set; }
