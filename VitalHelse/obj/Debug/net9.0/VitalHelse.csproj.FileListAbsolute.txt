@@ -662,3 +662,4 @@ C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\ref\VitalHelse.dll
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\mor0utulqd-5qti06k8e7.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\h8zjss1dsw-5qti06k8e7.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\aapbrjzzor-x267qky301.gz
+C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\8r390j222j-d6zk01tek4.gz

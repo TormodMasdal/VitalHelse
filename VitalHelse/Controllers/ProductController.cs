@@ -21,22 +21,25 @@ public class ProductController : Controller
     {
         var currentCategory = _context.Categories
             .Include(c => c.ChildCategories)
+            .ThenInclude(c => c.ChildCategories)
             .Include(c => c.ProductCategories)
-            .ThenInclude(pc => pc.Product)
-            .ThenInclude(p => p.ProductPictures)
-            .Include(c => c.ProductCategories)
-            .ThenInclude(pc => pc.Product)
-            .ThenInclude(p => p.ProductTags)
-            .ThenInclude(pt => pt.Tag)
             .FirstOrDefault(c => c.CategoryName == categoryName);
 
-        if (currentCategory == null) return NotFound();
+        if (currentCategory == null)
+            return NotFound();
 
-        var products = currentCategory.ProductCategories
-            .Select(pc => pc.Product)
+// Hent alle ID-er nedover i hierarkiet
+        var allCategoryIds = GetAllCategoryIds(currentCategory);
+
+        var products = _context.Products
+            .Include(p => p.ProductPictures)
+            .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+            .Include(p => p.ProductCategories)
+            .Where(p => p.ProductCategories.Any(pc => allCategoryIds.Contains(pc.CategoryId)))
             .ToList();
 
         var subcategories = currentCategory.ChildCategories.ToList();
+
 
         var viewModel = new CategoryViewModel
         {
@@ -58,6 +61,22 @@ public class ProductController : Controller
             ids.AddRange(GetAllProductIds(child));
         return ids;
     }
+    
+    private List<int> GetAllCategoryIds(Category category)
+    {
+        var ids = new List<int> { category.CategoryId };
+
+        if (category.ChildCategories != null && category.ChildCategories.Any())
+        {
+            foreach (var child in category.ChildCategories)
+            {
+                ids.AddRange(GetAllCategoryIds(child));
+            }
+        }
+
+        return ids;
+    }
+
 
 
 public IActionResult Category(string category, string? subcategory, string? subsubcategory)
