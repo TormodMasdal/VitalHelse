@@ -93,7 +93,7 @@ public static class TestData
                 new ProductPicture { ProductId = hudkrem.ProductId, PicturePath = "/images/products/daycream.png" },
                 new ProductPicture { ProductId = fotkrem.ProductId, PicturePath = "/images/products/footcream.png" },
                 new ProductPicture { ProductId = nattkrem.ProductId, PicturePath = "/images/products/nightcream.png" },
-                new ProductPicture { ProductId = kuldekremProd.ProductId, PicturePath = "/images/products/coolface.png" }
+                new ProductPicture { ProductId = kuldekremProd.ProductId, PicturePath = "/images/products/coldcream.png" }
             };
             context.ProductPictures.AddRange(pictures);
             context.SaveChanges();

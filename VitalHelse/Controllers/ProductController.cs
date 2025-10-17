@@ -15,51 +15,68 @@ public class ProductController : Controller
         _context = context;
         _logger = logger;
     }
+    
+    
+[Route("produkt/{category}/{subcategory?}/{subsubcategory?}")]
+public IActionResult Category(string category, string? subcategory, string? subsubcategory)
+{
+    // Hent alle produkter med relasjoner
+    var productsQuery = _context.Products
+        .Include(p => p.ProductCategories)
+            .ThenInclude(pc => pc.Category)
+        .Include(p => p.ProductPictures)
+        .Include(p => p.ProductTags)
+            .ThenInclude(pt => pt.Tag)
+        .AsQueryable();
 
-    // Route med kategori, subkategori og subsubkategori
-    [Route("produkt/{category}/{subcategory?}/{subsubcategory?}")]
-    public IActionResult Category(string category, string? subcategory, string? subsubcategory)
+    var currentCategory = _context.Categories
+        .Include(c => c.ChildCategories)
+        .FirstOrDefault(c => c.CategoryName == category);
+
+
+    if (currentCategory == null)
+        return NotFound();
+
+    // Filtrer produkter basert på kategori-hierarkiet
+    if (!string.IsNullOrEmpty(category))
     {
-        // Hent produkter med relasjoner
-        var products = _context.Products
-            .Include(p => p.ProductCategories)
-                .ThenInclude(pc => pc.Category)
-            .Include(p => p.ProductPictures)
-            .Include(p => p.ProductTags)
-                .ThenInclude(pt => pt.Tag)
-            .AsQueryable();
-
-        // Filtrer på top-level kategori
-        if (!string.IsNullOrEmpty(category))
-        {
-            products = products.Where(p => p.ProductCategories
-                .Any(pc => pc.Category.CategoryName == category ||
-                           (pc.Category.ParentCategory != null && pc.Category.ParentCategory.CategoryName == category)));
-        }
-
-        // Filtrer på subkategori
-        if (!string.IsNullOrEmpty(subcategory))
-        {
-            products = products.Where(p => p.ProductCategories
-                .Any(pc => pc.Category.CategoryName == subcategory));
-        }
-
-        // Filtrer på subsubkategori
-        if (!string.IsNullOrEmpty(subsubcategory))
-        {
-            products = products.Where(p => p.ProductCategories
-                .Any(pc => pc.Category.CategoryName == subsubcategory));
-        }
-
-        var productList = products.ToList();
-
-        if (!productList.Any())
-        {
-            ViewBag.Message = "Ingen produkter funnet i denne kategorien.";
-        }
-
-        return View("CategoryTemplate", productList);
+        productsQuery = productsQuery.Where(p => p.ProductCategories
+            .Any(pc => pc.CategoryId == currentCategory.CategoryId ||
+                       (pc.Category.ParentCategoryId == currentCategory.CategoryId)));
     }
+
+    if (!string.IsNullOrEmpty(subcategory))
+    {
+        var subCat = _context.Categories.FirstOrDefault(c => c.CategoryName == subcategory);
+        if (subCat != null)
+            productsQuery = productsQuery.Where(p => p.ProductCategories
+                .Any(pc => pc.CategoryId == subCat.CategoryId));
+    }
+
+    if (!string.IsNullOrEmpty(subsubcategory))
+    {
+        var subSubCat = _context.Categories.FirstOrDefault(c => c.CategoryName == subsubcategory);
+        if (subSubCat != null)
+            productsQuery = productsQuery.Where(p => p.ProductCategories
+                .Any(pc => pc.CategoryId == subSubCat.CategoryId));
+    }
+
+    var subcategories = _context.Categories
+        .Where(c => c.ParentCategoryId == currentCategory.CategoryId)
+        .ToList();
+
+    var viewModel = new CategoryViewModel
+    {
+        CurrentCategory = currentCategory,
+        ParentCategoryName = currentCategory.ParentCategory?.CategoryName, // <- viktig
+        SubCategories = subcategories,
+        Products = productsQuery.ToList()
+    };
+
+    return View("CategoryTemplate", viewModel);
+}
+
+
 
     // Eksempel på detaljside for ett produkt
     [Route("produkt/detaljer/{id}")]

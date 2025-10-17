@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VitalHelse")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+788a5a12eb765557dea8a59e375c0082bde414ad")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c44650ed9e126a7199f6063516fcdf8d0a5f498b")]
 [assembly: System.Reflection.AssemblyProductAttribute("VitalHelse")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VitalHelse")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

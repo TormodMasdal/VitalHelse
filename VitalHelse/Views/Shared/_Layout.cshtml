@@ -1,10 +1,13 @@
 ﻿@inject VitalHelse.Data.ApplicationDbContext _db;
 
 @{
-    var categories = _db.Categories
+    // Kun toppnivå-kategorier
+    var topCategories = _db.Categories
+        .Where(c => c.ParentCategoryId == null)
         .OrderBy(c => c.CategoryName)
         .ToList();
 }
+
 
 
 <!DOCTYPE html>
@@ -35,7 +38,7 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
-                    @foreach (var cat in categories)
+                    @foreach (var cat in topCategories)
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="@Url.Action("Category", "Product", new { category = cat.CategoryName })">
@@ -43,6 +46,7 @@
                             </a>
                         </li>
                     }
+
                 </ul>
                 <partial name="_LoginPartial"/>
             </div>
