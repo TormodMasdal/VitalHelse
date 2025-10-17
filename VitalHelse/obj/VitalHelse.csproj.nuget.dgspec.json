@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj": {}
+    "C:\\Users\\Emanuel\\IKT201\\VitalHelse\\VitalHelse.csproj": {}
   },
   "projects": {
-    "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj": {
+    "C:\\Users\\Emanuel\\IKT201\\VitalHelse\\VitalHelse.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj",
+        "projectUniqueName": "C:\\Users\\Emanuel\\IKT201\\VitalHelse\\VitalHelse.csproj",
         "projectName": "VitalHelse",
-        "projectPath": "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj",
-        "packagesPath": "C:\\Users\\tormo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\obj\\",
+        "projectPath": "C:\\Users\\Emanuel\\IKT201\\VitalHelse\\VitalHelse.csproj",
+        "packagesPath": "C:\\Users\\Emanuel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Emanuel\\IKT201\\VitalHelse\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\tormo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Emanuel\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -100,7 +100,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -22,6 +22,20 @@ public class HomeController : Controller
     {
         return View();
     }
+    
+    public IActionResult Desinfeksjon()
+    {
+        return View();
+    }
+    
+    public IActionResult Hudpleie()
+    {
+        return View();
+    }
+    public IActionResult Massasje()
+    {
+        return View();
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
