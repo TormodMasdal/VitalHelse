@@ -4,6 +4,18 @@
     Layout = "_Layout";
 }
 
+// Breadcrumb-lignende visning av path
+@if (Model.CurrentCategory.ParentCategory != null)
+{
+    <nav class="mb-2">
+        <a href="@Url.Action("Category", "Product", new { categoryPath = Model.CurrentCategory.ParentCategory.CategoryName })">
+            @Model.CurrentCategory.ParentCategory.CategoryName
+        </a>
+        /
+        <span>@Model.CurrentCategory.CategoryName</span>
+    </nav>
+}
+
 <h2 class="mt-3">@Model.CurrentCategory.CategoryName</h2>
 
 @if (Model.SubCategories.Any())
@@ -32,20 +44,7 @@
                          alt="@product.ProductName" />
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">@product.ProductName</h5>
-                        @if (!string.IsNullOrEmpty(product.ProductDescription))
-                        {
-                            <p class="card-text">@product.ProductDescription</p>
-                        }
                         <p class="card-text fw-bold">@product.ProductPrice.ToString("0.00") kr</p>
-                        @if (product.ProductTags.Any())
-                        {
-                            <p class="mb-1">
-                                @foreach (var tag in product.ProductTags)
-                                {
-                                    <span class="badge bg-secondary me-1">@tag.Tag.Tags</span>
-                                }
-                            </p>
-                        }
                         <a class="btn btn-primary mt-auto"
                            href="@Url.Action("Details", "Product", new { id = product.ProductId })">
                             Se produkt
@@ -55,8 +54,4 @@
             </div>
         }
     </div>
-}
-else
-{
-    <p class="text-muted">Ingen produkter funnet i denne kategorien.</p>
 }

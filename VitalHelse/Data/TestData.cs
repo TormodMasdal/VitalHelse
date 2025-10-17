@@ -101,7 +101,7 @@ public static class TestData
             // --- 5. Koble produkter til kategorier ---
             var krem = context.Categories.First(c => c.CategoryName == "Krem" && c.ParentCategory.CategoryName == "Hudpleie");
             var ansiktskrem = context.Categories.First(c => c.CategoryName == "Ansiktskrem");
-            var handFotKrem = context.Categories.First(c => c.CategoryName == "Hånd- og fotkrem");
+            var handFotKrem = context.Categories.First(c => c.CategoryName == "Håndogfotkrem");
             var kremKjol = context.Categories.First(c => c.CategoryName == "Krem" && c.ParentCategory.CategoryName == "Kjøleprodukter");
             var kuldekrem = context.Categories.First(c => c.CategoryName == "Kuldekrem");
 

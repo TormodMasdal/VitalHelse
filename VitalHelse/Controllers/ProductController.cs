@@ -19,7 +19,6 @@ public class ProductController : Controller
     [Route("produkt/{categoryName}")]
     public IActionResult Category(string categoryName)
     {
-        // Hent hovedkategori med subkategorier
         var currentCategory = _context.Categories
             .Include(c => c.ChildCategories)
             .Include(c => c.ProductCategories)
@@ -33,12 +32,10 @@ public class ProductController : Controller
 
         if (currentCategory == null) return NotFound();
 
-        // Alle produkter direkte under denne kategorien
         var products = currentCategory.ProductCategories
             .Select(pc => pc.Product)
             .ToList();
 
-        // Subkategorier (child)
         var subcategories = currentCategory.ChildCategories.ToList();
 
         var viewModel = new CategoryViewModel
@@ -51,6 +48,89 @@ public class ProductController : Controller
 
         return View("CategoryTemplate", viewModel);
     }
+
+
+// Rekursiv metode for å hente alle produkter fra kategori + underkategorier
+    private List<int> GetAllProductIds(Category category)
+    {
+        var ids = category.ProductCategories.Select(pc => pc.ProductId).ToList();
+        foreach (var child in category.ChildCategories)
+            ids.AddRange(GetAllProductIds(child));
+        return ids;
+    }
+
+
+public IActionResult Category(string category, string? subcategory, string? subsubcategory)
+{
+    // Hent alle produkter med relasjoner
+    var productsQuery = _context.Products
+        .Include(p => p.ProductCategories)
+            .ThenInclude(pc => pc.Category)
+        .Include(p => p.ProductPictures)
+        .Include(p => p.ProductTags)
+            .ThenInclude(pt => pt.Tag)
+        .AsQueryable();
+
+    // Finn kategori basert på hierarki
+    Category currentCategory = null;
+
+    if (!string.IsNullOrEmpty(subsubcategory))
+    {
+        currentCategory = _context.Categories
+            .Include(c => c.ChildCategories)
+            .Include(c => c.ParentCategory)
+            .FirstOrDefault(c => c.CategoryName == subsubcategory);
+    }
+    else if (!string.IsNullOrEmpty(subcategory))
+    {
+        currentCategory = _context.Categories
+            .Include(c => c.ChildCategories)
+            .Include(c => c.ParentCategory)
+            .FirstOrDefault(c => c.CategoryName == subcategory);
+    }
+    else
+    {
+        currentCategory = _context.Categories
+            .Include(c => c.ChildCategories)
+            .Include(c => c.ParentCategory)
+            .FirstOrDefault(c => c.CategoryName == category);
+    }
+
+    if (currentCategory == null) return NotFound();
+
+    // Hent alle produkter under denne kategorien inkl. child categories
+    productsQuery = productsQuery.Where(p =>
+        p.ProductCategories.Any(pc => IsCategoryInPath(pc.Category, currentCategory)));
+
+    var products = productsQuery.ToList();
+
+    // Hent child categories for subkategori-bar
+    var subcategories = currentCategory.ChildCategories.ToList();
+
+    var viewModel = new CategoryViewModel
+    {
+        CurrentCategory = currentCategory,
+        ParentCategoryName = currentCategory.ParentCategory?.CategoryName,
+        SubCategories = subcategories,
+        Products = products
+    };
+
+    return View("CategoryTemplate", viewModel);
+}
+
+// Hjelpefunksjon for å sjekke om produktets kategori er under currentCategory
+private bool IsCategoryInPath(Category productCategory, Category currentCategory)
+{
+    var cat = productCategory;
+    while (cat != null)
+    {
+        if (cat.CategoryId == currentCategory.CategoryId)
+            return true;
+        cat = cat.ParentCategory;
+    }
+    return false;
+}
+
 
 
 
