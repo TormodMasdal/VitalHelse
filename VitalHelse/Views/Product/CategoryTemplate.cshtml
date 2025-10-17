@@ -1,17 +1,49 @@
 ﻿@model List<VitalHelse.Models.Product>
+@{
+    ViewBag.Title = "Produkter";
+    Layout = "_Layout";
+}
 
-<h1>@(Model.FirstOrDefault()?.ProductCategories.FirstOrDefault()?.CategoryName ?? "Produkter")</h1>
+<h1>Produkter</h1>
 
 <div class="row">
     @foreach (var product in Model)
     {
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <div class="card-body">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <!-- Bilde -->
+                <img class="card-img-top" 
+                     src="@(product.ProductPictures.FirstOrDefault()?.PicturePath ?? "/images/products/default.png")" 
+                     alt="@product.ProductName" />
+
+                <div class="card-body d-flex flex-column">
+                    <!-- Navn -->
                     <h5 class="card-title">@product.ProductName</h5>
-                    <p class="card-text">@product.ProductDescription</p>
-                    <p class="card-text"><strong>Pris:</strong> @product.ProductPrice.ToString("C")</p>
-                    <a class="btn btn-primary" href="@Url.Action("Details", "Product", new { id = product.ProductId })">Se produkt</a>
+
+                    <!-- Beskrivelse -->
+                    @if (!string.IsNullOrEmpty(product.ProductDescription))
+                    {
+                        <p class="card-text">@product.ProductDescription</p>
+                    }
+
+                    <!-- Pris -->
+                    <p class="card-text fw-bold">@product.ProductPrice.ToString("0.00") kr</p>
+
+                    <!-- Tags -->
+                    @if (product.ProductTags.Any())
+                    {
+                        <p>
+                            @foreach (var tag in product.ProductTags)
+                            {
+                                <span class="badge bg-secondary me-1">@tag.Tag.Tags</span>
+                            }
+                        </p>
+                    }
+
+                    <a class="btn btn-primary mt-auto" 
+                       href="@Url.Action("Details", "Product", new { id = product.ProductId })">
+                        Se produkt
+                    </a>
                 </div>
             </div>
         </div>

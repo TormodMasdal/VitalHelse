@@ -192,16 +192,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Emanuel/IKT201/VitalHelse/Views/Produkt/Desinfeksjon.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVrdFxEZXNpbmZla3Nqb24uY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/Emanuel/IKT201/VitalHelse/Views/Produkt/Hudpleie.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVrdFxIdWRwbGVpZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/Emanuel/IKT201/VitalHelse/Views/Produkt/Massasje.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVrdFxNYXNzYXNqZS5jc2h0bWw=
+[C:/Users/Emanuel/IKT201/VitalHelse/Views/Product/CategoryTemplate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxDYXRlZ29yeVRlbXBsYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Emanuel/IKT201/VitalHelse/Views/Shared/Error.cshtml]

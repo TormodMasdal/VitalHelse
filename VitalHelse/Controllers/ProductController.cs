@@ -3,38 +3,75 @@ using Microsoft.EntityFrameworkCore;
 using VitalHelse.Data;
 using VitalHelse.Models;
 
-namespace VitalHelse.Controllers
+namespace VitalHelse.Controllers;
+
+public class ProductController : Controller
 {
-    public class ProductController : Controller
+    private readonly ApplicationDbContext _context;
+    private readonly ILogger<ProductController> _logger;
+
+    public ProductController(ApplicationDbContext context, ILogger<ProductController> logger)
     {
-        private readonly ILogger<ProductController> _logger;
-        private readonly ApplicationDbContext _db;
+        _context = context;
+        _logger = logger;
+    }
 
-        public ProductController(ApplicationDbContext db, ILogger<ProductController> logger)
+    // Route med kategori, subkategori og subsubkategori
+    [Route("produkt/{category}/{subcategory?}/{subsubcategory?}")]
+    public IActionResult Category(string category, string? subcategory, string? subsubcategory)
+    {
+        // Hent produkter med relasjoner
+        var products = _context.Products
+            .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
+            .Include(p => p.ProductPictures)
+            .Include(p => p.ProductTags)
+                .ThenInclude(pt => pt.Tag)
+            .AsQueryable();
+
+        // Filtrer på kategori
+        if (!string.IsNullOrEmpty(category))
         {
-            _db = db;
-            _logger = logger;
+            products = products.Where(p => p.ProductCategories
+                .Any(pc => pc.Category.CategoryName == category));
         }
 
-        [Route("produkt/{category}/{subcategory?}/{subsubcategory?}")]
-        public IActionResult Category(string category, string? subcategory, string? subsubcategory)
+        if (!string.IsNullOrEmpty(subcategory))
         {
-            var products = _db.Products
-                .Include(p => p.ProductCategories)
-                .Include(p => p.ProductPictures)
-                .Include(p => p.ProductTags)
-                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(category))
-                products = products.Where(p => p.ProductCategories.Any(c => c.CategoryName == category));
-
-            if (!string.IsNullOrEmpty(subcategory))
-                products = products.Where(p => p.ProductCategories.Any(c => c.SubCategoryName == subcategory));
-
-            if (!string.IsNullOrEmpty(subsubcategory))
-                products = products.Where(p => p.ProductCategories.Any(c => c.SubSubCategoryName == subsubcategory));
-
-            return View("CategoryTemplate", products.ToList());
+            products = products.Where(p => p.ProductCategories
+                .Any(pc => pc.Category.SubCategoryName == subcategory));
         }
+
+        if (!string.IsNullOrEmpty(subsubcategory))
+        {
+            products = products.Where(p => p.ProductCategories
+                .Any(pc => pc.Category.SubSubCategoryName == subsubcategory));
+        }
+
+        var productList = products.ToList();
+
+        if (!productList.Any())
+        {
+            ViewBag.Message = "Ingen produkter funnet i denne kategorien.";
+        }
+
+        return View("CategoryTemplate", productList);
+    }
+
+    // Eksempel på detaljside for ett produkt
+    [Route("produkt/detaljer/{id}")]
+    public IActionResult Details(int id)
+    {
+        var product = _context.Products
+            .Include(p => p.ProductPictures)
+            .Include(p => p.ProductTags)
+                .ThenInclude(pt => pt.Tag)
+            .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
+            .FirstOrDefault(p => p.ProductId == id);
+
+        if (product == null) return NotFound();
+
+        return View("ProductDetails", product);
     }
 }

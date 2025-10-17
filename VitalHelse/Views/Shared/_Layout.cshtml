@@ -1,5 +1,12 @@
 ﻿@inject VitalHelse.Data.ApplicationDbContext _db;
 
+@{
+    var categories = _db.Categories
+        .OrderBy(c => c.CategoryName)
+        .ToList();
+}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,14 +35,15 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
-                    @foreach (var cat in _db.ProductCategories.Distinct().ToList())
+                    @foreach (var cat in categories)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Category", "Product", new { category = cat.CategoryName })">
+                            <a class="nav-link text-dark" href="@Url.Action("Category", "Product", new { category = cat.CategoryName })">
                                 @cat.CategoryName
                             </a>
                         </li>
                     }
+
                 </ul>
                 <partial name="_LoginPartial"/>
             </div>
