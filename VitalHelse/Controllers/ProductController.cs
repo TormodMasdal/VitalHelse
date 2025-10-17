@@ -29,23 +29,26 @@ public class ProductController : Controller
                 .ThenInclude(pt => pt.Tag)
             .AsQueryable();
 
-        // Filtrer på kategori
+        // Filtrer på top-level kategori
         if (!string.IsNullOrEmpty(category))
         {
             products = products.Where(p => p.ProductCategories
-                .Any(pc => pc.Category.CategoryName == category));
+                .Any(pc => pc.Category.CategoryName == category ||
+                           (pc.Category.ParentCategory != null && pc.Category.ParentCategory.CategoryName == category)));
         }
 
+        // Filtrer på subkategori
         if (!string.IsNullOrEmpty(subcategory))
         {
             products = products.Where(p => p.ProductCategories
-                .Any(pc => pc.Category.SubCategoryName == subcategory));
+                .Any(pc => pc.Category.CategoryName == subcategory));
         }
 
+        // Filtrer på subsubkategori
         if (!string.IsNullOrEmpty(subsubcategory))
         {
             products = products.Where(p => p.ProductCategories
-                .Any(pc => pc.Category.SubSubCategoryName == subsubcategory));
+                .Any(pc => pc.Category.CategoryName == subsubcategory));
         }
 
         var productList = products.ToList();
@@ -68,6 +71,7 @@ public class ProductController : Controller
                 .ThenInclude(pt => pt.Tag)
             .Include(p => p.ProductCategories)
                 .ThenInclude(pc => pc.Category)
+                    .ThenInclude(c => c.ParentCategory)
             .FirstOrDefault(p => p.ProductId == id);
 
         if (product == null) return NotFound();

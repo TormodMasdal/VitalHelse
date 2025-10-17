@@ -27,6 +27,8 @@ using (var services = app.Services.CreateScope())
     var db = services.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     
     ApplicationDbInitializer.Initialize(db, um, rm);
+    
+    TestData.Initialize(db);
 }
 
 
