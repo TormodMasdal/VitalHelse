@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject VitalHelse.Data.ApplicationDbContext _db;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -26,15 +28,14 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Produkt" asp-action="Hudpleie">Hudpleie</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Produkt" asp-action="Desinfeksjon">Desinfeksjon</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Produkt" asp-action="Massasje">Massasje</a>
-                    </li>
+                    @foreach (var cat in _db.ProductCategories.Distinct().ToList())
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Category", "Product", new { category = cat.CategoryName })">
+                                @cat.CategoryName
+                            </a>
+                        </li>
+                    }
                 </ul>
                 <partial name="_LoginPartial"/>
             </div>

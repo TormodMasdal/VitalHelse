@@ -1,0 +1,19 @@
+﻿@model List<VitalHelse.Models.Product>
+
+<h1>@(Model.FirstOrDefault()?.ProductCategories.FirstOrDefault()?.CategoryName ?? "Produkter")</h1>
+
+<div class="row">
+    @foreach (var product in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@product.ProductName</h5>
+                    <p class="card-text">@product.ProductDescription</p>
+                    <p class="card-text"><strong>Pris:</strong> @product.ProductPrice.ToString("C")</p>
+                    <a class="btn btn-primary" href="@Url.Action("Details", "Product", new { id = product.ProductId })">Se produkt</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
