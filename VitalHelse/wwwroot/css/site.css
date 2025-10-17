@@ -1,31 +1,237 @@
-html {
-  font-size: 14px;
+/* =============================
+   GLOBAL STYLE
+   ============================= */
+html, body {
+    height: 100%;
+    font-family: "Poppins", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f9fafb;
+    color: #222;
+    margin: 0;
+    padding: 0;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* Bruk en elegant font for overskrifter */
+h1, h2, h3, h4, h5 {
+    font-family: "Playfair Display", serif;
+    font-weight: 600;
+    color: #111827;
+    letter-spacing: -0.3px;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+p {
+    color: #4b5563;
+    font-size: 1.05rem;
+    line-height: 1.6;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Liten justering av knapper for mykere look */
+.btn-primary, .btn-outline-primary {
+    border-radius: 8px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.2px;
 }
 
-body {
-  margin-bottom: 60px;
+
+/* =============================
+   NAVBAR
+   ============================= */
+.navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #eee;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem 2rem;
+    backdrop-filter: blur(8px);
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Fjerner understrek på alle lenker i navbaren */
+.navbar a {
+    text-decoration: none !important;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* Sentraliser alt innhold i navbaren */
+.navbar .container-fluid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Logo / merke */
+.navbar-brand {
+    color: #111827 !important;
+    font-family: "Playfair Display", serif;
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    transition: color 0.25s ease;
+    margin-bottom: 0.8rem; /* gir luft mellom logo og kategorier */
+}
+
+.navbar-brand:hover {
+    color: #111827 !important; /* ingen endring ved hover */
+}
+
+
+/* Navigasjonsmeny */
+.navbar-nav {
+    display: flex;
+    justify-content: center; /* sentrer alt */
+    align-items: center;
+    gap: 2.5rem; /* jevn margin mellom alle elementer */
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0 auto;
+    list-style: none;
+}
+
+/* Lenker */
+.nav-item {
+    display: flex;
+    align-items: center;
+}
+
+/* --- Menylenker (kategorier) --- */
+.nav-link {
+    color: #111827 !important;
+    font-weight: 500;
+    font-size: 1rem;
+    text-transform: capitalize;
+    padding: 0.25rem 0;
+    border-radius: 4px;
+    transition: color 1s ease, transform 1s ease;
+    will-change: transform; /* for jevn GPU-animasjon */
+}
+
+.nav-link:hover {
+    text-decoration: none !important;
+    color: #1b6ec2 !important;
+    transform: scale(1.1); /* mindre zoom */
+}
+
+/* Jevn styling for login/register */
+.navbar .nav-link.text-dark {
+    color: #111827 !important;
+}
+
+/* Responsiv visning */
+@media (max-width: 768px) {
+    .navbar .container-fluid {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .navbar-nav {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+
+/* =============================
+   MAIN CONTAINER
+   ============================= */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+main {
+    text-align: center;
+}
+
+h1, h2, h3, h4, h5 {
+    font-weight: 600;
+    color: #111827;
+}
+
+p {
+    color: #4b5563;
+}
+
+/* =============================
+   BUTTONS
+   ============================= */
+.btn-primary {
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #155b9a;
+    border-color: #155b9a;
+}
+
+.btn-outline-primary {
+    color: #1b6ec2;
+    border-color: #1b6ec2;
+    font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+    background-color: #1b6ec2;
+    color: #fff;
+}
+
+/* =============================
+   PRODUCT CARDS
+   ============================= */
+.card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.card-body {
+    text-align: left;
+}
+
+/* =============================
+   FOOTER
+   ============================= */
+.footer {
+    background-color: #fff;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    padding: 1rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.footer a {
+    color: #1b6ec2;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* =============================
+   LINKS & UTILITIES
+   ============================= */
+.text-muted {
+    color: #6b7280 !important;
+}
+
+a {
+    color: #1b6ec2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }

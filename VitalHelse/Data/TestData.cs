@@ -12,31 +12,31 @@ public static class TestData
         // --- 1. Kategorier med hierarki ---
         if (!context.Categories.Any())
         {
-            // Top-level kategorier
-            var hudpleie = new Category { CategoryName = "Hudpleie" };
-            var kjoleprodukter = new Category { CategoryName = "Kjøleprodukter" };
+            // Toppnivå-kategorier
+            var hudpleie = new Category { CategoryName = "hudpleie" };
+            var kjoleprodukter = new Category { CategoryName = "kjoleprodukter" };
 
             context.Categories.AddRange(hudpleie, kjoleprodukter);
             context.SaveChanges();
 
             // Underkategorier
-            var krem = new Category { CategoryName = "Krem", ParentCategoryId = hudpleie.CategoryId };
-            var serum = new Category { CategoryName = "Serum", ParentCategoryId = hudpleie.CategoryId };
-            var aloe = new Category { CategoryName = "Aloe Vera", ParentCategoryId = hudpleie.CategoryId };
+            var krem = new Category { CategoryName = "krem", ParentCategoryId = hudpleie.CategoryId };
+            var serum = new Category { CategoryName = "serum", ParentCategoryId = hudpleie.CategoryId };
+            var aloevera = new Category { CategoryName = "aloevera", ParentCategoryId = hudpleie.CategoryId };
 
-            var kremKjol = new Category { CategoryName = "Krem", ParentCategoryId = kjoleprodukter.CategoryId };
-            var spray = new Category { CategoryName = "Spray", ParentCategoryId = kjoleprodukter.CategoryId };
+            var kjolekrem = new Category { CategoryName = "krem", ParentCategoryId = kjoleprodukter.CategoryId };
+            var spray = new Category { CategoryName = "spray", ParentCategoryId = kjoleprodukter.CategoryId };
 
-            context.Categories.AddRange(krem, serum, aloe, kremKjol, spray);
+            context.Categories.AddRange(krem, serum, aloevera, kjolekrem, spray);
             context.SaveChanges();
 
             // Sub-subkategorier
-            var ansiktskrem = new Category { CategoryName = "Ansiktskrem", ParentCategoryId = krem.CategoryId };
-            var handFotKrem = new Category { CategoryName = "Hånd- og fotkrem", ParentCategoryId = krem.CategoryId };
-            var kuldekrem = new Category { CategoryName = "Kuldekrem", ParentCategoryId = kremKjol.CategoryId };
-            var kuldespray = new Category { CategoryName = "Kuldespray", ParentCategoryId = spray.CategoryId };
+            var ansiktskrem = new Category { CategoryName = "ansiktskrem", ParentCategoryId = krem.CategoryId };
+            var handogfotkrem = new Category { CategoryName = "handogfotkrem", ParentCategoryId = krem.CategoryId };
+            var kuldekrem = new Category { CategoryName = "kuldekrem", ParentCategoryId = kjolekrem.CategoryId };
+            var kuldespray = new Category { CategoryName = "kuldespray", ParentCategoryId = spray.CategoryId };
 
-            context.Categories.AddRange(ansiktskrem, handFotKrem, kuldekrem, kuldespray);
+            context.Categories.AddRange(ansiktskrem, handogfotkrem, kuldekrem, kuldespray);
             context.SaveChanges();
         }
 
@@ -45,9 +45,9 @@ public static class TestData
         {
             var tags = new List<Tag>
             {
-                new Tag { Tags = "Økologisk" },
-                new Tag { Tags = "Populær" },
-                new Tag { Tags = "Nyhet" }
+                new Tag { Tags = "økologisk" },
+                new Tag { Tags = "populær" },
+                new Tag { Tags = "nyhet" }
             };
             context.Tags.AddRange(tags);
             context.SaveChanges();
@@ -87,7 +87,7 @@ public static class TestData
             context.Products.AddRange(hudkrem, fotkrem, nattkrem, kuldekremProd);
             context.SaveChanges();
 
-            // --- 4. Legg til ProductPictures ---
+            // --- 4. Produktbilder ---
             var pictures = new List<ProductPicture>
             {
                 new ProductPicture { ProductId = hudkrem.ProductId, PicturePath = "/images/products/daycream.png" },
@@ -98,31 +98,31 @@ public static class TestData
             context.ProductPictures.AddRange(pictures);
             context.SaveChanges();
 
-            // --- 5. Koble produkter til kategorier ---
-            var krem = context.Categories.First(c => c.CategoryName == "Krem" && c.ParentCategory.CategoryName == "Hudpleie");
-            var ansiktskrem = context.Categories.First(c => c.CategoryName == "Ansiktskrem");
-            var handFotKrem = context.Categories.First(c => c.CategoryName == "Håndogfotkrem");
-            var kremKjol = context.Categories.First(c => c.CategoryName == "Krem" && c.ParentCategory.CategoryName == "Kjøleprodukter");
-            var kuldekrem = context.Categories.First(c => c.CategoryName == "Kuldekrem");
+            // --- 5. Produkt–kategori koblinger ---
+            var krem = context.Categories.First(c => c.CategoryName == "krem" && c.ParentCategory.CategoryName == "hudpleie");
+            var ansiktskrem = context.Categories.First(c => c.CategoryName == "ansiktskrem");
+            var handogfotkrem = context.Categories.First(c => c.CategoryName == "handogfotkrem");
+            var kjolekrem = context.Categories.First(c => c.CategoryName == "krem" && c.ParentCategory.CategoryName == "kjoleprodukter");
+            var kuldekrem = context.Categories.First(c => c.CategoryName == "kuldekrem");
 
             context.ProductCategories.AddRange(
                 new ProductCategory { ProductId = hudkrem.ProductId, CategoryId = ansiktskrem.CategoryId },
-                new ProductCategory { ProductId = fotkrem.ProductId, CategoryId = handFotKrem.CategoryId },
+                new ProductCategory { ProductId = fotkrem.ProductId, CategoryId = handogfotkrem.CategoryId },
                 new ProductCategory { ProductId = nattkrem.ProductId, CategoryId = ansiktskrem.CategoryId },
                 new ProductCategory { ProductId = kuldekremProd.ProductId, CategoryId = kuldekrem.CategoryId }
             );
             context.SaveChanges();
 
-            // --- 6. Koble produkter til tags ---
-            var økologisk = context.Tags.First(t => t.Tags == "Økologisk");
-            var populær = context.Tags.First(t => t.Tags == "Populær");
-            var nyhet = context.Tags.First(t => t.Tags == "Nyhet");
+            // --- 6. Produkt–tag koblinger ---
+            var okologisk = context.Tags.First(t => t.Tags == "økologisk");
+            var popular = context.Tags.First(t => t.Tags == "populær");
+            var nyhet = context.Tags.First(t => t.Tags == "nyhet");
 
             context.ProductTags.AddRange(
-                new ProductTags { ProductId = hudkrem.ProductId, TagId = populær.TagId },
-                new ProductTags { ProductId = hudkrem.ProductId, TagId = økologisk.TagId },
+                new ProductTags { ProductId = hudkrem.ProductId, TagId = popular.TagId },
+                new ProductTags { ProductId = hudkrem.ProductId, TagId = okologisk.TagId },
                 new ProductTags { ProductId = nattkrem.ProductId, TagId = nyhet.TagId },
-                new ProductTags { ProductId = fotkrem.ProductId, TagId = økologisk.TagId },
+                new ProductTags { ProductId = fotkrem.ProductId, TagId = okologisk.TagId },
                 new ProductTags { ProductId = kuldekremProd.ProductId, TagId = nyhet.TagId }
             );
             context.SaveChanges();

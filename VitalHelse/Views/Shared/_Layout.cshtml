@@ -9,7 +9,6 @@
 }
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,6 +19,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/VitalHelse.styles.css" asp-append-version="true"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 <header>
@@ -33,19 +33,20 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Hjem</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privat</a>
                     </li>
                     @foreach (var cat in topCategories)
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark"
-                               href="@Url.Action("Category", "Product", new { categoryName = cat.CategoryName })">
-                                @cat.CategoryName
+                               href="/produkt/@cat.CategoryName">
+                                @char.ToUpper(cat.CategoryName[0])@cat.CategoryName.Substring(1)
                             </a>
                         </li>
+
                     }
                 </ul>
                 <partial name="_LoginPartial"/>

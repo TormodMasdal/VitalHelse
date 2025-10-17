@@ -586,7 +586,6 @@ C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\a3ygkwa5zy-2z0ns9
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\nezrqnk58p-muycvpuwrr.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\v0zgfp0y55-87fc7y1x7t.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\yfc7ypekbg-mlv21k5csn.gz
-C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\aapbrjzzor-b9sayid5wm.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\zj83c05d4p-61n19gt1b8.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\h679rd1tbz-59nynjgyp0.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\44z55q0nze-jpt8yivctl.gz
@@ -650,8 +649,6 @@ C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\czr0lpaeyo-jjsuc0
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\hxizsdqbqa-9vr69e8ynj.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\wcmm6giqku-87fc7y1x7t.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\urqzdt6qm8-mlv21k5csn.gz
-C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\mor0utulqd-5qti06k8e7.gz
-C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\h8zjss1dsw-5qti06k8e7.gz
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\staticwebassets.development.json
@@ -662,3 +659,6 @@ C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\refint\VitalHelse.dll
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\VitalHelse.pdb
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\VitalHelse.genruntimeconfig.cache
 C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\ref\VitalHelse.dll
+C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\mor0utulqd-5qti06k8e7.gz
+C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\h8zjss1dsw-5qti06k8e7.gz
+C:\Users\Emanuel\IKT201\VitalHelse\obj\Debug\net9.0\compressed\aapbrjzzor-x267qky301.gz

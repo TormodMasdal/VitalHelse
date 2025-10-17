@@ -1,10 +1,5 @@
 ﻿@model VitalHelse.Models.CategoryViewModel
-@{
-    ViewBag.Title = Model.CurrentCategory.CategoryName;
-    Layout = "_Layout";
-}
 
-// Breadcrumb-lignende visning av path
 @if (Model.CurrentCategory.ParentCategory != null)
 {
     <nav class="mb-2">
@@ -16,7 +11,10 @@
     </nav>
 }
 
-<h2 class="mt-3">@Model.CurrentCategory.CategoryName</h2>
+<h2 class="mt-3">
+    @(char.ToUpper(Model.CurrentCategory.CategoryName[0]) + Model.CurrentCategory.CategoryName.Substring(1))
+</h2>
+
 
 @if (Model.SubCategories.Any())
 {
@@ -25,12 +23,20 @@
         @foreach (var sub in Model.SubCategories)
         {
             <a class="btn btn-sm btn-outline-primary me-1 mb-1"
-               href="@Url.Action("Category", "Product", new { categoryName = sub.CategoryName })">
-                @sub.CategoryName
+               href="/produkt/@Model.CurrentCategory.CategoryName/@sub.CategoryName">
+                @(char.ToUpper(sub.CategoryName[0]) + sub.CategoryName.Substring(1))
             </a>
+
         }
+
     </div>
 }
+
+@{
+    ViewBag.Title = Model.CurrentCategory.CategoryName;
+    Layout = "_Layout";
+}
+
 
 @if (Model.Products.Any())
 {
