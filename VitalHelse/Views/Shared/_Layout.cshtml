@@ -45,9 +45,9 @@
                     @foreach (var cat in topCategories)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark"
+                            <a class="nav-link @(ViewContext.RouteData.Values["categoryPath"]?.ToString()?.ToLower() == cat.CategoryName.ToLower() ? "active" : "")"
                                href="/produkt/@cat.CategoryName">
-                                @char.ToUpper(cat.CategoryName[0])@cat.CategoryName.Substring(1)
+                                @cat.CategoryName
                             </a>
                         </li>
 

@@ -14,9 +14,9 @@ public static class TestData
         {
             // Toppnivå-kategorier
             var hudpleie = new Category { CategoryName = "hudpleie" };
-            var kjoleprodukter = new Category { CategoryName = "kjoleprodukter" };
+            var kjøleprodukter = new Category { CategoryName = "kjøleprodukter" };
 
-            context.Categories.AddRange(hudpleie, kjoleprodukter);
+            context.Categories.AddRange(hudpleie, kjøleprodukter);
             context.SaveChanges();
 
             // Underkategorier
@@ -24,8 +24,8 @@ public static class TestData
             var serum = new Category { CategoryName = "serum", ParentCategoryId = hudpleie.CategoryId };
             var aloevera = new Category { CategoryName = "aloevera", ParentCategoryId = hudpleie.CategoryId };
 
-            var kjolekrem = new Category { CategoryName = "krem", ParentCategoryId = kjoleprodukter.CategoryId };
-            var spray = new Category { CategoryName = "spray", ParentCategoryId = kjoleprodukter.CategoryId };
+            var kjolekrem = new Category { CategoryName = "krem", ParentCategoryId = kjøleprodukter.CategoryId };
+            var spray = new Category { CategoryName = "spray", ParentCategoryId = kjøleprodukter.CategoryId };
 
             context.Categories.AddRange(krem, serum, aloevera, kjolekrem, spray);
             context.SaveChanges();
@@ -102,7 +102,7 @@ public static class TestData
             var krem = context.Categories.First(c => c.CategoryName == "krem" && c.ParentCategory.CategoryName == "hudpleie");
             var ansiktskrem = context.Categories.First(c => c.CategoryName == "ansiktskrem");
             var handogfotkrem = context.Categories.First(c => c.CategoryName == "handogfotkrem");
-            var kjolekrem = context.Categories.First(c => c.CategoryName == "krem" && c.ParentCategory.CategoryName == "kjoleprodukter");
+            var kjolekrem = context.Categories.First(c => c.CategoryName == "krem" && c.ParentCategory.CategoryName == "kjøleprodukter");
             var kuldekrem = context.Categories.First(c => c.CategoryName == "kuldekrem");
 
             context.ProductCategories.AddRange(

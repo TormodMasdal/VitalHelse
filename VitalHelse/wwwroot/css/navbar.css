@@ -72,8 +72,16 @@
 .nav-link:hover {
     text-decoration: none !important;
     color: #1b6ec2 !important;
-    transform: scale(1.1); /* mindre zoom */
+    transform: scale(1.15);
 }
+
+/* --- ACTIVE LINK --- */
+.nav-link.active {
+    color: #1b6ec2 !important;
+    transform: scale(1.15);
+    font-weight: 600;
+}
+
 
 /* Jevn styling for login/register */
 .navbar .nav-link.text-dark {
