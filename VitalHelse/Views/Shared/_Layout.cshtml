@@ -1,7 +1,7 @@
 ﻿@inject VitalHelse.Data.ApplicationDbContext _db;
 
+
 @{
-    // Kun toppnivå-kategorier
     var topCategories = _db.Categories
         .Where(c => c.ParentCategoryId == null)
         .OrderBy(c => c.CategoryName)
@@ -41,12 +41,12 @@
                     @foreach (var cat in topCategories)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="@Url.Action("Category", "Product", new { category = cat.CategoryName })">
+                            <a class="nav-link text-dark"
+                               href="@Url.Action("Category", "Product", new { categoryName = cat.CategoryName })">
                                 @cat.CategoryName
                             </a>
                         </li>
                     }
-
                 </ul>
                 <partial name="_LoginPartial"/>
             </div>
