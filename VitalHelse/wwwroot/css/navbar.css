@@ -1,0 +1,94 @@
+﻿/* =============================
+   NAVBAR
+   ============================= */
+.navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #eaeaea;
+    padding: 1.5rem 2rem;
+    backdrop-filter: blur(8px);
+}
+
+/* Fjerner understrek på alle lenker i navbaren */
+.navbar a {
+    text-decoration: none !important;
+}
+
+/* Sentraliser alt innhold i navbaren */
+.navbar .container-fluid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Logo / merke */
+.navbar-brand {
+    color: #111827 !important;
+    font-family: "Playfair Display", serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    transition: color 0.25s ease;
+    margin-bottom: 0.8rem; /* gir luft mellom logo og kategorier */
+}
+
+.navbar-brand:hover {
+    color: #111827 !important; /* ingen endring ved hover */
+}
+
+
+/* Navigasjonsmeny */
+.navbar-nav {
+    display: flex;
+    justify-content: center; /* sentrer alt */
+    align-items: center;
+    gap: 2.5rem; /* jevn margin mellom alle elementer */
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0 auto;
+    list-style: none;
+    margin-left: 2.5rem;
+}
+
+/* Lenker */
+.nav-item {
+    display: flex;
+    align-items: center;
+}
+
+/* --- Menylenker (kategorier) --- */
+.nav-link {
+    color: #111827 !important;
+    font-weight: 500;
+    font-size: 1rem;
+    text-transform: capitalize;
+    padding: 0.25rem 0;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    transition: color 1s ease, transform 1s ease;
+    will-change: transform; /* for jevn GPU-animasjon */
+}
+
+.nav-link:hover {
+    text-decoration: none !important;
+    color: #1b6ec2 !important;
+    transform: scale(1.1); /* mindre zoom */
+}
+
+/* Jevn styling for login/register */
+.navbar .nav-link.text-dark {
+    color: #111827 !important;
+}
+
+/* Responsiv visning */
+@media (max-width: 768px) {
+    .navbar .container-fluid {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .navbar-nav {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
