@@ -19,6 +19,7 @@ using VitalHelse.Models;
 
 namespace VitalHelse.Areas.Identity.Pages.Account;
 
+// Not allowed to inherit from the RegisterModel class, therefore, copy most of the file
 public class BusinessRegisterModel : PageModel
 {
     private readonly SignInManager<AspNetUsers> _signInManager;
@@ -72,6 +73,8 @@ public class BusinessRegisterModel : PageModel
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
+        
+        // All entities that shall be added from the businessRegister page
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
@@ -130,6 +133,7 @@ public class BusinessRegisterModel : PageModel
             await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
             await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
             
+            // Adding the info from the form
             user.PhoneNumber = Input.PhoneNumber;
             user.OrgName = Input.OrgName;
             user.OrgNr = Input.OrgNr;
@@ -139,6 +143,8 @@ public class BusinessRegisterModel : PageModel
             if (result.Succeeded)
             {
                 _logger.LogInformation("User created a new account with password.");
+                
+                // Giving the user the business customer role
                 await _userManager.AddToRoleAsync(user, "BusinessCustomer");
 
                 var userId = await _userManager.GetUserIdAsync(user);
