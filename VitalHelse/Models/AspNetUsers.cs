@@ -23,6 +23,8 @@ public class AspNetUsers : IdentityUser
     public string? LastName { get; set; }
 
     [MinLength(9), MaxLength(9)] public string? OrgNr { get; set; }
+
+    [StringLength(100)] public string? OrgName { get; set; }
     
     public ICollection<ProductReview> ProductReviews { get; } = new List<ProductReview>();
     public ICollection<FavoriteProduct> FavoriteProducts { get; } = new List<FavoriteProduct>();
