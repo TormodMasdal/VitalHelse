@@ -1,14 +1,11 @@
 ﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
-
-
-
 //Waits for the page to load before executing the code
 //Uses JQuery which is allready included in the project
 //@ select the whole html document
 //.ready waits for the document to be fully loaded
 //function is a anonymous function
-$(document).ready(function () 
+$(document).ready(function ()
 {
     //Declares variable to store timer (for debounce)
     //Will hols a timer that will be used to debounce the search input
@@ -24,7 +21,7 @@ $(document).ready(function ()
     //on input event, fires every time the user types in the search input
     //.on is jQuery method that listens for an event and input is the event we are listening for
     //funcion is the code we run when the event is triggered
-    searchInput.on('input', function () 
+    searchInput.on('input', function ()
     {
         //Get the current value of the search input and removes spaces
         //$this refers to the search input (the element triggering the event)
@@ -39,7 +36,7 @@ $(document).ready(function ()
         //If the term is less than 2 characters, hide the suggestions and return
         //also empties out previous suggestions if user deletes input
         //reduce unnecessary requests to server
-        if (term.length < 2) 
+        if (term.length < 1)
         {
             suggestionsContainer.removeClass('show').empty();
             return;
@@ -49,7 +46,7 @@ $(document).ready(function ()
         //function is the code we run after the timeout
         //this returns a timer id and stores it in the variable searchTimeout
         //we store the timer id in a variable so we can cancel it later when the user keeps typing
-        searchTimeout = setTimeout(function () 
+        searchTimeout = setTimeout(function ()
         {
             //ajax request to server to get suggestions
             //AJAX = Asynchronous JavaScript and XML
@@ -58,41 +55,41 @@ $(document).ready(function ()
                 {
                     //url is the address of the server we want to send the request to
                     //specifically the SearchSuggestions action in the SearchController
-                url: '/Search/SearchSuggestions',
+                    url: '/Search/SearchSuggestions',
                     //the type of request we are making
                     //HTTP GET request
-                type: 'GET',
+                    type: 'GET',
                     //parameters to send to the server
                     //e.g = /Search/SearchSuggestions?term=hello
                     //revamp this to use SEO friendly url
                     //{ term: term } is a JS object that contains the term parameter
                     //e.g { term: 'hello' } becomes /Search/SearchSuggestions?term=hello
-                data: { term: term },
+                    data: { term: term },
                     // success is the function that runs when the request is successful
                     //anonymous function that takes the data from the server as an argument
-                success: function (data) 
-                {
-                    //class our custom fucntion with the data from the server
-                    //data is the json array returned from our controller
-                    //see searchcontroller.cs for more info
-                    displaySuggestions(data);
-                },
+                    success: function (data)
+                    {
+                        //class our custom fucntion with the data from the server
+                        //data is the json array returned from our controller
+                        //see searchcontroller.cs for more info
+                        displaySuggestions(data);
+                    },
                     //error is the function that runs when the request fails
-                error: function () 
-                {
-                    //log the error to the console
-                    console.error('Error fetching suggestions');
-                }
-            });
+                    error: function ()
+                    {
+                        //log the error to the console
+                        console.error('Error fetching suggestions');
+                    }
+                });
             // closes the suggestions after 300ms, makes it so the user can see the results
             // and not update the suggestions while they are typing
-        }, 300); 
+        }, 300);
     });
 
     //function to display suggestions
     //takes in the data from the server and displays it in the suggestions container
     //see function above for more info in regards to the data
-    function displaySuggestions(suggestions) 
+    function displaySuggestions(suggestions)
     {
         //empty the suggestions container and hide it
         //clears old sugestions before displaying new ones
@@ -100,7 +97,7 @@ $(document).ready(function ()
 
         //if there are no suggestions, display a message and return
         //checks if he array is empty
-        if (suggestions.length === 0) 
+        if (suggestions.length === 0)
         {
             suggestionsContainer.html('<div class="no-suggestions">No products found</div>');
             //displays the message// make the dropdown visible
@@ -112,7 +109,7 @@ $(document).ready(function ()
         //suggestions is the array of products returned from the server
         //function is anonymous function that takes in the item as an argument
         //item is the current item in the array
-        suggestions.forEach(function (item) 
+        suggestions.forEach(function (item)
         {
             //create a div for each suggestion
             //$ is a Jquery function that creates a new element
@@ -143,7 +140,7 @@ $(document).ready(function ()
             //this adds the suggestion item to the suggestions container as a child element
             //
             suggestionsContainer.append(suggestionItem);
-            
+
             //close the loop
         });
 
@@ -160,7 +157,7 @@ $(document).ready(function ()
     //#searchInput is the selector for the search input
     // basically it checks if the click event happened inside the search input
     //if if it doesnt close the suggestions
-    
+
     $(document).on('click', function (e) {
         if (!$(e.target).closest('#searchInput, #searchSuggestions').length) {
             suggestionsContainer.removeClass('show').empty();
@@ -169,39 +166,40 @@ $(document).ready(function ()
 
     // Handle keyboard navigation
     // Add keyboard navigation to suggestions
-    
-    searchInput.on('keydown', function (e) 
+
+    searchInput.on('keydown', function (e)
     {
         //select all items
         const items = $('.search-suggestion-item');
         const active = $('.search-suggestion-item.active');
-
+        
         //e-key is the key that was pressed
-        if (e.key === 'ArrowDown') 
+        if (e.key === 'ArrowDown')
         {
-         //if the active item is the last item, select the first item
+            
+            //if the active item is the last item, select the first item
             e.preventDefault();
-            if (active.length === 0) 
+            if (active.length === 0)
             {
                 items.first().addClass('active');
-            } 
-            else 
+            }
+            else
             {
                 //remove the active class from the current active item
                 //add the active class to the next item
                 active.removeClass('active').next().addClass('active');
             }
-        } 
-        else if (e.key === 'ArrowUp') 
+        }
+        else if (e.key === 'ArrowUp')
         {
             //if the active item is the first item, select the last item
             e.preventDefault();
-            if (active.length > 0) 
+            if (active.length > 0)
             {
                 active.removeClass('active').prev().addClass('active');
             }
-        } 
-        else if (e.key === 'Enter' && active.length > 0) 
+        }
+        else if (e.key === 'Enter' && active.length > 0)
         {
             //prevents the default action of the event
             //so we can add custom logic to the event
