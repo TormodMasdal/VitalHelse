@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - VitalHelse</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/searchSuggestions.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/VitalHelse.styles.css" asp-append-version="true"/>
 </head>
 <body>
@@ -27,6 +27,21 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
                 </ul>
+                
+                <!-- Search bar -->
+                <form class="d-flex me-3" asp-controller="Search" asp-action="Search" method="get">
+                    <div class="position-relative">
+                        <!-- The input field, query is a param name in the controller -->
+                        <input class="form-control me-2" type="search" placeholder="Search products..."
+                               aria-label="Search" name="query" id="searchInput" autocomplete="off">
+                        <!-- The container where JS injects suggestions
+                        the id is what JS targets 
+                        this gets turned on and off by JS
+                        based on search input is meeting criteria-->
+                        <div id="searchSuggestions" class="search-suggestions"></div>
+                    </div>
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
                 <partial name="_LoginPartial"/>
             </div>
         </div>
@@ -45,7 +60,7 @@
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/searchSuggestions.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
