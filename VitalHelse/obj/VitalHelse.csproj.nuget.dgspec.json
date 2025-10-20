@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj": {}
+    "C:\\Users\\oline\\ikt201g25h\\group-15\\VitalHelse\\VitalHelse.csproj": {}
   },
   "projects": {
-    "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj": {
+    "C:\\Users\\oline\\ikt201g25h\\group-15\\VitalHelse\\VitalHelse.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj",
+        "projectUniqueName": "C:\\Users\\oline\\ikt201g25h\\group-15\\VitalHelse\\VitalHelse.csproj",
         "projectName": "VitalHelse",
-        "projectPath": "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\VitalHelse.csproj",
-        "packagesPath": "C:\\Users\\tormo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\tormo\\IKT201Exam\\VitalHelse\\obj\\",
+        "projectPath": "C:\\Users\\oline\\ikt201g25h\\group-15\\VitalHelse\\VitalHelse.csproj",
+        "packagesPath": "C:\\Users\\oline\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\oline\\ikt201g25h\\group-15\\VitalHelse\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\tormo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\oline\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

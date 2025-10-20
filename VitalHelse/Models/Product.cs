@@ -5,7 +5,7 @@ namespace VitalHelse.Models;
 
 public class Product
 {
-    Product(){}
+    public Product(){}
     
     public int ProductId { get; set; }
 
