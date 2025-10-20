@@ -187,6 +187,10 @@ $(document).ready(function ()
             {
                 items.first().addClass('active');
             }
+            if (items.last().hasClass('active') && e.key == 'ArrowDown')
+            {
+                active.removeClass('active') && items.first().addClass('active');
+            }
             else
             {
                 //remove the active class from the current active item
@@ -201,6 +205,10 @@ $(document).ready(function ()
             if (active.length > 0)
             {
                 active.removeClass('active').prev().addClass('active');
+            }
+            else
+            {
+                items.last().addClass('active');
             }
         }
         else if (e.key === 'Enter' && active.length > 0)
