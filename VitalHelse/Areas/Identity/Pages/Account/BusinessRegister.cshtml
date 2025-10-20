@@ -1,7 +1,7 @@
-@page
-@model RegisterModel
+﻿@page
+@model BusinessRegisterModel
 @{
-    ViewData["Title"] = "Registrer";
+    ViewData["Title"] = "Registrer Bedrift";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -18,33 +18,19 @@
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.FirstName" class="form-control" autocomplete="FirstName" aria-required="true" placeholder="fornavn" />
-                <label asp-for="Input.FirstName">Fornavn <span class="text-danger">*</span></label>
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.LastName" class="form-control" autocomplete="LastName" aria-required="true" placeholder="etternavn" />
-                <label asp-for="Input.LastName">Etternavn <span class="text-danger">*</span></label>
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
                 <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="Phone-Number" aria-required="true" placeholder="telefon" />
                 <label asp-for="Input.PhoneNumber">Telefon <span class="text-danger">*</span></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.Address" class="form-control" autocomplete="Address" aria-required="true" placeholder="addresse" />
-                <label asp-for="Input.Address">Addresse</label>
-                <span asp-validation-for="Input.Address" class="text-danger"></span>
+                <input asp-for="Input.OrgName" class="form-control" autocomplete="OrgName" aria-required="true" placeholder="organisasjonsnavn" />
+                <label asp-for="Input.OrgName">Organisasjonsnavn <span class="text-danger">*</span></label>
+                <span asp-validation-for="Input.OrgName" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input id="postnummer" asp-for="Input.PostalCode" class="form-control" autocomplete="PostalCode" aria-required="true" placeholder="postnummer" />
-                <label asp-for="Input.PostalCode">Postnummer</label>
-                <span asp-validation-for="Input.PostalCode" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input id="poststed" class="form-control" autocomplete="Area" aria-required="true" placeholder="Poststed" readonly/>
-                <label for="poststed">Poststed</label>
+                <input asp-for="Input.OrgNr" class="form-control" autocomplete="OrgNr" aria-required="true" placeholder="organisasjonsnummer" />
+                <label asp-for="Input.OrgNr">Organisasjonsnummer <span class="text-danger">*</span></label>
+                <span asp-validation-for="Input.OrgNr" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="passord" />
@@ -58,7 +44,6 @@
             </div>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Registrer</button>
         </form>
-        <a class="nav-link text-info" asp-area="Identity" asp-page="/Account/BusinessRegister">Klikk her for å registrere deg som bedrift</a>
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>

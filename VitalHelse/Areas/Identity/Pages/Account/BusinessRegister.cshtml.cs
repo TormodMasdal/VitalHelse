@@ -1,7 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -22,7 +19,8 @@ using VitalHelse.Models;
 
 namespace VitalHelse.Areas.Identity.Pages.Account;
 
-public class RegisterModel : PageModel
+// Not allowed to inherit from the RegisterModel class, therefore, copy most of the file
+public class BusinessRegisterModel : PageModel
 {
     private readonly SignInManager<AspNetUsers> _signInManager;
     private readonly UserManager<AspNetUsers> _userManager;
@@ -31,7 +29,7 @@ public class RegisterModel : PageModel
     private readonly ILogger<RegisterModel> _logger;
     private readonly IEmailSender _emailSender;
 
-    public RegisterModel(
+    public BusinessRegisterModel(
         UserManager<AspNetUsers> userManager,
         IUserStore<AspNetUsers> userStore,
         SignInManager<AspNetUsers> signInManager,
@@ -75,6 +73,8 @@ public class RegisterModel : PageModel
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
+        
+        // All entities that shall be added from the businessRegister page
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
@@ -84,23 +84,16 @@ public class RegisterModel : PageModel
         [Display(Name = "Phone Number")]
         [Phone]
         public string PhoneNumber { get; set; } = null!;
-        
-        [StringLength(200)] 
-        [Display(Name = "Address")]
-        public string? Address { get; set; }
 
-        [MaxLength(4), MinLength(4)]
-        public string? PostalCode { get; set; }
-        
-        [Required] 
+        [Required]
         [StringLength(100)]
-        [Display(Name = "First name")]
-        public string FirstName { get; set; } = null!;
-
-        [Required] 
-        [StringLength(100)] 
-        [Display(Name = "Last name")]
-        public string LastName { get; set; } = null!;
+        [Display(Name = "Organization Name")]
+        public string OrgName { get; set; } = null!;
+        
+        [Required]
+        [MinLength(9), MaxLength(9)]
+        [Display(Name = "Organization Number")]
+        public string OrgNr { get; set; } = null!;
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -136,20 +129,23 @@ public class RegisterModel : PageModel
         if (ModelState.IsValid)
         {
             var user = CreateUser();
-            
-            // Adding the info from the form
+
             await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
             await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-            user.Address = Input.Address;
+            
+            // Adding the info from the form
             user.PhoneNumber = Input.PhoneNumber;
-            user.PostalCode = Input.PostalCode;
-            user.FirstName = Input.FirstName;
-            user.LastName = Input.LastName;
+            user.OrgName = Input.OrgName;
+            user.OrgNr = Input.OrgNr;
+            
             var result = await _userManager.CreateAsync(user, Input.Password);
 
             if (result.Succeeded)
             {
                 _logger.LogInformation("User created a new account with password.");
+                
+                // Giving the user the business customer role
+                await _userManager.AddToRoleAsync(user, "BusinessCustomer");
 
                 var userId = await _userManager.GetUserIdAsync(user);
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
