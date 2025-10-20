@@ -1,0 +1,87 @@
+﻿@model VitalHelse.Models.Product
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+<ul class="nav">
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Index","Home")">Home</a>
+    </li>
+</ul>
+<div class="row">
+    <div class="col">
+        @if (Model.ProductPictures.Any())
+        {
+            <div id="pictures" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    @for (int i = 0; i < Model.ProductPictures.Count; i++)
+                    {
+                        <button type="button" data-bs-target="#pictures" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="slide@(i + 1)"> </button>
+                    }
+                </div>
+                <div class="carousel-inner">
+                    @{ int index = 0;}
+                    @foreach (var pic in Model.ProductPictures)
+                    {
+                        <div class="carousel-item @(index == 0 ? "active" : "")">
+                            <img src="@pic.PicturePath" alt="@Model.ProductName" class="d-block w-100">
+                        </div>
+                        index++;
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#pictures" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#pictures" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        }
+        else
+        {
+            <p>No picture found</p>
+        }
+    </div>
+
+    <div class="col ms-4">
+        <h3> @Model.ProductName</h3>
+        <h4 class="text-end m-4"> kr @Model.ProductPrice</h4>
+        <p class="mt-3"> @Model.ProductDescription</p>
+        
+        <div class="text-center mt-2">
+            <button type="button" class="btn btn-outline-dark w-100"> Legg i handlekurv </button>
+        </div>
+
+        <div class="accordion accordion-flush mt-4" id="productAccordion">
+            <div class="accordion-item border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseThree">
+                        BRUK
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <p> Beskrivelse av hvordan produktet brukes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseThree">
+                        INGREDIENSER
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <p> @Model.ProductIngredients</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
