@@ -160,7 +160,11 @@ $(document).ready(function ()
 
     $(document).on('click', function (e) {
         if (!$(e.target).closest('#searchInput, #searchSuggestions').length) {
-            suggestionsContainer.removeClass('show').empty();
+            suggestionsContainer.removeClass('show');
+        }
+        //shows the suggestions agian if the user clicks inside the search input
+        if ($(e.target).closest('#searchInput, #searchSuggestions').length) {
+            suggestionsContainer.addClass('show');
         }
     });
 
