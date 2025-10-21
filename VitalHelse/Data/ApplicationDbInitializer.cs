@@ -45,7 +45,7 @@ public class ApplicationDbInitializer
     //used for testing purposes
     private static void SeedProducts(ApplicationDbContext db)
     {
-        var products = new List<Product>
+        /*var products = new List<Product>
         {
             new Product
             {
@@ -136,6 +136,6 @@ public class ApplicationDbInitializer
             }
         };
 
-        db.Products.AddRange(products);
+        db.Products.AddRange(products);*/
     }
 }

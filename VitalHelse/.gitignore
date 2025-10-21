@@ -1,0 +1,54 @@
+# Build og midlertidige filer
+bin/
+obj/
+Debug/
+Release/
+*.log
+*.tlog
+
+# Brukerfiler og lokal konfig
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.idea/
+
+# Databaser
+app.db
+app.db-shm
+app.db-wal
+
+# Runtime genererte filer
+*.dll
+*.exe
+*.pdb
+*.cache
+*.json~*
+
+# Publiserte filer (genereres ved build)
+publish/
+*.Publish.xml
+
+# Kompilerte wwwroot-filer (kan bygges på nytt)
+wwwroot/lib/
+wwwroot/dist/
+wwwroot/node_modules/
+
+# OS spesifikke filer
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# VSCode og Rider
+.vscode/
+*.code-workspace
+
+# Backup og temp
+*.bak
+*.tmp
+~$*
+
+# JetBrains og analyseting
+_ReSharper*/
+*.DotSettings.user
