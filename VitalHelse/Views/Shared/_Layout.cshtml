@@ -30,7 +30,55 @@
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VitalHelse</a>
+            <div class="navbar-top align-items-center">
+                <!-- Venstre: søk -->
+                <form class="search-form" asp-controller="Search" asp-action="Search" method="get">
+                    <div class="search-container position-relative">
+                        <input
+                            id="searchInput"                     
+                        name="query"                          
+                        type="search"
+                        class="search-input form-control"
+                        placeholder="Søk etter..."
+                        autocomplete="off"
+                        aria-label="Søk"
+                        />
+                        <button type="submit" class="search-btn" aria-label="Søk">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                        <!-- beholder nøyaktig ID som JS bruker -->
+                        <div id="searchSuggestions" class="search-suggestions"></div>
+                    </div>
+                </form>
+
+                <!-- Midten: logo -->
+                <a class="navbar-brand vital-logo" asp-controller="Home" asp-action="Index">VitalHelse</a>
+
+                <!-- Høyre: ikoner -->
+                <div class="nav-icons">
+                    <a href="/Account/Profile" class="icon-link" title="Min side">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="7" r="4"></circle>
+                            <path d="M5.5 20a6.5 6.5 0 0 1 13 0"></path>
+                        </svg>
+                    </a>
+                    <a href="/Cart" class="icon-link" title="Handlevogn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -55,20 +103,6 @@
                     }
                 </ul>
                 
-                <!-- Search bar -->
-                <form class="d-flex me-3" asp-controller="Search" asp-action="Search" method="get">
-                    <div class="position-relative">
-                        <!-- The input field, query is a param name in the controller -->
-                        <input class="form-control me-2" type="search" placeholder="Search products..."
-                               aria-label="Search" name="query" id="searchInput" autocomplete="off">
-                        <!-- The container where JS injects suggestions
-                        the id is what JS targets 
-                        this gets turned on and off by JS
-                        based on search input is meeting criteria-->
-                        <div id="searchSuggestions" class="search-suggestions"></div>
-                    </div>
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
                 <partial name="_LoginPartial"/>
             </div>
         </div>

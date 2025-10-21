@@ -1,14 +1,14 @@
 ﻿/* =============================
-   NAVBAR
+   NAVBAR (HOVEDSTIL)
    ============================= */
 .navbar {
     background-color: #ffffff;
-    border-bottom: 1px solid #eaeaea;
-    padding: 1.5rem 2rem;
+    border: none;
+    padding: 1.5rem 2rem 0.5rem 2rem;
     backdrop-filter: blur(8px);
 }
 
-/* Fjerner understrek på alle lenker i navbaren */
+/* Fjern understrek på alle lenker */
 .navbar a {
     text-decoration: none !important;
 }
@@ -21,36 +21,115 @@
     justify-content: center;
 }
 
-/* Logo / merke */
-.navbar-brand {
-    color: #111827 !important;
+/* =============================
+   ØVRE SEKSJON (søk + logo + ikoner)
+   ============================= */
+.navbar-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0.6rem 5rem 0.3rem 5rem;
+    background: #fff;
+    border: none;
+    flex-wrap: wrap;
+}
+
+/* Midtstilt logo med rom rundt seg */
+.vital-logo {
     font-family: "Playfair Display", serif;
-    font-size: 2.5rem;
+    font-size: 2.4rem;
     font-weight: 600;
-    letter-spacing: -0.3px;
-    transition: color 0.25s ease;
-    margin-bottom: 0.8rem; /* gir luft mellom logo og kategorier */
+    color: #111827 !important;
+    text-decoration: none;
+    margin: 0 3rem;
+    z-index: 2;
 }
 
-.navbar-brand:hover {
-    color: #111827 !important; /* ingen endring ved hover */
+/* --- Søkeområde --- */
+.search-form {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 6rem;
 }
 
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+}
 
-/* Navigasjonsmeny */
+.search-input {
+    width: 100%;
+    padding: 10px 40px 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.search-input:focus {
+    border-color: #1b6ec2;
+    box-shadow: 0 0 0 3px rgba(27, 110, 194, 0.15);
+}
+
+.search-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.search-btn:hover {
+    color: #1b6ec2;
+}
+
+/* --- Høyre ikoner --- */
+.nav-icons {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 6rem;
+}
+
+.nav-icons .icon-link {
+    color: #111827 !important;
+    text-decoration: none;
+}
+
+.icon-link svg {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.icon-link:hover svg {
+    transform: scale(1.1);
+    opacity: 0.85;
+}
+
+/* =============================
+   NEDRE SEKSJON (kategorier)
+   ============================= */
 .navbar-nav {
     display: flex;
-    justify-content: center; /* sentrer alt */
+    justify-content: center;
     align-items: center;
-    gap: 2.5rem; /* jevn margin mellom alle elementer */
+    gap: 2.5rem;
     flex-wrap: wrap;
     padding: 0;
-    margin: 0 auto;
+    margin: 1.2rem auto 0.5rem auto;
     list-style: none;
-    margin-left: 2.5rem;
 }
 
-/* Lenker */
 .nav-item {
     display: flex;
     align-items: center;
@@ -62,41 +141,59 @@
     font-weight: 500;
     font-size: 1rem;
     text-transform: capitalize;
-    padding: 0.25rem 0;
     border-radius: 4px;
     letter-spacing: 1px;
-    transition: color 1s ease, transform 1s ease;
-    will-change: transform; /* for jevn GPU-animasjon */
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .nav-link:hover {
     text-decoration: none !important;
     color: #1b6ec2 !important;
-    transform: scale(1.15);
+    transform: scale(1.1);
 }
 
-/* --- ACTIVE LINK --- */
 .nav-link.active {
     color: #1b6ec2 !important;
-    transform: scale(1.15);
     font-weight: 600;
+    transform: scale(1.1);
 }
 
-
-/* Jevn styling for login/register */
-.navbar .nav-link.text-dark {
-    color: #111827 !important;
-}
-
-/* Responsiv visning */
-@media (max-width: 768px) {
-    .navbar .container-fluid {
+/* =============================
+   RESPONSIV
+   ============================= */
+@media (max-width: 992px) {
+    .navbar-top {
         flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+    }
+
+    .vital-logo {
+        order: 0;
+        margin: 0.5rem 0;
+        font-size: 2rem;
+    }
+
+    .search-form {
+        order: 1;
+        justify-content: center;
+        margin: 0;
+    }
+
+    .nav-icons {
+        order: 2;
+        justify-content: center;
+        margin: 0;
         gap: 0.8rem;
     }
 
+    .search-container {
+        max-width: 90%;
+    }
+
     .navbar-nav {
-        flex-wrap: wrap;
+        margin-top: 0.8rem;
         gap: 1rem;
+        text-align: center;
     }
 }

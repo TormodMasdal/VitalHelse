@@ -40,11 +40,13 @@ public class SearchController : Controller
         {
             return Json(new List<object>());
         }
+        
+        term = term.ToLower();
 
         var suggestions = await _context.Products
             .Where(p =>
-                (p.ProductName != null && p.ProductName.Contains(term)) ||
-                (p.ProductDescription != null && p.ProductDescription.Contains(term))
+                (p.ProductName != null && p.ProductName.ToLower().Contains(term)) ||
+                (p.ProductDescription != null && p.ProductDescription.ToLower().Contains(term))
             )
             .Take(maxResults)
             //Transforms the result set into a list of objects with the following properties:

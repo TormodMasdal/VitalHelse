@@ -1,42 +1,42 @@
+/* =============================
+   RESPONSIVE ROOT FONT SIZE
+   ============================= */
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    html {
+        font-size: 16px;
+    }
 }
 
 /* =============================
-   GLOBAL STYLE
+   GLOBAL RESET & BASE
    ============================= */
 html, body {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
     font-family: 'Lato', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight: 300;
     background-color: #fafafa;
-    margin: 0;
-    padding: 0;
+    color: #111827;
 }
 
-/* Overskrifter får mer karakter */
+body > .container,
+main {
+    flex: 1 0 auto;
+    min-height: auto;
+}
+
+/* =============================
+   TYPOGRAPHY
+   ============================= */
 h1, h2, h3, h4, h5 {
     font-family: 'Raleway', sans-serif;
-    font-weight: 500;
+    font-weight: 600;
     color: #111827;
     letter-spacing: -0.3px;
 }
-
 
 p {
     color: #4b5563;
@@ -44,16 +44,59 @@ p {
     line-height: 1.6;
 }
 
-/* Liten justering av knapper for mykere look */
-.btn-primary, .btn-outline-primary {
+/* =============================
+   FORM ELEMENTS & FOCUS STYLES
+   ============================= */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* =============================
+   BUTTONS
+   ============================= */
+.btn-primary,
+.btn-outline-primary {
     border-radius: 8px;
     font-family: "Poppins", sans-serif;
     font-weight: 500;
     letter-spacing: 0.2px;
+    transition: all 0.2s ease;
 }
 
+.btn-primary {
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+    color: #fff;
+}
 
+.btn-primary:hover {
+    background-color: #155b9a;
+    border-color: #155b9a;
+}
 
+.btn-outline-primary {
+    color: #1b6ec2;
+    border-color: #1b6ec2;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: #1b6ec2;
+    color: #fff;
+}
 
 /* =============================
    MAIN CONTAINER
@@ -65,42 +108,8 @@ p {
 }
 
 main {
+    flex: 1; /* holder footeren i bunnen */
     text-align: center;
-}
-
-h1, h2, h3, h4, h5 {
-    font-weight: 600;
-    color: #111827;
-}
-
-p {
-    color: #4b5563;
-}
-
-/* =============================
-   BUTTONS
-   ============================= */
-.btn-primary {
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-}
-
-.btn-primary:hover {
-    background-color: #155b9a;
-    border-color: #155b9a;
-}
-
-.btn-outline-primary {
-    color: #1b6ec2;
-    border-color: #1b6ec2;
-    font-weight: 500;
-}
-
-.btn-outline-primary:hover {
-    background-color: #1b6ec2;
-    color: #fff;
 }
 
 /* =============================
@@ -109,9 +118,10 @@ p {
 .card {
     background-color: #f5f5f5;
     border: none;
+    border-radius: 8px;
     overflow: hidden;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
     margin: 0.8rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .card:hover {
@@ -128,7 +138,6 @@ p {
     padding: 1.1rem 1rem;
 }
 
-/* Juster grid spacing */
 .row {
     justify-content: center;
     margin: 0 auto;
@@ -139,14 +148,23 @@ p {
    FOOTER
    ============================= */
 .footer {
+    position: relative !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-top: auto;
+    width: 100%;
     background-color: #fff;
     border-top: 1px solid #e5e7eb;
     text-align: center;
     padding: 1rem;
     color: #6b7280;
     font-size: 0.9rem;
+    flex-shrink: 0;
+    z-index: 0;
 }
 
+/* Lenker i footeren */
 .footer a {
     color: #1b6ec2;
     text-decoration: none;
@@ -159,16 +177,16 @@ p {
 /* =============================
    LINKS & UTILITIES
    ============================= */
-.text-muted {
-    color: #6b7280 !important;
-}
-
 a {
     color: #1b6ec2;
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 a:hover {
     text-decoration: underline;
 }
 
+.text-muted {
+    color: #6b7280 !important;
+}
