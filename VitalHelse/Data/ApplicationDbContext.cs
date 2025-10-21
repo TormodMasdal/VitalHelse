@@ -26,6 +26,6 @@ public class ApplicationDbContext : IdentityDbContext<AspNetUsers>
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderProduct> OrderProducts => Set<OrderProduct>();
     public DbSet<CartProduct> CartProducts => Set<CartProduct>();
-    public DbSet<ShoppingCart> ShoppingCarts => Set<ShoppingCart>();
+    
     
 }
