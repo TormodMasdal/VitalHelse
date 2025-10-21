@@ -1,8 +1,29 @@
+@model List<CartProduct>
 
+<h2>Handlekurv</h2>
 
-@{
-    ViewBag.Title = "title";
-    Layout = "_Layout";
+@if (Model == null || !Model.Any())
+{
+    <p>Handlekurven er tom.</p>
+}
+else
+{
+    <table>
+        <thead>
+        <tr>
+            <th>Produkt</th>
+            <th>Antall</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Product.ProductName</td>
+                <td>@item.Quantity</td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }
 
-<h2>title</h2>

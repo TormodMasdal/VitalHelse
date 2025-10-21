@@ -21,14 +21,17 @@ public class ShoppingCartController : Controller
     // GET
     public IActionResult Index()
     {
+        // Finds the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
+        // Query to get all items in the shopping cart
         var items = _db.CartProducts
             .Include(cp => cp.Product)
             .Include(cp => cp.AspNetUsers)
             .Where(cp => cp.AspNetUsersId == userId)
             .ToList();
         
-        return View();
+        // Returns the items to the view
+        return View(items);
     }
 }
