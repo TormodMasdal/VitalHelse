@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VitalHelse.Data;
+using VitalHelse.Helpers;
 using VitalHelse.Models;
 
 namespace VitalHelse.Controllers;
@@ -17,98 +17,69 @@ public class ProductController : Controller
         _db = db;
         _logger = logger;
     }
-    /*
-    public IActionResult Index(int? id) 
-    {
-        if (id == null)
-        {
-            return RedirectToAction("Index","Home");
-        }
 
-        var products = _db.Products
-            .Include(p => p.ProductPictures)
-            .FirstOrDefault(p => p.ProductId == id); 
-
-        if (products == null) 
-            return NotFound();
-        
-        return View(products);
-    } 
-    */
+    // Viser et spesifikt produkt via ID (fallback / direkte lenke)
     public IActionResult Index(int? id)
     {
-        // Oppretter dummy produkt
-        var product = new VitalHelse.Models.Product
-        {
-            ProductId = 1,
-            ProductName = "AloeV Hyaluronic Acid Night Cream",
-            ProductPrice = 199.89,
-            ProductDescription = "AloeV nattkrem inneholder Aloe Vera, Hyaluronic Acid, Glycosaminoglycans, Grønn te,\n\nRetinol (vitamin A), Vitamin E, Panthenol, og har et høyt innhold av aktive lipider.",
-            ProductIngredients = "Aloe Barbadensis, Aqua, Carbomer, C12-15 Alkyl Benzoate, Glycolic Acid, Camellia Sinensis, Caprylic/Capric Triglyceride, Cetearyl Alcohol, Sorbitol,Cyclomethicone, Ceteareth 20, Glyceryl Stearate, Echinacea Angustifolia, PEG-100 Stearate, Cetyl Alcohol, Hyaluronic Acid, Glycosaminoglycans, Biosaccharide Gum-1, Retinyl Palmitate, Cholecalciferol,Tocopheryl Acetate, Ascorbic Acid, Allantoin, Panthenol, TetrasodiumEDTA, Sodium Hydroxymethylglycinate, Sodium Hydroxide, Parfum, Rosmarinus Officinalis, Symphytum Officinale, Citrus Grandis."
-        };
+        if (id == null)
+            return RedirectToAction("Index", "Home");
 
-// Oppretter dummy bilder
-        var pic1 = new VitalHelse.Models.ProductPicture
-        {
-            ProductPictureId = 1,
-            PicturePath = "https://static.wixstatic.com/media/94c78e_e44626f5e8974dfeba2cb5fa19c3fc8b~mv2.jpg/v1/fill/w_1160,h_840,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/94c78e_e44626f5e8974dfeba2cb5fa19c3fc8b~mv2.jpg",
-            Product = product, // kobler tilbake til produktet
-            ProductId = product.ProductId
-        };
+        var product = _db.Products
+            .Include(p => p.ProductPictures)
+            .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+            .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
+                    .ThenInclude(c => c.ParentCategory)
+            .FirstOrDefault(p => p.ProductId == id);
 
-        var pic2 = new VitalHelse.Models.ProductPicture
-        {
-            ProductPictureId = 2,
-            PicturePath = "https://static.wixstatic.com/media/94c78e_ea4520d3ac284d0c829fd57f3b1ef859~mv2.jpeg/v1/fill/w_1160,h_840,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/94c78e_ea4520d3ac284d0c829fd57f3b1ef859~mv2.jpeg",
-            Product = product,
-            ProductId = product.ProductId
-        };
-
-// Legger bildene til produktet
-        product.ProductPictures.Add(pic1);
-        product.ProductPictures.Add(pic2);
-
-        return View(product);
-    }
-    
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-    
-
-    [Route("produkt/{*categoryPath}")]
-    public IActionResult Category(string? categoryPath)
-    {
-        if (string.IsNullOrEmpty(categoryPath))
+        if (product == null)
             return NotFound();
 
-        var pathParts = categoryPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        var categoryName = pathParts.Last();
+        return View("ProductDetails", product);
+    }
 
-        // Finn kategorien basert på hele hierarkiet
+    // Hovedrute som håndterer både kategori- og produkt-URL-er
+    [Route("produkt/{*fullPath}")]
+    public IActionResult ProductOrCategory(string? fullPath)
+    {
+        if (string.IsNullOrEmpty(fullPath))
+            return NotFound();
+
+        var parts = fullPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var lastPart = parts.Last().ToLowerInvariant();
+
+        // 🔹 Sjekk om siste del matcher et produkt (via slug)
+        var product = _db.Products
+            .Include(p => p.ProductPictures)
+            .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+            .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
+                    .ThenInclude(c => c.ParentCategory)
+            .AsEnumerable() // kreves for SlugHelper i minne
+            .FirstOrDefault(p => SlugHelper.Slugify(p.ProductName) == lastPart);
+
+        if (product != null)
+            return View("ProductDetails", product);
+
+        // 🔹 Ellers: behandle som kategori
         var currentCategory = _db.Categories
             .Include(c => c.ParentCategory)
             .Include(c => c.ChildCategories)
-            .AsEnumerable() // nødvendig for å bygge full sti i minnet
+            .AsEnumerable()
             .FirstOrDefault(c =>
-            {
-                var fullPath = GetCategoryFullPath(c).ToLower();
-                return fullPath == categoryPath.ToLower();
-            });
+                SlugHelper.Slugify(GetCategoryFullPath(c)) == SlugHelper.Slugify(fullPath)
+            );
 
         if (currentCategory == null)
             return NotFound();
 
-        // 🔥 Hent ALLE produkter i denne kategorien + ALLE underkategorier (rekursivt)
         var allCategoryIds = GetAllCategoryIds(currentCategory);
 
         var products = _db.Products
             .Include(p => p.ProductPictures)
             .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
             .Include(p => p.ProductCategories)
-            .ThenInclude(pc => pc.Category)
+                .ThenInclude(pc => pc.Category)
             .Where(p => p.ProductCategories.Any(pc => allCategoryIds.Contains(pc.CategoryId)))
             .ToList();
 
@@ -125,7 +96,7 @@ public class ProductController : Controller
         return View("CategoryTemplate", viewModel);
     }
 
-    // 📂 Hjelpemetode for å bygge full sti (f.eks. hudpleie/krem/ansiktskrem)
+    // 📂 Lager full kategori-sti som "hudpleie/krem/ansiktskrem"
     private string GetCategoryFullPath(Category category)
     {
         var names = new List<string> { category.CategoryName };
@@ -138,7 +109,7 @@ public class ProductController : Controller
         return string.Join('/', names);
     }
 
-    // 🔁 Hent ALLE underkategorier rekursivt
+    // 🔁 Henter alle underkategorier rekursivt
     private List<int> GetAllCategoryIds(Category category)
     {
         var ids = new List<int> { category.CategoryId };
@@ -148,28 +119,14 @@ public class ProductController : Controller
             .ToList();
 
         foreach (var child in children)
-        {
             ids.AddRange(GetAllCategoryIds(child));
-        }
 
         return ids;
     }
 
-    [Route("produkt/detaljer/{id}")]
-    public IActionResult Details(int id)
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
     {
-        var product = _db.Products
-            .Include(p => p.ProductPictures)
-            .Include(p => p.ProductTags)
-                .ThenInclude(pt => pt.Tag)
-            .Include(p => p.ProductCategories)
-                .ThenInclude(pc => pc.Category)
-                    .ThenInclude(c => c.ParentCategory)
-            .FirstOrDefault(p => p.ProductId == id);
-
-        if (product == null)
-            return NotFound();
-
-        return View("ProductDetails", product);
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

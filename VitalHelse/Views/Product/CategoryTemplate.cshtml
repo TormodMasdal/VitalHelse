@@ -1,4 +1,6 @@
-﻿@model VitalHelse.Models.CategoryViewModel
+﻿@using VitalHelse.Helpers
+
+@model VitalHelse.Models.CategoryViewModel
 @{
     ViewBag.Title = Model.CurrentCategory.CategoryName;
     Layout = "_Layout";
@@ -42,7 +44,7 @@
                     <h5>@product.ProductName</h5>
                     <p class="desc">@product.ProductDescription</p>
                     <p class="price">@product.ProductPrice.ToString("0.00") kr</p>
-                    <a class="learn-more" href="@Url.Action("Details", "Product", new { id = product.ProductId })">Se produkt</a>
+                    <a class="learn-more" href="@SlugHelper.BuildProductPath(product)">Se produkt</a>
                 </div>
             }
         </div>
