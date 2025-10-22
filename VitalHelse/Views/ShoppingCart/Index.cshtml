@@ -13,14 +13,17 @@ else
         <tr>
             <th>Produkt</th>
             <th>Antall</th>
+            <th>Total Pris</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Product.ProductName</td>
-                <td>@item.Quantity</td>
+                <td><button>-</button>@item.Product.ProductName</td>
+                <td><button>-</button> @item.Quantity <button>+</button></td>
+                <td>@(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPrice * item.Quantity) kr</td>
             </tr>
         }
         </tbody>
