@@ -4,71 +4,84 @@
     ViewData["Title"] = "Registrer Bedrift";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="account-container">
+    <div class="account-card">
+        <h2 class="account-title">Registrer bedrift</h2>
+        <p class="account-subtitle">Fyll inn bedriftsinformasjonen nedenfor</p>
 
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Lag en ny konto.</h2>
-            <hr />
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="account-form">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="navn@eksempel.com" />
+
+            <div class="form-group">
                 <label asp-for="Input.Email">E-post <span class="text-danger">*</span></label>
+                <input asp-for="Input.Email" placeholder="navn@bedrift.no" />
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="Phone-Number" aria-required="true" placeholder="telefon" />
+
+            <div class="form-group">
                 <label asp-for="Input.PhoneNumber">Telefon <span class="text-danger">*</span></label>
+                <input asp-for="Input.PhoneNumber" placeholder="Telefonnummer" />
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.OrgName" class="form-control" autocomplete="OrgName" aria-required="true" placeholder="organisasjonsnavn" />
+
+            <div class="form-group">
                 <label asp-for="Input.OrgName">Organisasjonsnavn <span class="text-danger">*</span></label>
+                <input asp-for="Input.OrgName" placeholder="Bedriftens navn" />
                 <span asp-validation-for="Input.OrgName" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.OrgNr" class="form-control" autocomplete="OrgNr" aria-required="true" placeholder="organisasjonsnummer" />
+
+            <div class="form-group">
                 <label asp-for="Input.OrgNr">Organisasjonsnummer <span class="text-danger">*</span></label>
+                <input asp-for="Input.OrgNr" placeholder="Organisasjonsnummer (9 siffer)" />
                 <span asp-validation-for="Input.OrgNr" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="passord" />
+
+            <div class="form-group">
                 <label asp-for="Input.Password">Passord <span class="text-danger">*</span></label>
+                <input asp-for="Input.Password" placeholder="••••••••" />
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="passord" />
-                <label asp-for="Input.ConfirmPassword">Bekreft Passord <span class="text-danger">*</span></label>
+
+            <div class="form-group">
+                <label asp-for="Input.ConfirmPassword">Bekreft passord <span class="text-danger">*</span></label>
+                <input asp-for="Input.ConfirmPassword" placeholder="••••••••" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Registrer</button>
+
+            <button id="registerSubmit" type="submit" class="btn-submit">Registrer bedrift</button>
+
+            <div class="account-links">
+                <a asp-area="Identity" asp-page="/Account/Register">Registrer som privatkunde</a>
+                <a asp-area="Identity" asp-page="/Account/Login">Allerede registrert? Logg inn</a>
+            </div>
         </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
+
+        @* Ekstern pålogging, f.eks. Google eller Microsoft *@
+        <section class="external-login">
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) == 0)
                 {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
+                    <p class="small-text">
+                        Ingen eksterne påloggingstjenester er konfigurert.
+                        <a href="https://go.microsoft.com/fwlink/?LinkID=532715" target="_blank">
+                            Les mer her
+                        </a>.
+                    </p>
                 }
                 else
                 {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
+                    <form id="external-account" asp-page="./ExternalLogin"
+                          asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <p>Registrer via:</p>
+                        <div class="external-buttons">
+                            @foreach (var provider in Model.ExternalLogins!)
+                            {
+                                <button type="submit" class="btn-submit"
+                                        name="provider" value="@provider.Name"
+                                        title="Registrer med @provider.DisplayName">
+                                    @provider.DisplayName
+                                </button>
+                            }
                         </div>
                     </form>
                 }
@@ -78,6 +91,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/postlookup.js"></script>
     <partial name="_ValidationScriptsPartial" />
 }

@@ -104,7 +104,7 @@ p {
 .container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 2rem 1rem;
 }
 
 main {
@@ -190,3 +190,11 @@ a:hover {
 .text-muted {
     color: #6b7280 !important;
 }
+
+
+
+
+
+
+
+
