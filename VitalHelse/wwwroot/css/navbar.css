@@ -159,41 +159,91 @@
 }
 
 /* =============================
-   RESPONSIV
+   RESPONSIV – Mobil (behold horisontal layout)
    ============================= */
 @media (max-width: 992px) {
+
+    /* Øvre seksjon */
     .navbar-top {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem 1.5rem;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.8rem 1.2rem;
+        gap: 0;
     }
 
+    /* Logo – litt mindre for mobil */
     .vital-logo {
-        order: 0;
-        margin: 0.5rem 0;
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin: 0 0.5rem;
     }
 
+    /* Søkeområdet – midtstilt og skalert ned */
     .search-form {
-        order: 1;
+        flex: 1;
         justify-content: center;
-        margin: 0;
-    }
-
-    .nav-icons {
-        order: 2;
-        justify-content: center;
-        margin: 0;
-        gap: 0.8rem;
+        margin: 0 0.5rem;
     }
 
     .search-container {
-        max-width: 90%;
+        max-width: 180px;
     }
 
+    .search-input {
+        padding: 0.5rem 2.2rem 0.5rem 0.8rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+    }
+
+    .search-btn {
+        right: 8px;
+        font-size: 1rem;
+    }
+
+    /* Ikoner – høyre side, men med litt mellomrom */
+    .nav-icons {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.9rem;
+        margin-left: 0.5rem;
+    }
+
+    .icon-link svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    /* Nedre meny (kategorier) */
     .navbar-nav {
+        gap: 1.3rem;
         margin-top: 0.8rem;
-        gap: 1rem;
-        text-align: center;
+        padding: 0.3rem 0;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .nav-link {
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+    }
+}
+
+/* Ekstra finjustering for svært små skjermer */
+@media (max-width: 600px) {
+    .vital-logo {
+        font-size: 1.6rem;
+    }
+
+    .search-container {
+        max-width: 150px;
+    }
+
+    .icon-link svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .navbar-top {
+        padding: 0.8rem 0.8rem;
     }
 }
