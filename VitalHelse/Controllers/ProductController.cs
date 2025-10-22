@@ -129,4 +129,13 @@ public class ProductController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+    
+    [HttpGet]
+    public IActionResult ProductGrid(IEnumerable<Product> products)
+    {
+        _logger.LogInformation("Rendering partial product grid with {Count} products", products.Count());
+        return PartialView("_ProductGrid", products);
+    }
+
+
 }

@@ -1,0 +1,26 @@
+@using VitalHelse.Helpers
+@model IEnumerable<VitalHelse.Models.Product>
+
+@if (Model != null && Model.Any())
+{
+    <div class="product-grid">
+        @foreach (var product in Model)
+        {
+            <div class="product-card">
+                <img src="@(product.ProductPictures.FirstOrDefault()?.PicturePath ?? "/images/products/default.png")"
+                     alt="@product.ProductName"
+                     class="product-img" />
+
+                <h5>@product.ProductName</h5>
+                <p class="desc">@product.ProductDescription</p>
+                <p class="price">@product.ProductPrice.ToString("0.00") kr</p>
+
+                <a class="learn-more" href="@SlugHelper.BuildProductPath(product)">Se produkt</a>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted text-center mt-4">Ingen produkter funnet.</p>
+}

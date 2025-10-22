@@ -1,0 +1,13 @@
+﻿@model VitalHelse.Models.CategoryViewModel
+@using VitalHelse.Helpers
+
+@{
+    ViewData["Title"] = Model?.CurrentCategory?.CategoryName ?? "Kategori";
+    Layout = "_Layout";
+}
+
+<section class="category-header text-center mb-5">
+    <h1 class="category-title">@Model?.CurrentCategory?.CategoryName?.ToUpper()</h1>
+</section>
+
+@await Html.PartialAsync("_ProductGrid", Model?.Products ?? Enumerable.Empty<VitalHelse.Models.Product>())
