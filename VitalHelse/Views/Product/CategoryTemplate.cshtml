@@ -6,8 +6,30 @@
     Layout = "_Layout";
 }
 
-<section class="category-header text-center mb-5">
-    <h1 class="category-title">@Model?.CurrentCategory?.CategoryName?.ToUpper()</h1>
-</section>
+<div class="category-page">
+    <section class="category-header text-center mb-5">
+        <h1 class="category-title">@Model?.CurrentCategory?.CategoryName?.ToUpper()</h1>
+    </section>
 
-@await Html.PartialAsync("_ProductGrid", Model?.Products ?? Enumerable.Empty<VitalHelse.Models.Product>())
+    @{
+        var currentPath = Context.Request.Path.Value?.Replace("/produkt/", "").Trim('/') ?? "";
+    }
+
+    @* 🔹 Underkategorier *@
+    @if (Model.SubCategories != null && Model.SubCategories.Any())
+    {
+        <div class="subcategory-bar text-center mb-4">
+            @foreach (var sub in Model.SubCategories)
+            {
+                var newPath = $"{currentPath}/{SlugHelper.Slugify(sub.CategoryName)}".Trim('/');
+
+                <a class="subcategory-link" href="/produkt/@newPath">
+                    @sub.CategoryName.ToUpper()
+                </a>
+            }
+        </div>
+    }
+
+    @* 🔹 Produktgrid (hentes fra partial view) *@
+    @await Html.PartialAsync("_ProductGrid", Model?.Products ?? Enumerable.Empty<VitalHelse.Models.Product>())
+</div>
