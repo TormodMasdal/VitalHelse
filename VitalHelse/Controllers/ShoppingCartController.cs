@@ -34,4 +34,53 @@ public class ShoppingCartController : Controller
         // Returns the items to the view
         return View(items);
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        var shoppingCart = await _db.CartProducts
+            .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
+
+        if(shoppingCart != null)
+            _db.Remove(shoppingCart);
+
+        await _db.SaveChangesAsync();
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPatch]
+    public async Task<IActionResult> AddQuantity(int id)
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        
+        var shoppingCart = await _db.CartProducts
+            .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
+
+        if (shoppingCart != null)
+        {
+            shoppingCart.Quantity += 1;
+            await _db.SaveChangesAsync();
+        }
+        return RedirectToAction("Index");
+    }
+    
+    [HttpPatch]
+    public async Task<IActionResult> DecreaseQuantity(int id)
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        
+        var shoppingCart = await _db.CartProducts
+            .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
+        
+        if (shoppingCart != null && shoppingCart.Quantity > 1)
+        {
+            shoppingCart.Quantity -= 1;
+            await _db.SaveChangesAsync();
+        }
+        
+        return RedirectToAction("Index");
+    }
 }

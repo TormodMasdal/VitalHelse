@@ -21,12 +21,17 @@ else
         @foreach (var item in Model)
         {
             <tr>
-                <td><button>-</button>@item.Product.ProductName</td>
-                <td><button>-</button> @item.Quantity <button>+</button></td>
+                <td><button onclick="removItemShoppingCart(@item.ProductId)">-</button>
+                    @item.Product.ProductName</td>
+                <td><button onclick="DecreaseQuantity(@item.ProductId)">-</button> @item.Quantity <button onclick="AddQuantity(@item.ProductId)">+</button></td>
                 <td>@(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPrice * item.Quantity) kr</td>
             </tr>
         }
         </tbody>
     </table>
 }
+@section Scripts {
+    <script src="~/js/ShoppingCart.js"></script>
+}
+
 
