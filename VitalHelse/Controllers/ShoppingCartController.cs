@@ -38,14 +38,18 @@ public class ShoppingCartController : Controller
     [HttpDelete]
     public async Task<IActionResult> Delete(int id)
     {
+        // Fetch the userId
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
+        // Finds the row in CartProducts where Product and userId match
         var shoppingCart = await _db.CartProducts
             .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
 
+        // Removes the product
         if(shoppingCart != null)
             _db.Remove(shoppingCart);
 
+        // Save the changes
         await _db.SaveChangesAsync();
 
         return RedirectToAction("Index");
@@ -54,13 +58,16 @@ public class ShoppingCartController : Controller
     [HttpPatch]
     public async Task<IActionResult> AddQuantity(int id)
     {
+        // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         
+        // Finds the row in CartProducts where Product and userId match 
         var shoppingCart = await _db.CartProducts
             .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
 
         if (shoppingCart != null)
         {
+            // Adds quantity by 1 and save it
             shoppingCart.Quantity += 1;
             await _db.SaveChangesAsync();
         }
@@ -70,16 +77,20 @@ public class ShoppingCartController : Controller
     [HttpPatch]
     public async Task<IActionResult> DecreaseQuantity(int id)
     {
+        // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         
+        // Finds the row in CartProducts where Product and userId match
         var shoppingCart = await _db.CartProducts
             .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
 
         if (shoppingCart.Quantity <= 1)
         {
+            // Returns a 400 bad request if the quantity is too low to use this function
             return BadRequest("Du må ha minst en gjenstand per produkt");
         }
         
+        // Decrease the quantity by one
         shoppingCart.Quantity -= 1;
         await _db.SaveChangesAsync();
         
