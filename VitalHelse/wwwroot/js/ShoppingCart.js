@@ -14,8 +14,15 @@ async function AddQuantity(productId) {
 }
 
 async function DecreaseQuantity(productId) {
-    await fetch(`/ShoppingCart/DecreaseQuantity/?id=${productId}`, { method: 'PATCH' })
+    const response = await fetch(`/ShoppingCart/DecreaseQuantity/?id=${productId}`, { method: 'PATCH' })
 
-    window.location.reload();
+    if (!response.ok) {
+        const msg = await response.text();
+        document.getElementById("error-box").innerText = msg;
+        setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
+    }
+    else {
+        window.location.reload(); // reload for å se endret quantity
+    }
 }
 

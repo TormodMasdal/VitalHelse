@@ -74,12 +74,14 @@ public class ShoppingCartController : Controller
         
         var shoppingCart = await _db.CartProducts
             .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
-        
-        if (shoppingCart != null && shoppingCart.Quantity > 1)
+
+        if (shoppingCart.Quantity <= 1)
         {
-            shoppingCart.Quantity -= 1;
-            await _db.SaveChangesAsync();
+            return BadRequest("Du må ha minst en gjenstand per produkt");
         }
+        
+        shoppingCart.Quantity -= 1;
+        await _db.SaveChangesAsync();
         
         return RedirectToAction("Index");
     }
