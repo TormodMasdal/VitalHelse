@@ -33,9 +33,11 @@ namespace VitalHelse.Controllers
 
             var favoriteProducts = await _db.FavoriteProducts
                 .Include(fp => fp.Product)
-                .Where(fp => fp.AspNetUsersId == user.Id) // 👈 bruker-ID matcher nå IdentityUser
+                .ThenInclude(p => p.ProductPictures)
+                .Where(fp => fp.AspNetUsersId == user.Id)
                 .Select(fp => fp.Product)
                 .ToListAsync();
+
 
             var viewModel = new FavoritesViewModel
             {

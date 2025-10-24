@@ -5,8 +5,8 @@
     Layout = "_Layout";
 }
 
-<section class="favorites-page container text-center py-5">
-    <h1 class="category-title mb-5">Mine Favoritter ️</h1>
+<section class="category-page py-5">
+    <h1 class="category-title mb-5">Mine Favoritter </h1>
 
     <!-- 🔹 Toppknapper -->
     <div class="favorites-actions mb-5 d-flex justify-content-center gap-3 flex-wrap">
@@ -23,13 +23,10 @@
     }
     else
     {
-        <div class="product-grid">
-            @await Html.PartialAsync("_ProductGrid",
-                Model.Products,
-                new ViewDataDictionary(ViewData) {
-                    { "IsAuthenticated", User.Identity?.IsAuthenticated ?? false }
-                })
-
-        </div>
+        @await Html.PartialAsync("_ProductGrid",
+            Model.Products,
+            new ViewDataDictionary(ViewData) {
+                { "IsAuthenticated", User.Identity?.IsAuthenticated ?? false }
+            })
     }
 </section>
