@@ -1,0 +1,33 @@
+@model VitalHelse.Models.FavoritesViewModel
+
+@{
+    ViewData["Title"] = "Mine favoritter";
+    Layout = "_Layout";
+}
+
+<section class="favorites-page text-center p-5">
+    <h1 class="mb-4">Mine favoritter ❤️</h1>
+
+    @if (Model.Products == null || !Model.Products.Any())
+    {
+        <p>Du har ingen favoritter enda.</p>
+    }
+    else
+    {
+        <div class="product-grid">
+            @foreach (var product in Model.Products)
+            {
+                <div class="product-card">
+                    <img src="@(product.ProductPictures.FirstOrDefault()?.PicturePath ?? "/images/products/default.png")"
+                         alt="@product.ProductName" class="product-img" />
+                    <h5>@product.ProductName</h5>
+                    <p class="desc">@product.ProductDescription</p>
+                    <p class="price">@product.ProductPrice.ToString("0.00") kr</p>
+                    <form method="post" asp-action="RemoveFavorite" asp-route-productId="@product.ProductId">
+                        <button type="submit" class="learn-more">Fjern</button>
+                    </form>
+                </div>
+            }
+        </div>
+    }
+</section>
