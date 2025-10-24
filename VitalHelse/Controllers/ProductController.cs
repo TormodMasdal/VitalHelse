@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VitalHelse.Data;
@@ -11,12 +12,15 @@ public class ProductController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly ILogger<ProductController> _logger;
+    private readonly UserManager<AspNetUsers> _um;
 
-    public ProductController(ApplicationDbContext db, ILogger<ProductController> logger)
+    public ProductController(ApplicationDbContext db, ILogger<ProductController> logger, UserManager<AspNetUsers> um)
     {
         _db = db;
         _logger = logger;
+        _um = um;
     }
+
 
     // Viser et spesifikt produkt via ID (fallback / direkte lenke)
     public IActionResult Index(int? id)
@@ -40,7 +44,7 @@ public class ProductController : Controller
 
     // Hovedrute som håndterer både kategori- og produkt-URL-er
     [Route("produkt/{*fullPath}")]
-    public IActionResult ProductOrCategory(string? fullPath)
+    public async Task<IActionResult> ProductOrCategory(string? fullPath)
     {
         if (string.IsNullOrEmpty(fullPath))
             return NotFound();
@@ -79,9 +83,24 @@ public class ProductController : Controller
             .Include(p => p.ProductPictures)
             .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
             .Include(p => p.ProductCategories)
-                .ThenInclude(pc => pc.Category)
+            .ThenInclude(pc => pc.Category)
             .Where(p => p.ProductCategories.Any(pc => allCategoryIds.Contains(pc.CategoryId)))
             .ToList();
+
+        // 🔹 Sett IsFavorite-feltet her
+        if (User.Identity?.IsAuthenticated ?? false)
+        {
+            var userId = _um.GetUserId(User);
+
+            var favoriteIds = await _db.FavoriteProducts
+                .Where(f => f.AspNetUsersId == userId)
+                .Select(f => f.ProductId)
+                .ToListAsync();
+
+            foreach (var p in products)
+                p.IsFavorite = favoriteIds.Contains(p.ProductId);
+        }
+
 
         var subcategories = currentCategory.ChildCategories.ToList();
 
@@ -129,4 +148,13 @@ public class ProductController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+    
+    [HttpGet]
+    public IActionResult ProductGrid(IEnumerable<Product> products)
+    {
+        _logger.LogInformation("Rendering partial product grid with {Count} products", products.Count());
+        return PartialView("_ProductGrid", products);
+    }
+
+
 }

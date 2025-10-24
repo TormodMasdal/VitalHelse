@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VitalHelse.Models;
 
@@ -32,4 +33,7 @@ public class Product
     public ICollection<FavoriteProduct> FavoriteProducts { get; } = new List<FavoriteProduct>();
     public ICollection<OrderProduct> OrderProducts { get; } = new List<OrderProduct>();
     public ICollection<CartProduct> CartProducts { get; } = new List<CartProduct>();
+    
+    [NotMapped]
+    public bool IsFavorite { get; set; } = false;
 }
