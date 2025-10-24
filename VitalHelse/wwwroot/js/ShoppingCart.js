@@ -15,6 +15,20 @@ async function removItemShoppingCart(productId) {
     window.location.reload();
 }
 
+async function AddToCart(productId){
+    
+    // Saves antiforgerytoken to protect against CSRF-attacks
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    // Fetch the delete function from the controller
+    await fetch(`/ShoppingCart/AddToCart/?id=${productId}`, {
+        method: 'POST',
+        headers: {
+            'RequestVerificationToken': token
+        }
+    });
+}
+
 
 async function AddQuantity(productId) {
     

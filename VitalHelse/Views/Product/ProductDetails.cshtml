@@ -52,7 +52,7 @@
         <p class="mt-3"> @Model.ProductDescription</p>
         
         <div class="text-center mt-2">
-            <button type="button" class="btn btn-outline-dark w-100"> Legg i handlekurv </button>
+            <button type="button" class="btn btn-outline-dark w-100" onclick="AddToCart(@Model.ProductId)"> Legg i handlekurv </button>
         </div>
 
         <div class="accordion accordion-flush mt-4" id="productAccordion">
@@ -83,5 +83,8 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script src="~/js/ShoppingCart.js"></script>
+}
 
 
