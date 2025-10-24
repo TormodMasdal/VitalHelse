@@ -21,12 +21,21 @@ async function AddToCart(productId){
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     // Fetch the delete function from the controller
-    await fetch(`/ShoppingCart/AddToCart/?id=${productId}`, {
+   const response = await fetch(`/ShoppingCart/AddToCart/?id=${productId}`, {
         method: 'POST',
         headers: {
             'RequestVerificationToken': token
         }
     });
+
+    // Prints the error message if bad request is returned, and keeps it there for 3 seconds
+    if (!response.ok) {
+        const msg = await response.text();
+        document.getElementById("error-box").innerText = msg;
+        setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
+    } else {
+        window.location.reload();
+    }
 }
 
 
@@ -36,13 +45,19 @@ async function AddQuantity(productId) {
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     // Fetch the add quantity function from the controller
-    await fetch(`/ShoppingCart/AddQuantity/?id=${productId}`, {
+    const response = await fetch(`/ShoppingCart/AddQuantity/?id=${productId}`, {
         method: 'PATCH',
         headers: { 'RequestVerificationToken': token }
     });
 
-    // Reloads the page so it is updated
-    window.location.reload();
+    // Prints the error message if bad request is returned, and keeps it there for 3 seconds
+    if (!response.ok) {
+        const msg = await response.text();
+        document.getElementById("error-box").innerText = msg;
+        setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
+    } else {
+        window.location.reload();
+    }
 }
 
 async function DecreaseQuantity(productId) {

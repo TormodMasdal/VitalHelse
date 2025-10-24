@@ -68,10 +68,17 @@ public class ShoppingCartController : Controller
         
         // Finds the row in CartProducts where Product and userId match 
         var shoppingCart = await _db.CartProducts
+            .Include(c => c.Product)
             .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
 
         if (shoppingCart != null)
         {
+            if (shoppingCart.Quantity >= shoppingCart.Product.StockCount)
+            {
+                // Returns a 400 bad request if the quantity equals the amount of stock
+                return BadRequest("Vi har desverre ikke dette antaller tilgjengelig på lager");
+            }
+            
             // Adds quantity by 1 and save it
             shoppingCart.Quantity += 1;
             await _db.SaveChangesAsync();
@@ -110,36 +117,47 @@ public class ShoppingCartController : Controller
         // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         
-        // If a user is signed in
-        if (userId != null)
-        {
-            // Search for a matching row in the shoppingcart
-            var shoppingCart = await _db.CartProducts
-                .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
+        // Search for a matching row in the shoppingcart
+        var shoppingCart = await _db.CartProducts
+            .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
 
-            // If the item already exists in the shoppingcart increment the quantity.
-            if (shoppingCart != null)
+        // Gets the productId, so that we can match the cart quantity with stock count
+        var product = await _db.Products
+            .FirstOrDefaultAsync(m => m.ProductId == id);
+
+        if (product == null) return NoContent();
+        
+        // The stock count has to be higher than 0 to add the item to cart.
+        if (product.StockCount <= 0) return NoContent();
+        
+        // If the item already exists in the shoppingcart increment the quantity.
+        if (shoppingCart != null)
+        {
+            // If the quantity tries to go higher than the stock count
+            if (shoppingCart.Quantity >= product.StockCount)
             {
-                shoppingCart.Quantity += 1;
-                await _db.SaveChangesAsync();
+                // Returns a 400 bad request if the quantity is too low to use this function
+                return BadRequest("Vi har desverre ikke dette antaller tilgjengelig på lager");
             }
             
-            // If not Create a new row and add the item
-            else
-            {
-                // Creates a new row
-                CartProduct cartProduct = new CartProduct
-                {
-                    Quantity = 1,
-                    AspNetUsersId = userId,
-                    ProductId = id
-                };
-                
-                _db.Add(cartProduct);
-                await _db.SaveChangesAsync();
-            }
+            shoppingCart.Quantity += 1;
         }
-        
+
+        // If not. Create a new row and add the item
+        else
+        {
+            // Creates a new row
+            CartProduct cartProduct = new CartProduct
+            {
+                Quantity = 1,
+                AspNetUsersId = userId,
+                ProductId = id 
+            };
+            
+            _db.Add(cartProduct);
+        }
+        await _db.SaveChangesAsync();
+
         // Dont change the view
         return NoContent();
     }

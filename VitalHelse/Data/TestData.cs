@@ -60,28 +60,32 @@ public static class TestData
             {
                 ProductName = "BestBuy 50ml Day Cream",
                 ProductPrice = 299.0,
-                ProductDescription = "Fuktighetskrem for dagbruk."
+                ProductDescription = "Fuktighetskrem for dagbruk.",
+                StockCount = 1
             };
 
             var fotkrem = new Product
             {
                 ProductName = "SoftFeet 75ml Foot Cream",
                 ProductPrice = 199.0,
-                ProductDescription = "Nærende krem for tørre føtter."
+                ProductDescription = "Nærende krem for tørre føtter.",
+                StockCount = 1
             };
 
             var nattkrem = new Product
             {
                 ProductName = "NightGlow 30ml Night Cream",
                 ProductPrice = 349.0,
-                ProductDescription = "Nærende krem for natten."
+                ProductDescription = "Nærende krem for natten.",
+                StockCount = 3
             };
 
             var kuldekremProd = new Product
             {
                 ProductName = "CoolFace 50ml Kuldekrem",
                 ProductPrice = 279.0,
-                ProductDescription = "Avkjølende krem for ansiktet."
+                ProductDescription = "Avkjølende krem for ansiktet.",
+                StockCount = 2
             };
 
             context.Products.AddRange(hudkrem, fotkrem, nattkrem, kuldekremProd);
@@ -126,6 +130,9 @@ public static class TestData
                 new ProductTags { ProductId = kuldekremProd.ProductId, TagId = nyhet.TagId }
             );
             context.SaveChanges();
+            
+            
+
         }
     }
 }
