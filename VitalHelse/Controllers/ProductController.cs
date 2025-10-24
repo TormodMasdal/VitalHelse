@@ -17,6 +17,20 @@ public class ProductController : Controller
         _db = db;
         _logger = logger;
     }
+    
+    private ProductDetailViewModel BuildProductViewModel(Product product)
+    {
+        var category = product.ProductCategories.Select(pc => pc.Category).FirstOrDefault();
+        var fullCategoryPath = GetCategoryFullPathFromDb(category.CategoryId); 
+
+
+        return new ProductDetailViewModel
+        {
+            CurrentProduct = product,
+            ParentCategory = category?.ParentCategory,
+            CategoryPath = fullCategoryPath
+        };
+    }
 
     // Viser et spesifikt produkt via ID (fallback / direkte lenke)
     public IActionResult Index(int? id)
@@ -29,13 +43,13 @@ public class ProductController : Controller
             .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
             .Include(p => p.ProductCategories)
                 .ThenInclude(pc => pc.Category)
-                    .ThenInclude(c => c.ParentCategory)
+                    .ThenInclude(c1 => c1.ParentCategory)
             .FirstOrDefault(p => p.ProductId == id);
 
         if (product == null)
             return NotFound();
-
-        return View("ProductDetails", product);
+        
+        return View("ProductDetails", BuildProductViewModel(product));
     }
 
     // Hovedrute som håndterer både kategori- og produkt-URL-er
@@ -58,8 +72,9 @@ public class ProductController : Controller
             .AsEnumerable() // kreves for SlugHelper i minne
             .FirstOrDefault(p => SlugHelper.Slugify(p.ProductName) == lastPart);
 
+        
         if (product != null)
-            return View("ProductDetails", product);
+            return View("ProductDetails", BuildProductViewModel(product));
 
         // 🔹 Ellers: behandle som kategori
         var currentCategory = _db.Categories
@@ -108,6 +123,21 @@ public class ProductController : Controller
         }
         return string.Join('/', names);
     }
+    
+    // Retrieve all categories from the database to include the full hierarchy
+    private string GetCategoryFullPathFromDb(int categoryId)
+    {
+        var category = _db.Categories.Find(categoryId);
+        var names = new List<string> { category.CategoryName };
+
+        while (category.ParentCategoryId != null)
+        {
+            category = _db.Categories.Find(category.ParentCategoryId.Value);
+            names.Insert(0, category.CategoryName);
+        }
+        return string.Join('/', names);
+    }
+    
 
     // 🔁 Henter alle underkategorier rekursivt
     private List<int> GetAllCategoryIds(Category category)
@@ -123,6 +153,7 @@ public class ProductController : Controller
 
         return ids;
     }
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

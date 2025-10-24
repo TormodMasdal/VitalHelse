@@ -78,3 +78,8 @@
         max-width: 100%;
     }
 }
+
+.accordion-button:focus{
+    background-color: transparent;
+    box-shadow: none;
+}
