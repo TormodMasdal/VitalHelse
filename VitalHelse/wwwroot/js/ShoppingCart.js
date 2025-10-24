@@ -1,31 +1,54 @@
 async function removItemShoppingCart(productId) {
     
-    // Calls the delete function from the controller, await before the reload page so we don't get race condition
-    await fetch(`/ShoppingCart/Delete?id=${productId}`, { method: 'DELETE' })
+    // Saves antiforgerytoken to protect against CSRF-attacks
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-    // Reloads the page so we get updated shopping cart
+    // Fetch the delete function from the controller
+    await fetch(`/ShoppingCart/Delete?id=${productId}`, {
+        method: 'DELETE',
+        headers: {
+            'RequestVerificationToken': token
+        }
+    });
+
+    // Reloads the page so it is updated
     window.location.reload();
 }
 
+
 async function AddQuantity(productId) {
-    await fetch(`/ShoppingCart/AddQuantity/?id=${productId}`, { method: 'PATCH' })
     
+    // Saves antiforgerytoken to protect against CSRF-attacks
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    // Fetch the add quantity function from the controller
+    await fetch(`/ShoppingCart/AddQuantity/?id=${productId}`, {
+        method: 'PATCH',
+        headers: { 'RequestVerificationToken': token }
+    });
+
+    // Reloads the page so it is updated
     window.location.reload();
 }
 
 async function DecreaseQuantity(productId) {
-    // Calls the controller function decrease quantity, and svaes the result so we can print error message if quantity allready is a 1
-    const response = await fetch(`/ShoppingCart/DecreaseQuantity/?id=${productId}`, { method: 'PATCH' })
+    // Saves antiforgerytoken to protect against CSRF-attacks
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-    // If error message, print it on the screen for 3 seconds
+    // Saves the response from the decreaseQuantity function, so that we may print out error message if they try to decrease more than allowed
+    const response = await fetch(`/ShoppingCart/DecreaseQuantity/?id=${productId}`, {
+        method: 'PATCH',
+        headers: { 'RequestVerificationToken': token }
+    });
+
+    // Prints the error message if bad request is returned, and keeps it there for 3 seconds
     if (!response.ok) {
         const msg = await response.text();
         document.getElementById("error-box").innerText = msg;
         setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
-    }
-    else {
-        // If no error reload the page so we get updated shopping cart
-        window.location.reload(); // reload for å se endret quantity
+    } else {
+        window.location.reload();
     }
 }
+
 

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,8 @@ using VitalHelse.Models;
 
 namespace VitalHelse.Controllers;
 
+// All of these actions demands a user, therefore, authorize the whole class
+[Authorize]
 public class ShoppingCartController : Controller
 {
     private readonly ApplicationDbContext _db;
@@ -36,6 +39,7 @@ public class ShoppingCartController : Controller
     }
 
     [HttpDelete]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
         // Fetch the userId
@@ -56,6 +60,7 @@ public class ShoppingCartController : Controller
     }
 
     [HttpPatch]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddQuantity(int id)
     {
         // Fetch the user id
@@ -75,6 +80,7 @@ public class ShoppingCartController : Controller
     }
     
     [HttpPatch]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DecreaseQuantity(int id)
     {
         // Fetch the user id
@@ -95,5 +101,46 @@ public class ShoppingCartController : Controller
         await _db.SaveChangesAsync();
         
         return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddToCart(int id)
+    {
+        // Fetch the user id
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        
+        // If a user is signed in
+        if (userId != null)
+        {
+            // Search for a matching row in the shoppingcart
+            var shoppingCart = await _db.CartProducts
+                .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
+
+            // If the item already exists in the shoppingcart increment the quantity.
+            if (shoppingCart != null)
+            {
+                shoppingCart.Quantity += 1;
+                await _db.SaveChangesAsync();
+            }
+            
+            // If not Create a new row and add the item
+            else
+            {
+                // Creates a new row
+                CartProduct cartProduct = new CartProduct
+                {
+                    Quantity = 1,
+                    AspNetUsersId = userId,
+                    ProductId = id
+                };
+                
+                _db.Add(cartProduct);
+                await _db.SaveChangesAsync();
+            }
+        }
+        
+        // Dont change the view
+        return NoContent();
     }
 }
