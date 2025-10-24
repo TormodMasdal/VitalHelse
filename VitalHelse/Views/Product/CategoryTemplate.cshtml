@@ -31,5 +31,10 @@
     }
 
     @* 🔹 Produktgrid (hentes fra partial view) *@
-    @await Html.PartialAsync("_ProductGrid", Model?.Products ?? Enumerable.Empty<VitalHelse.Models.Product>())
+    @await Html.PartialAsync("_ProductGrid",
+        Model?.Products ?? Enumerable.Empty<VitalHelse.Models.Product>(),
+        new ViewDataDictionary(ViewData) {
+            { "IsAuthenticated", User.Identity?.IsAuthenticated ?? false }
+        })
+
 </div>

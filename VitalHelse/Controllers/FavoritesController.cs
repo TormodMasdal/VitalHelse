@@ -44,5 +44,35 @@ namespace VitalHelse.Controllers
 
             return View("FavoritesPage", viewModel);
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavorite(int productId)
+        {
+            var user = await _um.GetUserAsync(User);
+            if (user == null) return Challenge();
+
+            var existing = await _db.FavoriteProducts
+                .FirstOrDefaultAsync(f => f.AspNetUsersId == user.Id && f.ProductId == productId);
+
+            if (existing == null)
+            {
+                _db.FavoriteProducts.Add(new FavoriteProduct
+                {
+                    AspNetUsersId = user.Id,
+                    ProductId = productId
+                });
+            }
+            else
+            {
+                _db.FavoriteProducts.Remove(existing);
+            }
+
+            await _db.SaveChangesAsync();
+
+            // 👇 Går tilbake til siden brukeren kom fra
+            return Json(new { success = true, isFavorite = existing == null });
+
+        }
+
     }
 }

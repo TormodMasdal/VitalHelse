@@ -5,29 +5,31 @@
     Layout = "_Layout";
 }
 
-<section class="favorites-page text-center p-5">
-    <h1 class="mb-4">Mine favoritter ❤️</h1>
+<section class="favorites-page container text-center py-5">
+    <h1 class="category-title mb-5">Mine Favoritter ️</h1>
 
+    <!-- 🔹 Toppknapper -->
+    <div class="favorites-actions mb-5 d-flex justify-content-center gap-3 flex-wrap">
+
+        <button type="button" class="fav-btn cart">
+            🛒 Legg alle i handlevogn
+        </button>
+    </div>
+
+    <!-- 🔹 Produkter -->
     @if (Model.Products == null || !Model.Products.Any())
     {
-        <p>Du har ingen favoritter enda.</p>
+        <p class="text-muted">Du har ingen favoritter enda.</p>
     }
     else
     {
         <div class="product-grid">
-            @foreach (var product in Model.Products)
-            {
-                <div class="product-card">
-                    <img src="@(product.ProductPictures.FirstOrDefault()?.PicturePath ?? "/images/products/default.png")"
-                         alt="@product.ProductName" class="product-img" />
-                    <h5>@product.ProductName</h5>
-                    <p class="desc">@product.ProductDescription</p>
-                    <p class="price">@product.ProductPrice.ToString("0.00") kr</p>
-                    <form method="post" asp-action="RemoveFavorite" asp-route-productId="@product.ProductId">
-                        <button type="submit" class="learn-more">Fjern</button>
-                    </form>
-                </div>
-            }
+            @await Html.PartialAsync("_ProductGrid",
+                Model.Products,
+                new ViewDataDictionary(ViewData) {
+                    { "IsAuthenticated", User.Identity?.IsAuthenticated ?? false }
+                })
+
         </div>
     }
 </section>

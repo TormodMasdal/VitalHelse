@@ -1,12 +1,23 @@
 @using VitalHelse.Helpers
 @model IEnumerable<VitalHelse.Models.Product>
 
+@{
+    bool isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? false;
+}
+
 @if (Model != null && Model.Any())
 {
     <div class="product-grid">
         @foreach (var product in Model)
         {
             <div class="product-card">
+                <button type="button"
+                        class="heart-btn @(product.IsFavorite ? "active" : "")"
+                        data-id="@product.ProductId"
+                        title="Legg til eller fjern som favoritt">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+
                 <img src="@(product.ProductPictures.FirstOrDefault()?.PicturePath ?? "/images/products/default.png")"
                      alt="@product.ProductName"
                      class="product-img" />
@@ -14,7 +25,6 @@
                 <h5>@product.ProductName</h5>
                 <p class="desc">@product.ProductDescription</p>
                 <p class="price">@product.ProductPrice.ToString("0.00") kr</p>
-
                 <a class="learn-more" href="@SlugHelper.BuildProductPath(product)">Se produkt</a>
             </div>
         }
@@ -24,3 +34,31 @@ else
 {
     <p class="text-muted text-center mt-4">Ingen produkter funnet.</p>
 }
+
+<script>
+    const isAuthenticated = @(isAuthenticated.ToString().ToLower());
+    document.querySelectorAll(".heart-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            if (!isAuthenticated) {
+                alert("Du må være logget inn for å legge til favoritter");
+                return;
+            }
+
+            const id = btn.dataset.id;
+            const res = await fetch("/Favorites/ToggleFavorite", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `productId=${id}`
+            });
+
+            if (res.ok) {
+                btn.classList.toggle("active");
+                const icon = btn.querySelector("i");
+                icon.classList.toggle("fa-regular");
+                icon.classList.toggle("fa-solid");
+            }
+        });
+    });
+</script>
