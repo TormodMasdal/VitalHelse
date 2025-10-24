@@ -38,7 +38,9 @@ namespace VitalHelse.Controllers
                 .Select(fp => fp.Product)
                 .ToListAsync();
 
-
+            foreach (var p in favoriteProducts)
+                p.IsFavorite = true;
+            
             var viewModel = new FavoritesViewModel
             {
                 Products = favoriteProducts ?? new List<Product>()
