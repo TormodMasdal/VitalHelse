@@ -1,5 +1,5 @@
 async function removItemShoppingCart(productId) {
-    
+
     // Saves antiforgerytoken to protect against CSRF-attacks
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
@@ -11,8 +11,14 @@ async function removItemShoppingCart(productId) {
         }
     });
 
-    // Reloads the page so it is updated
-    window.location.reload();
+    // Removes the product from the page instead of reloading the entire page
+    document.getElementById(`row-${productId}`).remove();
+
+    const tbody = document.querySelector('#shopping-cart tbody');
+    if (!tbody || tbody.rows.length === 0) {
+        // If there is no items left, reload the entire page
+        window.location.reload();
+    }
 }
 
 async function AddToCart(productId){
@@ -39,28 +45,56 @@ async function AddToCart(productId){
 }
 
 
-async function AddQuantity(productId) {
-    
-    // Saves antiforgerytoken to protect against CSRF-attacks
+async function AddQuantity(productId, unitPrice) {
+    const quantityElement = document.getElementById(`quantity-${productId}`);
+    const totalElement = document.getElementById(`total-${productId}`);
+
+    // Save old values in case of rollback, parse to int because we will treat it as a number
+    const oldQuantity = parseInt(quantityElement.innerText);
+    const oldTotal = totalElement.innerText;
+
+    // Optimistic update, to make website more responsive
+    const newQuantity = oldQuantity + 1;
+    quantityElement.innerText = newQuantity.toString();
+    totalElement.innerText = (newQuantity * unitPrice).toString() + " kr";
+
+    // Saves the Anti forgery token
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-    // Fetch the add quantity function from the controller
+    // Fetch the response in case of error
     const response = await fetch(`/ShoppingCart/AddQuantity/?id=${productId}`, {
         method: 'PATCH',
         headers: { 'RequestVerificationToken': token }
     });
 
-    // Prints the error message if bad request is returned, and keeps it there for 3 seconds
+    // If the response is an error
     if (!response.ok) {
+        // Rollback to the cart values before the error occured
+        quantityElement.innerText = oldQuantity.toString();
+        totalElement.innerText = oldTotal;
+
+        // Prints error message
         const msg = await response.text();
         document.getElementById("error-box").innerText = msg;
         setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
-    } else {
-        window.location.reload();
     }
 }
 
-async function DecreaseQuantity(productId) {
+
+async function DecreaseQuantity(productId, unitPrice) {
+
+    const quantityElement = document.getElementById(`quantity-${productId}`);
+    const totalElement = document.getElementById(`total-${productId}`);
+
+    // Save old values in case of rollback, parse to int because we will treat it as a number
+    const oldQuantity = parseInt(quantityElement.innerText);
+    const oldTotal = totalElement.innerText;
+    
+    // Optimistic update, to make website more responsive
+    const newQuantity = oldQuantity - 1;
+    quantityElement.innerText = newQuantity.toString();
+    totalElement.innerText = (newQuantity * unitPrice).toString() + " kr";
+    
     // Saves antiforgerytoken to protect against CSRF-attacks
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
@@ -72,12 +106,16 @@ async function DecreaseQuantity(productId) {
 
     // Prints the error message if bad request is returned, and keeps it there for 3 seconds
     if (!response.ok) {
+        
+        // Rollback to the cart values before the error occured
+        quantityElement.innerText = oldQuantity.toString();
+        totalElement.innerText = oldTotal;
+        
+        // Prints error message
         const msg = await response.text();
         document.getElementById("error-box").innerText = msg;
         setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
-    } else {
-        window.location.reload();
-    }
+    } 
 }
 
 

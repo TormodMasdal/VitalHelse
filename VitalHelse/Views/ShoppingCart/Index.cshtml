@@ -29,8 +29,13 @@ else
             <tr>
                 <td><button onclick="removItemShoppingCart(@item.ProductId)">-</button>
                     @item.Product.ProductName</td>
-                <td><button onclick="DecreaseQuantity(@item.ProductId)">-</button> @item.Quantity <button onclick="AddQuantity(@item.ProductId)">+</button></td>
-                <td>@(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPrice * item.Quantity) kr</td>
+                <td><button onclick="DecreaseQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPrice))">-</button>
+                    <span id="quantity-@item.ProductId">@item.Quantity</span> 
+                    <button onclick="AddQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPrice))">+</button>
+                    </td>
+                <td id="total-@item.ProductId">
+                    @(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPrice * item.Quantity) kr
+                </td>
             </tr>
         }
         </tbody>
