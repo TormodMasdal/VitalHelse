@@ -26,7 +26,7 @@ else
         <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr id="row-@item.ProductId">
                 <td><button onclick="removItemShoppingCart(@item.ProductId)">-</button>
                     @item.Product.ProductName</td>
                 <td><button onclick="DecreaseQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPrice))">-</button>
