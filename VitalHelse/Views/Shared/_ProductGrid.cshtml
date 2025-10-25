@@ -1,12 +1,23 @@
 @using VitalHelse.Helpers
 @model IEnumerable<VitalHelse.Models.Product>
 
+@{
+    bool isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? false;
+}
+
 @if (Model != null && Model.Any())
 {
     <div class="product-grid">
         @foreach (var product in Model)
         {
             <div class="product-card">
+                <button type="button"
+                        class="heart-btn @(product.IsFavorite ? "active" : "")"
+                        data-id="@product.ProductId"
+                        title="Legg til eller fjern som favoritt">
+                    <i class="@(product.IsFavorite ? "fa-solid" : "fa-regular") fa-heart"></i>
+                </button>
+
                 <img src="@(product.ProductPictures.FirstOrDefault()?.PicturePath ?? "/images/products/default.png")"
                      alt="@product.ProductName"
                      class="product-img" />
@@ -14,7 +25,6 @@
                 <h5>@product.ProductName</h5>
                 <p class="desc">@product.ProductDescription</p>
                 <p class="price">@product.ProductPrice.ToString("0.00") kr</p>
-
                 <a class="learn-more" href="@SlugHelper.BuildProductPath(product)">Se produkt</a>
             </div>
         }
@@ -24,3 +34,56 @@ else
 {
     <p class="text-muted text-center mt-4">Ingen produkter funnet.</p>
 }
+
+<script>
+(function () {
+  const isAuthenticated = @( (ViewData["IsAuthenticated"] as bool? ?? false).ToString().ToLower() );
+
+  // Finn gridden denne partialen nettopp renderte (scriptet står rett etter)
+  const grid = document.currentScript.previousElementSibling;
+
+  // Event delegation – én lytter for alle hjerter, også de som kommer/forsvinner
+  grid.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.heart-btn');
+    if (!btn) return;
+
+    if (!isAuthenticated) {
+      alert("Du må være logget inn for å legge til favoritter ❤️");
+      return;
+    }
+
+    const id = btn.dataset.id;
+    const res = await fetch('/Favorites/ToggleFavorite', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `productId=${encodeURIComponent(id)}`
+    });
+
+    if (!res.ok) return;
+
+    // Hvis ToggleFavorite returnerer JSON { isFavorite: true/false }
+    let isFav = null;
+    try { const data = await res.json(); isFav = !!data.isFavorite; } catch {}
+
+    if (isFav === null) {
+      // fallback hvis ikke JSON: toggl lokalt
+      isFav = !btn.classList.contains('active');
+    }
+
+    // Oppdater ikon + state
+    btn.classList.toggle('active', isFav);
+    const icon = btn.querySelector('i');
+    icon.classList.toggle('fa-regular', !isFav);
+    icon.classList.toggle('fa-solid', isFav);
+
+    // På /favoritter: når man fjerner, fjern kortet fra listen med en liten fade
+    if (window.location.pathname.startsWith('/favoritter') && !isFav) {
+      const card = btn.closest('.product-card');
+      card.style.transition = 'opacity .3s ease, transform .25s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.96)';
+      setTimeout(() => card.remove(), 300);
+    }
+  });
+})();
+</script>

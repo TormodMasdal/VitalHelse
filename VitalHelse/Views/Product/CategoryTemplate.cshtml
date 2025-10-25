@@ -7,7 +7,7 @@
 }
 
 <div class="category-page">
-    <section class="category-header text-center mb-5">
+    <section class="category-header text-center">
         <h1 class="category-title">@Model?.CurrentCategory?.CategoryName?.ToUpper()</h1>
     </section>
 
@@ -31,5 +31,10 @@
     }
 
     @* 🔹 Produktgrid (hentes fra partial view) *@
-    @await Html.PartialAsync("_ProductGrid", Model?.Products ?? Enumerable.Empty<VitalHelse.Models.Product>())
+    @await Html.PartialAsync("_ProductGrid",
+        Model?.Products ?? Enumerable.Empty<VitalHelse.Models.Product>(),
+        new ViewDataDictionary(ViewData) {
+            { "IsAuthenticated", User.Identity?.IsAuthenticated ?? false }
+        })
+
 </div>
