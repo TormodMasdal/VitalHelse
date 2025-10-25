@@ -17,7 +17,7 @@ public class ProfileController : Controller
         _um = um;
     }
 
-    public IActionResult privateCustomer()
+    public IActionResult PrivateCustomer()
     {
         return View();
     }
