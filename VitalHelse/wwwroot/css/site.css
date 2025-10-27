@@ -264,3 +264,9 @@ a:hover {
         margin-bottom: 2rem;
     }
 }
+
+@media (max-width: 576px) {
+    .product-card {
+        width: 65%;
+    }
+}

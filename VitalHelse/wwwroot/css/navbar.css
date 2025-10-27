@@ -60,7 +60,7 @@
 .search-form {
     justify-self: start;
     width: 100%;
-    max-width: 300px;
+    max-width: 15rem;
 }
 
 .search-container {
