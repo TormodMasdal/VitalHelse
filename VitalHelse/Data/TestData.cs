@@ -123,6 +123,7 @@ public static class TestData
                 ProductName = "Hyaluronic Acid Day Cream 50 ml",
                 ProductPrice = 299,
                 StockCount = 40,
+                ProductCampaignPrice = 200,
                 ProductDescription = "Lett og fuktighetsgivende dagkrem som gir huden glød og mykhet.",
                 LabelDescription = "Fuktighetskrem – Ansikt",
                 ProductPictures = { new() { PicturePath = "/images/products/Hyaluronic Acid Day Cream 50 ml.png" } },
