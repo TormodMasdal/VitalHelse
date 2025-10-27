@@ -7,10 +7,11 @@ public static class TestData
     public static void Initialize(ApplicationDbContext db)
     {
         db.Database.EnsureCreated();
-
+        
         if (!db.Categories.Any()) {
             SeedCategories(db);
             SeedProducts(db);
+
         }
     }
 
