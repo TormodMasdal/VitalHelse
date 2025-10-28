@@ -1,10 +1,18 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Stripe;
+using Stripe.Checkout;
+using VitalHelse.Configuration;
 using VitalHelse.Data;
 using VitalHelse.Models;
 using VitalHelse.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+DotNetEnv.Env.Load();
+StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
@@ -30,6 +38,14 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddScoped<TripletexService>();
 builder.Services.AddScoped<TripletexSyncService>();
 
+builder.Services.Configure<StripeOptions>(options =>
+{
+    options.PublishableKey = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY");
+    options.SecretKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+    options.WebhookSecret = Environment.GetEnvironmentVariable("STRIPE_WEBHOOK_SECRET");
+    options.Price = Environment.GetEnvironmentVariable("PRICE");
+    options.Domain = Environment.GetEnvironmentVariable("DOMAIN");
+});
 
 var app = builder.Build();
 
@@ -58,6 +74,29 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.MapPost("/create-checkout-session", async (IOptions<StripeOptions> stripeOptions, HttpContext context) =>
+{
+    var options = new SessionCreateOptions
+    {
+        SuccessUrl = $"{stripeOptions.Value.Domain}/success.html?session_id={{CHECKOUT_SESSION_ID}}",
+        CancelUrl = $"{stripeOptions.Value.Domain}/canceled.html",
+        Mode = "payment",
+        LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
+            {
+                Quantity = long.Parse(context.Request.Form["quantity"]),
+                Price = stripeOptions.Value.Price,
+            },
+        },
+    };
+
+    var service = new SessionService();
+    var session = await service.CreateAsync(options);
+    return Results.Redirect(session.Url);
+});
+
 
 app.UseHttpsRedirection();
 app.UseRouting();
