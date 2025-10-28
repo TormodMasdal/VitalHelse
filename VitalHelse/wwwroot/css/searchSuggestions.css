@@ -30,8 +30,13 @@ thank you AI for the help*/
     transition: background-color 0.2s;
 }
 
-.search-suggestion-item:hover {
-    background-color: #f8f9fa;
+
+.search-suggestion-item:hover,
+.search-suggestion-item.active
+{
+    background-color: #628cb6;
+    color: white;
+    border-radius: 4px;
 }
 
 .search-suggestion-item:last-child {

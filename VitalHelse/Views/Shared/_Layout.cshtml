@@ -30,10 +30,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap" rel="stylesheet">
     </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <nav id="navbar" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container-fluid">
             <div class="navbar-top align-items-center">
                 <!-- Venstre: søk -->
@@ -61,8 +62,10 @@
                 </form>
 
                 <!-- Midten: logo -->
-                <a class="navbar-brand vital-logo" asp-controller="Home" asp-action="Index">VitalHelse</a>
-
+                <a asp-controller="Home" asp-action="Index">
+                    <img class="vital-logo" src="~/images/navbar/logo.svg" alt="VitalHelse">
+                </a>
+                
                 <!-- Høyre: ikoner -->
                 <div class="nav-icons">
                     <a href="/favoritter"
@@ -80,7 +83,7 @@
                             <path d="M5.5 20a6.5 6.5 0 0 1 13 0"></path>
                         </svg>
                     </a>
-                    <a href="/Cart" class="icon-link" title="Handlevogn">
+                    <a asp-controller="ShoppingCart" asp-action="Index" class="icon-link" title="Handlevogn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="9" cy="21" r="1"></circle>
@@ -135,6 +138,7 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/searchSuggestions.js" asp-append-version="true"></script>
+<script src="~/js/navbarAnimation.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

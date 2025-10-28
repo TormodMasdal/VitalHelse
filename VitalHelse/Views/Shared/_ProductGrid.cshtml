@@ -24,7 +24,18 @@
 
                 <h5>@product.ProductName</h5>
                 <p class="desc">@product.ProductDescription</p>
-                <p class="price">@product.ProductPrice.ToString("0.00") kr</p>
+       
+                <div class="price">
+                    @if (product.ProductCampaignPrice.HasValue)
+                    {
+                        <span class="price-old">@product.ProductPrice.ToString("0.00") kr</span>
+                        <span class="price-new">@product.ProductCampaignPrice.Value.ToString("0.00") kr</span>
+                    }
+                    else
+                    {
+                        <span class="price-now">@product.ProductPrice.ToString("0.00") kr</span>
+                    }
+                </div>
                 <a class="learn-more" href="@SlugHelper.BuildProductPath(product)">Se produkt</a>
             </div>
         }
