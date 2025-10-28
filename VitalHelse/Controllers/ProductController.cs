@@ -98,7 +98,7 @@ namespace VitalHelse.Controllers
                     .ThenInclude(pc => pc.Category)
                         .ThenInclude(c => c.ParentCategory)
                 .AsEnumerable() // Slug comparison performed in-memory
-                .FirstOrDefault(p => SlugHelper.Slugify(p.ProductName) == lastPart);
+                .FirstOrDefault(p => SlugHelper.ToUrlFriendly(p.ProductName) == lastPart);
 
             if (product != null)
             {
@@ -112,7 +112,7 @@ namespace VitalHelse.Controllers
                 .Include(c => c.ChildCategories)
                 .AsEnumerable()
                 .FirstOrDefault(c =>
-                    SlugHelper.Slugify(GetCategoryFullPath(c)) == SlugHelper.Slugify(fullPath)
+                    SlugHelper.ToUrlFriendly(GetCategoryFullPath(c)) == SlugHelper.ToUrlFriendly(fullPath)
                 );
 
             if (currentCategory == null)

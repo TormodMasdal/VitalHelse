@@ -15,7 +15,7 @@ public class ApplicationDbContext : IdentityDbContext<AspNetUsers>
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
-    public DbSet<ProductTags> ProductTags => Set<ProductTags>();
+    public DbSet<ProductTag> ProductTags => Set<ProductTag>();
     public DbSet<ProductPicture> ProductPictures => Set<ProductPicture>();
     public DbSet<Tag> Tags => Set<Tag>();
     #endregion

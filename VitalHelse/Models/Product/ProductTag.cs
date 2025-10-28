@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 namespace VitalHelse.Models;
 
 [PrimaryKey(nameof(ProductId), nameof(TagId))]
-public class ProductTags
+public class ProductTag
 {
-    public ProductTags(){}
+    public ProductTag(){}
     public int ProductId { get; set; }
     public int TagId { get; set; }
 
