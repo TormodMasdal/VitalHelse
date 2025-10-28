@@ -7,6 +7,7 @@ using VitalHelse.Configuration;
 using VitalHelse.Data;
 using VitalHelse.Models;
 using VitalHelse.Services;
+using Product = Stripe.Product;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,32 +76,12 @@ else
     app.UseHsts();
 }
 
-app.MapPost("/create-checkout-session", async (IOptions<StripeOptions> stripeOptions, HttpContext context) =>
-{
-    var options = new SessionCreateOptions
-    {
-        SuccessUrl = $"{stripeOptions.Value.Domain}/success.html?session_id={{CHECKOUT_SESSION_ID}}",
-        CancelUrl = $"{stripeOptions.Value.Domain}/canceled.html",
-        Mode = "payment",
-        LineItems = new List<SessionLineItemOptions>
-        {
-            new SessionLineItemOptions
-            {
-                Quantity = long.Parse(context.Request.Form["quantity"]),
-                Price = stripeOptions.Value.Price,
-            },
-        },
-    };
-
-    var service = new SessionService();
-    var session = await service.CreateAsync(options);
-    return Results.Redirect(session.Url);
-});
 
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -119,5 +100,6 @@ using (var scope = app.Services.CreateScope())
     var result = await syncService.SyncProductsAsync();
     Console.WriteLine($"Tripletex Sync Completed: Added={result.added}, Updated={result.updated}, Hidden={result.hidden}");
 }
+app.MapControllers();
 
 app.Run();

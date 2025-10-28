@@ -29,10 +29,13 @@ else
             <tr id="row-@item.ProductId">
                 <td><button onclick="removItemShoppingCart(@item.ProductId)">-</button>
                     @item.Product.ProductName</td>
-                <td><button onclick="DecreaseQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))">-</button>
-                    <span id="quantity-@item.ProductId">@item.Quantity</span> 
+            <td><button onclick="DecreaseQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))">-</button>
+                <span id="quantity-@item.ProductId">@item.Quantity</span> 
+                <button onclick="AddQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))">+</button>
+            </td>
+            <td>
                     <button onclick="AddQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))">+</button>
-                    </td>
+                </td>
                 <td id="total-@item.ProductId">
                     @(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPriceInVAT * item.Quantity) kr
                 </td>
@@ -40,6 +43,11 @@ else
         }
         </tbody>
     </table>
+    
+    <form action="/api/checkout/create-session" method="POST">
+        <button type="submit" id="submit">Buy</button>
+    </form>
+
 }
 @section Scripts {
     <script src="~/js/components/shoppingCart.js"></script>
