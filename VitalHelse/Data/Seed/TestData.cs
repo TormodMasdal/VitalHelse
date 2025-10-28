@@ -2,22 +2,39 @@
 
 namespace VitalHelse.Data;
 
+/// <summary>
+/// Provides test and demo data for the VitalHelse application.
+/// This class should only be executed in Development environments
+/// to prevent accidental seeding of test data into production.
+/// </summary>
 public static class TestData
 {
-    public static void Initialize(ApplicationDbContext db)
+    /// <summary>
+    /// Initializes the database with categories and products if empty.
+    /// </summary>
+    /// <param name="db">Database context for the application.</param>
+    /// <param name="env">Environment context (used to prevent execution in production).</param>
+    public static void Initialize(ApplicationDbContext db, IWebHostEnvironment env)
     {
+        if (!env.IsDevelopment())
+            return; // Prevent accidental seeding in production
+
         db.Database.EnsureCreated();
-        
-        if (!db.Categories.Any()) {
+
+        if (!db.Categories.Any())
+        {
             SeedCategories(db);
             SeedProducts(db);
-
         }
     }
+
 
     // =========================================================
     //                 KATEGORI-SEEDING (RENT HIERARKI)
     // =========================================================
+    /// <summary>
+    /// Seeds a hierarchical category structure for testing.
+    /// </summary>
     private static void SeedCategories(ApplicationDbContext db)
     {
         // --------------------------
@@ -62,7 +79,7 @@ public static class TestData
         // --------------------------
         var hygieneUnder = new List<Category>
         {
-            new() { CategoryName = "hånddesinfeksjon", ParentCategoryId = hygiene.CategoryId },
+            new() { CategoryName = "desinfeksjon", ParentCategoryId = hygiene.CategoryId },
             new() { CategoryName = "overflatevask", ParentCategoryId = hygiene.CategoryId },
             new() { CategoryName = "dispensere", ParentCategoryId = hygiene.CategoryId },
             new() { CategoryName = "såpe-og-påfyll", ParentCategoryId = hygiene.CategoryId }
@@ -110,7 +127,7 @@ public static class TestData
         var aloeSport     = db.Categories.First(c => c.CategoryName == "sport");
         var aloeMassasje  = db.Categories.First(c => c.CategoryName == "massasje" && c.ParentCategory.CategoryName == "aloe-vera");
 
-        var hygHånd       = db.Categories.First(c => c.CategoryName == "hånddesinfeksjon");
+        var hygHånd       = db.Categories.First(c => c.CategoryName == "desinfeksjon");
         var massOlje      = db.Categories.First(c => c.CategoryName == "massasjeolje");
         var massMuskel    = db.Categories.First(c => c.CategoryName == "muskelpleie");
 
