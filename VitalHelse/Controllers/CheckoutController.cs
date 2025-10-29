@@ -5,14 +5,15 @@ using Stripe.Checkout;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
+
 using VitalHelse.Configuration;
 using VitalHelse.Data;
 namespace VitalHelse.Controllers;
 
-
+[Route("create-checkout-session")]
 [ApiController]
-[Route("api/[controller]")]
-public class CheckoutController : ControllerBase
+public class CheckoutController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly IOptions<StripeOptions> _stripeOptions;
@@ -23,7 +24,7 @@ public class CheckoutController : ControllerBase
         _stripeOptions = stripeOptions;
     }
 
-    [HttpPost("create-session")]
+    [HttpPost]
     public async Task<IActionResult> CreateCheckoutSession()
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -76,14 +77,35 @@ public class CheckoutController : ControllerBase
         var host = $"{Request.Scheme}://{Request.Host}";
         var options = new SessionCreateOptions
         {
-            SuccessUrl = $"{host}/success.html?session_id={{CHECKOUT_SESSION_ID}}",
-            CancelUrl = $"{host}/canceled.html",
+            UiMode = "embedded",
+           
+            //SuccessUrl = $"{host}/success.html?session_id={{CHECKOUT_SESSION_ID}}",
+            //CancelUrl = $"{host}/canceled.html",
             Mode = "payment",
-            LineItems = lineItems
+            LineItems = lineItems,
+            ReturnUrl = host + "/return.html?session_id={CHECKOUT_SESSION_ID}"
         };
 
-        var session = await new SessionService().CreateAsync(options);
-        return Redirect(session.Url);
+        var service = new SessionService();
+        Session session = service.Create(options);
+
+        return Json(new { clientSecret = session.ClientSecret });
+        //var session = await new SessionService().CreateAsync(options);
+        //return Redirect(session.Url);
+    }
+}
+
+[Route("session-status")]
+[ApiController]
+public class SessionStatusController : Controller
+{
+    [HttpGet]
+    public ActionResult SessionStatus([FromQuery] string session_id)
+    {
+        var sessionService = new SessionService();
+        Session session = sessionService.Get(session_id);
+
+        return Json(new {status = session.Status,  customer_email = session.CustomerDetails.Email});
     }
 }
 
