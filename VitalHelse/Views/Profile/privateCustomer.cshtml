@@ -1,8 +1,26 @@
+@using Microsoft.AspNetCore.Identity
+@using VitalHelse.Areas.Identity.Pages.Account.Manage
 @model VitalHelse.Models.AspNetUsers
-
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Min side";
     Layout = "_Layout";
 }
 
-<h2>title</h2>
+
+<h1 class="category-title">@ViewBag.Title</h1>
+<div class="container align-items-center">
+<nav class="navbar profile-navbar navbar-expand-sm navbar-toggleable-sm">
+    <ul class="navbar-nav flex-row">
+       <li class="nav-item subcategory-bar text-center mb-4">
+            <a class="nav-link subcategory-link" href="/Identity/Account/Manage/Index">Administrer profil</a>
+        </li> 
+        
+        <li class="nav-item subcategory-bar text-center mb-4">
+            <a class="nav-link subcategory-link" href="#">Mine bestillinger</a>
+        </li>
+        <li class="nav-item subcategory-bar text-center mb-4">
+            <a class="nav-link subcategory-link" href="#">Logg ut</a>
+        </li>
+    </ul>
+</nav>
+</div>

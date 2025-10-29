@@ -213,3 +213,10 @@
         height: 22px;
     }
 }
+
+/* Profile navbar*/
+.profile-navbar{
+    position: relative;
+    background: none;
+    justify-content: center;
+}
