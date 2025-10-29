@@ -24,7 +24,7 @@ public class Product
     public double? ProductCampaignPrice { get; set; }
     [StringLength(30)] public string? LabelDescription { get; set; }
 
-    public ICollection<ProductTags> ProductTags { get; } = new List<ProductTags>();
+    public ICollection<ProductTag> ProductTags { get; } = new List<ProductTag>();
     public ICollection<ProductPicture> ProductPictures { get; } = new List<ProductPicture>();
     public ICollection<ProductCategory> ProductCategories { get; } = new List<ProductCategory>();
     public ICollection<PhysicalProductAttribute> PhysicalProductAttributes { get; } =

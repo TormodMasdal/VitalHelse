@@ -21,7 +21,7 @@
         <div class="subcategory-bar text-center mb-4">
             @foreach (var sub in Model.SubCategories)
             {
-                var newPath = $"{currentPath}/{SlugHelper.Slugify(sub.CategoryName)}".Trim('/');
+                var newPath = $"{currentPath}/{SlugHelper.ToUrlFriendly(sub.CategoryName)}".Trim('/');
 
                 <a class="subcategory-link" href="/produkt/@newPath">
                     @sub.CategoryName.ToUpper()
