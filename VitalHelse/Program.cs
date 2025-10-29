@@ -35,9 +35,10 @@ using (var services = app.Services.CreateScope())
     var rm = services.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var db = services.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     
-    ApplicationDbInitializer.Initialize(db, um, rm);
+    var env = services.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
     
-    TestData.Initialize(db);
+    ApplicationDbInitializer.InitializeAsync(db, um, rm);
+    TestData.Initialize(db, env);
 }
 
 

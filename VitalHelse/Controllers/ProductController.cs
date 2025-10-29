@@ -6,186 +6,233 @@ using VitalHelse.Data;
 using VitalHelse.Helpers;
 using VitalHelse.Models;
 
-namespace VitalHelse.Controllers;
-
-public class ProductController : Controller
+namespace VitalHelse.Controllers
 {
-    private readonly ApplicationDbContext _db;
-    private readonly ILogger<ProductController> _logger;
-    private readonly UserManager<AspNetUsers> _um;
-
-    public ProductController(ApplicationDbContext db, ILogger<ProductController> logger, UserManager<AspNetUsers> um)
+    /// <summary>
+    /// Handles product- and category-related requests, including SEO-friendly URLs,
+    /// category navigation, and product detail rendering.
+    /// </summary>
+    public class ProductController : Controller
     {
-        _db = db;
-        _logger = logger;
-        _um = um;
-    }
-    
-    private ProductDetailViewModel BuildProductViewModel(Product product)
-    {
-        var category = product.ProductCategories.Select(pc => pc.Category).FirstOrDefault();
-        var fullCategoryPath = GetCategoryFullPathFromDb(category.CategoryId); 
+        private readonly ApplicationDbContext _db;
+        private readonly ILogger<ProductController> _logger;
+        private readonly UserManager<AspNetUsers> _um;
 
-
-        return new ProductDetailViewModel
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProductController"/> class.
+        /// </summary>
+        /// <param name="db">The database context used for querying products and categories.</param>
+        /// <param name="logger">Logger instance for tracking product and category requests.</param>
+        /// <param name="um">UserManager for retrieving the current user and favorite data.</param>
+        public ProductController(ApplicationDbContext db, ILogger<ProductController> logger, UserManager<AspNetUsers> um)
         {
-            CurrentProduct = product,
-            ParentCategory = category?.ParentCategory,
-            CategoryPath = fullCategoryPath
-        };
-    }
+            _db = db;
+            _logger = logger;
+            _um = um;
+        }
 
+        /// <summary>
+        /// Builds a view model for a specific product, including its parent category and category path.
+        /// </summary>
+        /// <param name="product">The product to build the view model for.</param>
+        /// <returns>A populated <see cref="ProductDetailViewModel"/>.</returns>
+        private ProductDetailViewModel BuildProductViewModel(Product product)
+        {
+            var category = product.ProductCategories.Select(pc => pc.Category).FirstOrDefault();
+            var fullCategoryPath = category != null ? GetCategoryFullPathFromDb(category.CategoryId) : string.Empty;
 
-    // Viser et spesifikt produkt via ID (fallback / direkte lenke)
-    public IActionResult Index(int? id)
-    {
-        if (id == null)
-            return RedirectToAction("Index", "Home");
+            return new ProductDetailViewModel
+            {
+                CurrentProduct = product,
+                ParentCategory = category?.ParentCategory,
+                CategoryPath = fullCategoryPath
+            };
+        }
 
-        var product = _db.Products
-            .Include(p => p.ProductPictures)
-            .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
-            .Include(p => p.ProductCategories)
-                .ThenInclude(pc => pc.Category)
-                    .ThenInclude(c1 => c1.ParentCategory)
-            .FirstOrDefault(p => p.ProductId == id);
+        /// <summary>
+        /// Displays a product by its ID (used for direct links or fallback scenarios).
+        /// </summary>
+        /// <param name="id">The ID of the product.</param>
+        /// <returns>The product details view, or a redirect if no ID is provided.</returns>
+        public IActionResult Index(int? id)
+        {
+            if (id == null)
+                return RedirectToAction("Index", "Home");
 
-        if (product == null)
-            return NotFound();
-        
-        return View("ProductDetails", BuildProductViewModel(product));
-    }
+            var product = _db.Products
+                .Include(p => p.ProductPictures)
+                .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                        .ThenInclude(c => c.ParentCategory)
+                .FirstOrDefault(p => p.ProductId == id);
 
-    // Hovedrute som håndterer både kategori- og produkt-URL-er
-    [Route("produkt/{*fullPath}")]
-    public async Task<IActionResult> ProductOrCategory(string? fullPath)
-    {
-        if (string.IsNullOrEmpty(fullPath))
-            return NotFound();
+            if (product == null)
+                return NotFound();
 
-        var parts = fullPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        var lastPart = parts.Last().ToLowerInvariant();
-
-        // 🔹 Sjekk om siste del matcher et produkt (via slug)
-        var product = _db.Products
-            .Include(p => p.ProductPictures)
-            .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
-            .Include(p => p.ProductCategories)
-                .ThenInclude(pc => pc.Category)
-                    .ThenInclude(c => c.ParentCategory)
-            .AsEnumerable() // kreves for SlugHelper i minne
-            .FirstOrDefault(p => SlugHelper.Slugify(p.ProductName) == lastPart);
-
-        
-        if (product != null)
+            _logger.LogInformation("Product {ProductId} viewed via direct ID link.", id);
             return View("ProductDetails", BuildProductViewModel(product));
-
-        // 🔹 Ellers: behandle som kategori
-        var currentCategory = _db.Categories
-            .Include(c => c.ParentCategory)
-            .Include(c => c.ChildCategories)
-            .AsEnumerable()
-            .FirstOrDefault(c =>
-                SlugHelper.Slugify(GetCategoryFullPath(c)) == SlugHelper.Slugify(fullPath)
-            );
-
-        if (currentCategory == null)
-            return NotFound();
-
-        var allCategoryIds = GetAllCategoryIds(currentCategory);
-
-        var products = _db.Products
-            .Include(p => p.ProductPictures)
-            .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
-            .Include(p => p.ProductCategories)
-            .ThenInclude(pc => pc.Category)
-            .Where(p => p.ProductCategories.Any(pc => allCategoryIds.Contains(pc.CategoryId)))
-            .ToList();
-
-        // 🔹 Sett IsFavorite-feltet her
-        if (User.Identity?.IsAuthenticated ?? false)
-        {
-            var userId = _um.GetUserId(User);
-
-            var favoriteIds = await _db.FavoriteProducts
-                .Where(f => f.AspNetUsersId == userId)
-                .Select(f => f.ProductId)
-                .ToListAsync();
-
-            foreach (var p in products)
-                p.IsFavorite = favoriteIds.Contains(p.ProductId);
         }
 
-
-        var subcategories = currentCategory.ChildCategories.ToList();
-
-        var viewModel = new CategoryViewModel
+        /// <summary>
+        /// Handles SEO-friendly routes for both product and category pages.
+        /// </summary>
+        /// <param name="fullPath">The URL path representing either a product slug or category path.</param>
+        /// <returns>
+        /// The appropriate view: either product details or category listing, depending on the matched route.
+        /// </returns>
+        [Route("produkt/{*fullPath}")]
+        public async Task<IActionResult> ProductOrCategory(string? fullPath)
         {
-            CurrentCategory = currentCategory,
-            ParentCategoryName = currentCategory.ParentCategory?.CategoryName,
-            SubCategories = subcategories,
-            Products = products
-        };
+            if (string.IsNullOrEmpty(fullPath))
+                return NotFound();
 
-        return View("CategoryTemplate", viewModel);
-    }
+            var parts = fullPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var lastPart = parts.Last().ToLowerInvariant();
 
-    // 📂 Lager full kategori-sti som "hudpleie/krem/ansiktskrem"
-    private string GetCategoryFullPath(Category category)
-    {
-        var names = new List<string> { category.CategoryName };
-        var parent = category.ParentCategory;
-        while (parent != null)
-        {
-            names.Insert(0, parent.CategoryName);
-            parent = parent.ParentCategory;
+            // 🔹 Check if path refers to a product
+            var product = _db.Products
+                .Include(p => p.ProductPictures)
+                .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                        .ThenInclude(c => c.ParentCategory)
+                .AsEnumerable() // Slug comparison performed in-memory
+                .FirstOrDefault(p => SlugHelper.ToUrlFriendly(p.ProductName) == lastPart);
+
+            if (product != null)
+            {
+                _logger.LogInformation("Product '{ProductName}' accessed via SEO route '{Path}'.", product.ProductName, fullPath);
+                return View("ProductDetails", BuildProductViewModel(product));
+            }
+
+            // 🔹 Otherwise treat it as a category
+            var currentCategory = _db.Categories
+                .Include(c => c.ParentCategory)
+                .Include(c => c.ChildCategories)
+                .AsEnumerable()
+                .FirstOrDefault(c =>
+                    SlugHelper.ToUrlFriendly(GetCategoryFullPath(c)) == SlugHelper.ToUrlFriendly(fullPath)
+                );
+
+            if (currentCategory == null)
+                return NotFound();
+
+            var allCategoryIds = GetAllCategoryIds(currentCategory);
+
+            var products = _db.Products
+                .Include(p => p.ProductPictures)
+                .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+                .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
+                .Where(p => p.ProductCategories.Any(pc => allCategoryIds.Contains(pc.CategoryId)))
+                .ToList();
+
+            // Mark favorites for authenticated users
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                var userId = _um.GetUserId(User);
+
+                var favoriteIds = await _db.FavoriteProducts
+                    .Where(f => f.AspNetUsersId == userId)
+                    .Select(f => f.ProductId)
+                    .ToListAsync();
+
+                foreach (var p in products)
+                    p.IsFavorite = favoriteIds.Contains(p.ProductId);
+            }
+
+            var viewModel = new CategoryViewModel
+            {
+                CurrentCategory = currentCategory,
+                ParentCategoryName = currentCategory.ParentCategory?.CategoryName,
+                SubCategories = currentCategory.ChildCategories.ToList(),
+                Products = products
+            };
+
+            _logger.LogInformation("Category '{CategoryName}' accessed with {Count} products.", currentCategory.CategoryName, products.Count);
+            return View("CategoryTemplate", viewModel);
         }
-        return string.Join('/', names);
-    }
-    
-    // Retrieve all categories from the database to include the full hierarchy
-    private string GetCategoryFullPathFromDb(int categoryId)
-    {
-        var category = _db.Categories.Find(categoryId);
-        var names = new List<string> { category.CategoryName };
 
-        while (category.ParentCategoryId != null)
+        /// <summary>
+        /// Builds the full hierarchical path of a category such as "skincare/cream/face-cream".
+        /// </summary>
+        /// <param name="category">The category whose path should be built.</param>
+        /// <returns>A slash-separated string representing the category path.</returns>
+        private string GetCategoryFullPath(Category category)
         {
-            category = _db.Categories.Find(category.ParentCategoryId.Value);
-            names.Insert(0, category.CategoryName);
+            var names = new List<string> { category.CategoryName };
+            var parent = category.ParentCategory;
+
+            while (parent != null)
+            {
+                names.Insert(0, parent.CategoryName);
+                parent = parent.ParentCategory;
+            }
+
+            return string.Join('/', names);
         }
-        return string.Join('/', names);
+
+        /// <summary>
+        /// Retrieves the full category path from the database using the category ID.
+        /// </summary>
+        /// <param name="categoryId">The category ID to resolve.</param>
+        /// <returns>The full category path string.</returns>
+        private string GetCategoryFullPathFromDb(int categoryId)
+        {
+            var category = _db.Categories.Find(categoryId);
+            if (category == null) return string.Empty;
+
+            var names = new List<string> { category.CategoryName };
+            while (category.ParentCategoryId != null)
+            {
+                category = _db.Categories.Find(category.ParentCategoryId.Value);
+                if (category == null) break;
+                names.Insert(0, category.CategoryName);
+            }
+            return string.Join('/', names);
+        }
+
+        /// <summary>
+        /// Recursively retrieves all category IDs within a hierarchy, including child categories.
+        /// </summary>
+        /// <param name="category">The root category.</param>
+        /// <returns>A list of category IDs including the root and all descendants.</returns>
+        private List<int> GetAllCategoryIds(Category category)
+        {
+            var ids = new List<int> { category.CategoryId };
+
+            var children = _db.Categories
+                .Where(c => c.ParentCategoryId == category.CategoryId)
+                .ToList();
+
+            foreach (var child in children)
+                ids.AddRange(GetAllCategoryIds(child));
+
+            return ids;
+        }
+
+        /// <summary>
+        /// Displays the shared product grid partial view for use in category, favorites, and search pages.
+        /// </summary>
+        /// <param name="products">A collection of products to render in the grid.</param>
+        /// <returns>A partial view containing the product grid markup.</returns>
+        [HttpGet]
+        public IActionResult ProductGrid(IEnumerable<Product> products)
+        {
+            _logger.LogInformation("Rendering partial product grid with {Count} products.", products.Count());
+            return PartialView("_ProductGrid", products);
+        }
+
+        /// <summary>
+        /// Displays an error page when an exception occurs.
+        /// </summary>
+        /// <returns>The error view with diagnostic information.</returns>
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            var requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            _logger.LogError("Unhandled error occurred. Request ID: {RequestId}", requestId);
+            return View(new ErrorViewModel { RequestId = requestId });
+        }
     }
-    
-
-    // 🔁 Henter alle underkategorier rekursivt
-    private List<int> GetAllCategoryIds(Category category)
-    {
-        var ids = new List<int> { category.CategoryId };
-
-        var children = _db.Categories
-            .Where(c => c.ParentCategoryId == category.CategoryId)
-            .ToList();
-
-        foreach (var child in children)
-            ids.AddRange(GetAllCategoryIds(child));
-
-        return ids;
-    }
-
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-    
-    [HttpGet]
-    public IActionResult ProductGrid(IEnumerable<Product> products)
-    {
-        _logger.LogInformation("Rendering partial product grid with {Count} products", products.Count());
-        return PartialView("_ProductGrid", products);
-    }
-
-
 }
