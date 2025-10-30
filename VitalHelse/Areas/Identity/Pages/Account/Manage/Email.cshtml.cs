@@ -49,6 +49,13 @@ public class EmailModel : PageModel
     /// </summary>
     [TempData]
     public string? StatusMessage { get; set; }
+    
+    // Disse to under med TempData skal kunne fjernes når e-post faktisk blir sendt
+    [TempData]
+    public bool DisplayConfirmEmailChangeLink { get; set; }
+
+    [TempData]
+    public string? EmailChangeConfirmationUrl { get; set; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -123,6 +130,11 @@ public class EmailModel : PageModel
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                 protocol: Request.Scheme)!;
+
+            // Disse to linjene skal kunne fjernes når e-post faktisk blir sendt
+            DisplayConfirmEmailChangeLink = true;
+            EmailChangeConfirmationUrl = callbackUrl;
+            
             await _emailSender.SendEmailAsync(
                 Input.NewEmail,
                 "Bekreft e-post",
