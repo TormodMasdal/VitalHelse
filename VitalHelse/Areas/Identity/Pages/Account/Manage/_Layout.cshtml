@@ -9,30 +9,7 @@
     }
 }
 <h1 class="category-title">@ViewBag.Title</h1>
-<div class="container align-items-center">
-    <nav class="navbar profile-navbar navbar-expand-sm navbar-toggleable-sm">
-        <ul class="navbar-nav flex-row">
-            <li class="nav-item subcategory-bar text-center mb-4">
-                <a class="nav-link subcategory-link" href="/Identity/Account/Manage">Profil</a>
-            </li>
-            <li class="nav-item subcategory-bar text-center mb-4">
-                <a class="nav-link subcategory-link" href="/Identity/Account/Manage/ChangePassword">Endre passord</a>
-            </li> 
-            <li class="nav-item subcategory-bar text-center mb-4">
-                <a class="nav-link subcategory-link" href="/Identity/Account/Manage/Email">Endre e-post</a>
-            </li> 
-        
-            <li class="nav-item subcategory-bar text-center mb-4">
-                <a class="nav-link subcategory-link" href="#">Mine bestillinger</a>
-            </li>
-            <li class="nav-item subcategory-bar text-center mb-4">
-                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                    <button type="submit" class="nav-link subcategory-link">Logg ut</button>
-                </form>
-            </li>
-        </ul>
-    </nav>
-</div>
+<partial name="_ManageNav"/>
 
 <div class="container-fluid">
         <div class="row mt-2">
