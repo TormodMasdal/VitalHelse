@@ -62,6 +62,8 @@ public class IndexModel : PageModel
         
         [Display(Name = "E-post")]
         public string? Email { get; set; }
+        [Display(Name = "Brukernavn")]
+        public string? Username { get; set; }
 
         [Display(Name = "Fornavn")]
         public string? FirstName { get; set; }
@@ -87,6 +89,7 @@ public class IndexModel : PageModel
         Input = new InputModel
         {
             Email = user.Email,
+            Username = user.UserName,
             FirstName = user.FirstName,
             LastName = user.LastName,
             PhoneNumber = phoneNumber,

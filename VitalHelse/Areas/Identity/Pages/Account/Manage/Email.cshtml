@@ -36,6 +36,17 @@
     </div>
 </div>
 
+@if (Model.DisplayConfirmEmailChangeLink && Model.EmailChangeConfirmationUrl != null)
+{
+    <p class="account-subtitle">
+        Applikasjonen har ikke en ekte e-posttjeneste konfigurert.  
+        Klikk i stedet her for å teste e-postbytte:
+    </p>
+    <div class="account-links">
+        <a href="@Model.EmailChangeConfirmationUrl">Bekreft ny e-post</a>
+    </div>
+}
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
