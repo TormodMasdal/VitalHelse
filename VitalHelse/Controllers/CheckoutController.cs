@@ -24,13 +24,22 @@ public class CheckoutController : Controller
         _stripeOptions = stripeOptions;
     }
 
+    /// <summary>
+    /// Creates a checkout session for the logged-in user.
+    /// Takes the products and quantities from the shopping cart,
+    /// checks their prices, and includes them in the checkout.
+    /// </summary>
+
+    /// <returns> A checkout page</returns>
     [HttpPost]
     public async Task<IActionResult> CreateCheckoutSession()
     {
+        // Finds the user id of the user creating the checkout session
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 
+        // Fetch all the items from the cart
         var cartItems = await _db.CartProducts
             .Include(cp => cp.Product)
             .Where(cp => cp.AspNetUsersId == userId)
@@ -40,10 +49,12 @@ public class CheckoutController : Controller
         var priceService = new PriceService();
         var lineItems = new List<SessionLineItemOptions>();
 
+        // For every item in the cart
         foreach (var item in cartItems)
         {
             var product = item.Product;
 
+            // If the product doesn't exist on the owners stripe account, create a new one
             if (string.IsNullOrEmpty(product.StripeProductId))
             {
                 var stripeProduct = await productService.CreateAsync(new ProductCreateOptions
@@ -53,8 +64,10 @@ public class CheckoutController : Controller
                 product.StripeProductId = stripeProduct.Id;
             }
 
+            // If the product price doesn't exist on the owners stripe account, create a new one
             if (string.IsNullOrEmpty(product.StripePriceId))
             {
+                // Checks if the price is on campaign, if so use the campaign price, else use the normal price
                 var effectivePrice = product.ProductCampaignPrice ?? product.ProductPriceInVAT;
                 var stripePrice = await priceService.CreateAsync(new PriceCreateOptions
                 {
@@ -64,7 +77,7 @@ public class CheckoutController : Controller
                 });
                 product.StripePriceId = stripePrice.Id;
             }
-
+            
             lineItems.Add(new SessionLineItemOptions
             {
                 Quantity = item.Quantity,
@@ -74,27 +87,39 @@ public class CheckoutController : Controller
 
         await _db.SaveChangesAsync();
 
+        // Creates checkout details
         var host = $"{Request.Scheme}://{Request.Host}";
         var options = new SessionCreateOptions
         {
+            // Makes the checkout embedded to our website
             UiMode = "embedded",
-           
-            //SuccessUrl = $"{host}/success.html?session_id={{CHECKOUT_SESSION_ID}}",
-            //CancelUrl = $"{host}/canceled.html",
             Mode = "payment",
             LineItems = lineItems,
-            ReturnUrl = host + "/return.html?session_id={CHECKOUT_SESSION_ID}"
+            ReturnUrl = host + "/return.html?session_id={CHECKOUT_SESSION_ID}",
+            
+            // Saves the userId for the webhook later
+            PaymentIntentData = new SessionPaymentIntentDataOptions
+            {
+                Metadata = new Dictionary<string, string>
+                {
+                    { "userId", userId }
+                }
+            }
         };
 
         var service = new SessionService();
+        
+        // Create the session with the given details (options)
         Session session = service.Create(options);
 
         return Json(new { clientSecret = session.ClientSecret });
-        //var session = await new SessionService().CreateAsync(options);
-        //return Redirect(session.Url);
     }
 }
 
+/// <summary>
+/// Gets confirmation from stripe when purchase confirmed
+/// Not safe to create orders, may be manipulated
+/// </summary>
 [Route("session-status")]
 [ApiController]
 public class SessionStatusController : Controller
