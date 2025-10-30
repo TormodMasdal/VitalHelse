@@ -59,18 +59,39 @@ public class IndexModel : PageModel
         [Phone]
         [Display(Name = "Mobilnummer")]
         public string? PhoneNumber { get; set; }
+        
+        [Display(Name = "E-post")]
+        public string? Email { get; set; }
+
+        [Display(Name = "Fornavn")]
+        public string? FirstName { get; set; }
+
+        [Display(Name = "Etternavn")]
+        public string? LastName { get; set; }
+        
+
+        [Display(Name = "Adresse")]
+        public string? Address { get; set; }
+
+        [MaxLength(4), MinLength(4)]
+        [Display(Name = "Postnummer")]
+        public string? PostalCode { get; set; }
+    
     }
 
     private async Task LoadAsync(AspNetUsers user)
     {
-        var userName = await _userManager.GetUserNameAsync(user);
+        var email = await _userManager.GetEmailAsync(user);
         var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
-        Username = userName;
 
         Input = new InputModel
         {
-            PhoneNumber = phoneNumber
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            PhoneNumber = phoneNumber,
+            Address = user.Address,
+            PostalCode = user.PostalCode
         };
     }
 
@@ -99,7 +120,7 @@ public class IndexModel : PageModel
             await LoadAsync(user);
             return Page();
         }
-
+        
         var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
         if (Input.PhoneNumber != phoneNumber)
         {
@@ -109,6 +130,18 @@ public class IndexModel : PageModel
                 StatusMessage = "En uventet feil oppstod ved lagring av telefonnummeret.";
                 return RedirectToPage();
             }
+        }
+        
+        user.FirstName = Input.FirstName;
+        user.LastName = Input.LastName;
+        user.Address = Input.Address;
+        user.PostalCode = Input.PostalCode;
+        
+        var updateResult = await _userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            StatusMessage = "En uventet feil oppstod ved lagring av brukerdataene.";
+            return RedirectToPage();
         }
 
         await _signInManager.RefreshSignInAsync(user);

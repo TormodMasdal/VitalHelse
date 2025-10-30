@@ -216,7 +216,7 @@
 
 /* Profile navbar*/
 .profile-navbar{
-    position: relative;
+    position: static;
     background: none;
     justify-content: center;
 }
