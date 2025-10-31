@@ -27,7 +27,9 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true;
 });
 
-builder.Services.AddSingleton<TripletexService>();
+builder.Services.AddScoped<TripletexService>();
+builder.Services.AddScoped<TripletexSyncService>();
+
 
 var app = builder.Build();
 
@@ -71,5 +73,12 @@ app.MapControllerRoute(
 
 app.MapRazorPages()
     .WithStaticAssets();
+
+using (var scope = app.Services.CreateScope())
+{
+    var syncService = scope.ServiceProvider.GetRequiredService<TripletexSyncService>();
+    var result = await syncService.SyncProductsAsync();
+    Console.WriteLine($"Tripletex Sync Completed: Added={result.added}, Updated={result.updated}, Hidden={result.hidden}");
+}
 
 app.Run();
