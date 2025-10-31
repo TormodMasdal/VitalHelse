@@ -1,7 +1,6 @@
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration;
+using VitalHelse.Models;
 
 namespace VitalHelse.Services;
 
@@ -74,25 +73,24 @@ public class TripletexService
         var doc = JsonDocument.Parse(json);
 
         var values = doc.RootElement.GetProperty("values");
-        var products = new List<TripletexProduct>();
-
-        foreach (var item in values.EnumerateArray())
+        var tasks = values.EnumerateArray().Select(async item =>
         {
-            products.Add(new TripletexProduct
+            int id = item.GetProperty("id").GetInt32();
+            double stock = await GetProductDetailsAsync(sessionToken, id);
+            return new TripletexProduct
             {
-                Id = item.GetProperty("id").GetInt32(),
+                Id = id,
                 Name = item.GetProperty("name").GetString() ?? "",
                 PriceExVat = item.TryGetProperty("priceExcludingVatCurrency", out var p1) ? p1.GetDouble() : 0,
                 PriceInVat = item.TryGetProperty("priceIncludingVatCurrency", out var p2) ? p2.GetDouble() : 0,
-                StockCount = await GetProductDetailsAsync(sessionToken, item.GetProperty("id").GetInt32())
-            });
-        }
-
-        return products;
+                StockCount = stock
+            };
+        });
+        return (await Task.WhenAll(tasks)).ToList();
     }
 
     /// <summary>
-    /// Retrieves detailed information for a single product, including stock quantity.
+    /// Retrieves stock quantity for a single product.
     /// </summary>
     /// <param name="sessionToken">A valid Tripletex session token.</param>
     /// <param name="productId">The Tripletex product ID.</param>
@@ -104,35 +102,18 @@ public class TripletexService
             new AuthenticationHeaderValue("Basic",
                 Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"0:{sessionToken}")));
 
-        var response = await _client.GetAsync("product?fields=stockOfGoods");
+        var response = await _client.GetAsync($"product/{productId}?fields=stockOfGoods");
 
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Tripletex GET /product/{productId} failed: {response.StatusCode}\n{error}");
+            throw new Exception($"Tripletex GET /product/{productId} feilet: {response.StatusCode}\n{error}");
         }
 
         var json = await response.Content.ReadAsStringAsync();
-        var doc = JsonDocument.Parse(json);
-        var stock = doc.RootElement
-            .GetProperty("values")[0]
-            .GetProperty("stockOfGoods")
-            .GetDouble();
+        using var doc = JsonDocument.Parse(json);
 
-        Console.WriteLine($"Stock: {stock}");
-
-        return stock;
+        var stockElement = doc.RootElement.GetProperty("value").GetProperty("stockOfGoods");
+        return stockElement.GetDouble();
     }
-}
-
-/// <summary>
-/// Represents a product retrieved from Tripletex.
-/// </summary>
-public class TripletexProduct
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-    public double PriceExVat { get; set; }
-    public double PriceInVat { get; set; }
-    public double StockCount { get; set; }
 }
