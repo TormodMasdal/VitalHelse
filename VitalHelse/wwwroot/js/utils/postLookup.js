@@ -1,7 +1,7 @@
 ﻿let postalCodeData = [];
 
 // Last JSON-fil
-fetch("/js/postdata.json")
+fetch("/js/data/postdata.json")
     .then(res => res.json())
     .then(data => {
         postalCodeData = data;
@@ -22,7 +22,7 @@ function updateArea() {
         areaInput.value = "";
     }
 }
-
+    
 document.addEventListener('DOMContentLoaded', () => {
     const postalCodeInput = document.getElementById('postnummer');
     postalCodeInput.addEventListener('input', updateArea);
