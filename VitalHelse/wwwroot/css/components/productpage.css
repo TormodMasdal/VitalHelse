@@ -43,3 +43,8 @@
     background-color: transparent;
     box-shadow: none;
 }
+
+.product-price{
+    text-align: end;
+    
+}
