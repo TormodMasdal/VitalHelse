@@ -5,49 +5,55 @@ using Microsoft.Extensions.Configuration;
 
 namespace VitalHelse.Services;
 
+/// <summary>
+/// Service used to communicate with the Tripletex API to retrieve products and stock information.
+/// </summary>
 public class TripletexService
 {
     private readonly HttpClient _client;
     private readonly IConfiguration _config;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TripletexService"/> class with configuration and HttpClient.
+    /// </summary>
     public TripletexService(IConfiguration config)
     {
         _config = config;
         _client = new HttpClient();
-        _client.BaseAddress = new Uri("https://api-test.tripletex.tech/v2/"); // TEST-miljø
+        _client.BaseAddress = new Uri("https://api-test.tripletex.tech/v2/"); // Test environment
     }
 
-    // 1️⃣ Hent session token fra dine to tokens
+    /// <summary>
+    /// Retrieves a Tripletex session token using the Consumer and Employee tokens stored in configuration.
+    /// </summary>
+    /// <returns>A valid Tripletex session token as a string.</returns>
+    /// <exception cref="Exception">Thrown if the API request fails.</exception>
     public async Task<string> GetSessionTokenAsync()
     {
-        // 1. Hent tokens fra appsettings.Development.json
         var consumerToken = Uri.EscapeDataString(_config["Tripletex:ConsumerToken"] ?? "");
         var employeeToken = Uri.EscapeDataString(_config["Tripletex:EmployeeToken"] ?? "");
-
-        // 2. Legg til utløpsdato (obligatorisk i Tripletex testmiljø)
         var expirationDate = DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd");
 
-        // 3. Sett sammen URL-en riktig
         var url = $"token/session/:create?consumerToken={consumerToken}&employeeToken={employeeToken}&expirationDate={expirationDate}";
-
-        // 4. Send PUT-forespørsel
         var response = await _client.PutAsync(url, null);
 
-        // 5. Hvis noe går galt, skriv ut detaljert feilmelding i konsollen
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Kunne ikke hente session token ({response.StatusCode}):\n{error}");
+            throw new Exception($"Failed to retrieve session token ({response.StatusCode}):\n{error}");
         }
 
-        // 6. Hent token fra JSON
         var json = await response.Content.ReadAsStringAsync();
         var doc = JsonDocument.Parse(json);
         return doc.RootElement.GetProperty("value").GetProperty("token").GetString()!;
     }
 
-
-    // 2️⃣ Bruk session token for å hente produkter
+    /// <summary>
+    /// Retrieves a list of products from Tripletex, including name, prices, and stock count.
+    /// </summary>
+    /// <param name="sessionToken">A valid Tripletex session token.</param>
+    /// <returns>A list of <see cref="TripletexProduct"/> objects.</returns>
+    /// <exception cref="Exception">Thrown if the API request fails.</exception>
     public async Task<List<TripletexProduct>> GetProductsAsync(string sessionToken)
     {
         _client.DefaultRequestHeaders.Authorization =
@@ -55,6 +61,13 @@ public class TripletexService
                 Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"0:{sessionToken}")));
 
         var response = await _client.GetAsync("product");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Tripletex GET /product failed: {response.StatusCode}\n{body}");
+        }
+
         response.EnsureSuccessStatusCode();
 
         var json = await response.Content.ReadAsStringAsync();
@@ -69,19 +82,57 @@ public class TripletexService
             {
                 Id = item.GetProperty("id").GetInt32(),
                 Name = item.GetProperty("name").GetString() ?? "",
-                Price = item.TryGetProperty("costPrice", out var p) ? p.GetDouble() : 0,
-                StockCount = item.TryGetProperty("stock", out var s) ? s.GetInt32() : 0
+                PriceExVat = item.TryGetProperty("priceExcludingVatCurrency", out var p1) ? p1.GetDouble() : 0,
+                PriceInVat = item.TryGetProperty("priceIncludingVatCurrency", out var p2) ? p2.GetDouble() : 0,
+                StockCount = await GetProductDetailsAsync(sessionToken, item.GetProperty("id").GetInt32())
             });
         }
 
         return products;
     }
+
+    /// <summary>
+    /// Retrieves detailed information for a single product, including stock quantity.
+    /// </summary>
+    /// <param name="sessionToken">A valid Tripletex session token.</param>
+    /// <param name="productId">The Tripletex product ID.</param>
+    /// <returns>The stock count as a double.</returns>
+    /// <exception cref="Exception">Thrown if the API request fails.</exception>
+    public async Task<double> GetProductDetailsAsync(string sessionToken, int productId)
+    {
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Basic",
+                Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"0:{sessionToken}")));
+
+        var response = await _client.GetAsync("product?fields=stockOfGoods");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Tripletex GET /product/{productId} failed: {response.StatusCode}\n{error}");
+        }
+
+        var json = await response.Content.ReadAsStringAsync();
+        var doc = JsonDocument.Parse(json);
+        var stock = doc.RootElement
+            .GetProperty("values")[0]
+            .GetProperty("stockOfGoods")
+            .GetDouble();
+
+        Console.WriteLine($"Stock: {stock}");
+
+        return stock;
+    }
 }
 
+/// <summary>
+/// Represents a product retrieved from Tripletex.
+/// </summary>
 public class TripletexProduct
 {
     public int Id { get; set; }
     public string Name { get; set; } = "";
-    public double Price { get; set; }
-    public int StockCount { get; set; }
+    public double PriceExVat { get; set; }
+    public double PriceInVat { get; set; }
+    public double StockCount { get; set; }
 }
