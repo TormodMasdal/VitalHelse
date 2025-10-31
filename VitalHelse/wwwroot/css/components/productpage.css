@@ -46,5 +46,9 @@
 
 .product-price{
     text-align: end;
-    
+    font-weight: 600;
+}
+.product-title {
+    font-weight: 700;
+    font-size: 1.8rem;
 }
