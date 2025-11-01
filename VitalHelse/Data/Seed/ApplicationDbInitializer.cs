@@ -40,7 +40,7 @@ public static class ApplicationDbInitializer
         // Business user
         if (await um.FindByEmailAsync("business@vitalhelse.no") == null)
         {
-            var businessUser = new AspNetUsers { UserName = "business@vitalhelse.no", Email = "business@vitalhelse.no", EmailConfirmed = true };
+            var businessUser = new AspNetUsers { UserName = "business@vitalhelse.no", Email = "business@vitalhelse.no", EmailConfirmed = true, OrgNr = "123456789"};
             await um.CreateAsync(businessUser, "Password1.");
             await um.AddToRoleAsync(businessUser, "BusinessCustomer");
         }

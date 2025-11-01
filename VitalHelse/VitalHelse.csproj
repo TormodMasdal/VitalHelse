@@ -28,4 +28,10 @@
       <Folder Include="wwwroot\images\products\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Areas\Identity\Pages\Account\Manage\BusinessProfile.cs">
+        <DependentUpon>BusinessProfile.cshtml</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>
