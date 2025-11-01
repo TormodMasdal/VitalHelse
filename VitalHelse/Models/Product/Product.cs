@@ -38,6 +38,7 @@ public class Product
     /// <summary>
     /// Price including VAT (Tripletex controlled).
     /// </summary>
+    
     [Required]
     public double ProductPriceInVAT { get; set; }
 

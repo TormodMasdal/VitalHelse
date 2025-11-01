@@ -20,7 +20,7 @@ public class ShoppingCartController : Controller
         _db = db;
         _userManager = userManager;
     }
-    
+
     // GET
     public IActionResult Index()
     {
@@ -30,10 +30,11 @@ public class ShoppingCartController : Controller
         // Query to get all items in the shopping cart
         var items = _db.CartProducts
             .Include(cp => cp.Product)
+            .Include(cp => cp.Product.ProductPictures)
             .Include(cp => cp.AspNetUsers)
             .Where(cp => cp.AspNetUsersId == userId)
             .ToList();
-        
+
         // Returns the items to the view
         return View(items);
     }
@@ -50,7 +51,7 @@ public class ShoppingCartController : Controller
             .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
 
         // Removes the product
-        if(shoppingCart != null)
+        if (shoppingCart != null)
             _db.Remove(shoppingCart);
 
         // Save the changes
@@ -65,7 +66,7 @@ public class ShoppingCartController : Controller
     {
         // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         // Finds the row in CartProducts where Product and userId match 
         var shoppingCart = await _db.CartProducts
             .Include(c => c.Product)
@@ -78,36 +79,68 @@ public class ShoppingCartController : Controller
                 // Returns a 400 bad request if the quantity equals the amount of stock
                 return BadRequest("Vi har desverre ikke dette antaller tilgjengelig på lager");
             }
-            
+
             // Adds quantity by 1 and save it
             shoppingCart.Quantity += 1;
             await _db.SaveChangesAsync();
         }
+
         return RedirectToAction("Index");
     }
-    
+
     [HttpPatch]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DecreaseQuantity(int id)
     {
         // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         // Finds the row in CartProducts where Product and userId match
         var shoppingCart = await _db.CartProducts
             .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
 
         if (shoppingCart.Quantity <= 1)
         {
-            // Returns a 400 bad request if the quantity is too low to use this function
-            return BadRequest("Du må ha minst en gjenstand per produkt");
+            _db.CartProducts.Remove(shoppingCart); 
+            await _db.SaveChangesAsync();
+            return NoContent();  
         }
-        
+
         // Decrease the quantity by one
         shoppingCart.Quantity -= 1;
         await _db.SaveChangesAsync();
-        
+
         return RedirectToAction("Index");
+    }
+    
+    [HttpPatch]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetQuantity(int id, int quantity)
+    {
+        // Fetch the user id
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        // Finds the row in CartProducts where Product and userId match
+        var shoppingCart = await _db.CartProducts
+            .Include(c => c.Product)
+            .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
+
+        // If cart item doesnt exist
+        if (shoppingCart == null)
+            return NotFound();
+
+        if (quantity <= 0)
+            return BadRequest("Antall må være minst 1.");
+
+        /*if (quantity > shoppingCart.Product.StockCount)
+            quantity = shoppingCart.Product.StockCount;*/
+        
+        // Update the quantity 
+        shoppingCart.Quantity = quantity;
+        await _db.SaveChangesAsync();
+        
+        // Return a JSON object with the adjusted quantity
+        return Json(new { correctedQuantity = quantity }); 
     }
 
     [HttpPost]
@@ -116,7 +149,7 @@ public class ShoppingCartController : Controller
     {
         // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         // Search for a matching row in the shoppingcart
         var shoppingCart = await _db.CartProducts
             .FirstOrDefaultAsync(m => m.ProductId == id && m.AspNetUsersId == userId);
@@ -126,10 +159,10 @@ public class ShoppingCartController : Controller
             .FirstOrDefaultAsync(m => m.ProductId == id);
 
         if (product == null) return NoContent();
-        
+
         // The stock count has to be higher than 0 to add the item to cart.
         if (product.StockCount <= 0) return NoContent();
-        
+
         // If the item already exists in the shoppingcart increment the quantity.
         if (shoppingCart != null)
         {
@@ -139,7 +172,7 @@ public class ShoppingCartController : Controller
                 // Returns a 400 bad request if the quantity is too low to use this function
                 return BadRequest("Vi har desverre ikke dette antaller tilgjengelig på lager");
             }
-            
+
             shoppingCart.Quantity += 1;
         }
 
@@ -151,14 +184,45 @@ public class ShoppingCartController : Controller
             {
                 Quantity = 1,
                 AspNetUsersId = userId,
-                ProductId = id 
+                ProductId = id
             };
-            
+
             _db.Add(cartProduct);
         }
+
         await _db.SaveChangesAsync();
 
         // Dont change the view
         return NoContent();
+    }
+    
+    //[HttpGet("/velg-adresse")]
+    public async Task<IActionResult> Detail(){
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        // Query to get all items in the shopping cart
+        var addresses = _db.Addresses
+            .Include(cp => cp.AspNetUsers)
+            .Where(cp => cp.AspNetUsersId == userId)
+            .ToList();
+
+        // Returns the items to the view
+        return View(addresses);
+    }
+    
+    
+    //[HttpGet("/velg-fraktmetode")]
+    public async Task<IActionResult> Shipping(){
+        return View();
+    }
+    
+    //[HttpGet("/oppsummering")]
+    public async Task<IActionResult> Review(){
+        return View();
+    }
+    
+    //[HttpGet("/bestilling-fullført")]
+    public async Task<IActionResult> Complete(){
+        return View();
     }
 }
