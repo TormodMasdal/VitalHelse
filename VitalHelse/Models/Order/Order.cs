@@ -7,7 +7,9 @@ public class Order
     public Order(){}
 
     public int OrderId { get; set; }
+    public string StripePaymentIntentId { get; set; }
 
+    
     public DateTime OrderDate { get; set; }
     [StringLength(50)] public string Status { get; set; } = "Posesseres";
     public double TotCost { get; set; }

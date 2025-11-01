@@ -56,6 +56,18 @@ public class StripeWebHook : Controller
                 Console.WriteLine("Missing userId in payment metadata");
                 return Ok();
             }
+            
+            var paymentIntentId = paymentIntent.Id;
+
+            // Test to avoid duplicate order in case of network error
+            var existingOrder = await _db.Orders
+                .FirstOrDefaultAsync(o => o.StripePaymentIntentId == paymentIntentId);
+
+            if (existingOrder != null)
+            {
+                Console.WriteLine($"Order already exists for PaymentIntent {paymentIntentId}");
+                return Ok();
+            }
 
             Console.WriteLine($"Payment succeeded for user {userId}");
 
@@ -64,6 +76,7 @@ public class StripeWebHook : Controller
             { 
                 AspNetUsersId = userId, 
                 OrderDate = DateTime.UtcNow,
+                StripePaymentIntentId = paymentIntentId
             };
 
             // Fetch shopping cart from the database
