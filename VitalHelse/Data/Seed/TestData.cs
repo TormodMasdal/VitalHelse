@@ -139,7 +139,7 @@ public static class TestData
             new()
             {
                 ProductName = "Hyaluronic Acid Day Cream 50 ml",
-                ProductPrice = 299,
+                ProductPriceInVAT = 299,
                 StockCount = 40,
                 ProductCampaignPrice = 200,
                 ProductDescription = "Lett og fuktighetsgivende dagkrem som gir huden glød og mykhet.",
@@ -150,7 +150,7 @@ public static class TestData
             new()
             {
                 ProductName = "Hyaluronic Acid Night Cream 50 ml",
-                ProductPrice = 329,
+                ProductPriceInVAT = 329,
                 StockCount = 35,
                 ProductDescription = "Rik nattkrem som fukter i dybden og reduserer tørrhetslinjer mens du sover.",
                 LabelDescription = "Nattkrem – Ansikt",
@@ -160,7 +160,7 @@ public static class TestData
             new()
             {
                 ProductName = "AloeV Hyaluronic Acid Night Cream 50 ml",
-                ProductPrice = 339,
+                ProductPriceInVAT = 339,
                 StockCount = 25,
                 ProductDescription = "Nattkrem med Aloe Vera og hyaluronsyre – roer huden og gir dyp fuktighet.",
                 LabelDescription = "Aloe Vera – Hudpleie",
@@ -170,7 +170,7 @@ public static class TestData
             new()
             {
                 ProductName = "Victory Face Cream 50 ml",
-                ProductPrice = 259,
+                ProductPriceInVAT = 259,
                 StockCount = 60,
                 ProductDescription = "Allsidig ansiktskrem for normal til tørr hud – gir næring og mykhet.",
                 LabelDescription = "Daglig pleie – Ansikt",
@@ -180,7 +180,7 @@ public static class TestData
             new()
             {
                 ProductName = "Hand & Foot Creme Extreme 100 gr",
-                ProductPrice = 229,
+                ProductPriceInVAT = 229,
                 StockCount = 45,
                 ProductDescription = "Intensiv krem for ru og tørre hender og føtter – mykgjør og beskytter.",
                 LabelDescription = "Ekstra rik – Hender/Føtter",
@@ -190,7 +190,7 @@ public static class TestData
             new()
             {
                 ProductName = "Foot Cream 75 ml",
-                ProductPrice = 199,
+                ProductPriceInVAT = 199,
                 StockCount = 70,
                 ProductDescription = "Pleier og frisker opp slitne føtter – trekker raskt inn.",
                 LabelDescription = "Fotpleie",
@@ -200,7 +200,7 @@ public static class TestData
             new()
             {
                 ProductName = "ColdFace Kuldekrem 50 ml",
-                ProductPrice = 279,
+                ProductPriceInVAT = 279,
                 StockCount = 30,
                 ProductDescription = "Beskyttende kuldekrem som motvirker tørr hud i kaldt klima.",
                 LabelDescription = "Beskyttende – Kuldekrem",
@@ -210,7 +210,7 @@ public static class TestData
             new()
             {
                 ProductName = "Victory Active Muscle 120 ml",
-                ProductPrice = 189,
+                ProductPriceInVAT = 189,
                 StockCount = 55,
                 ProductDescription = "Kjølende muskelkrem for restitusjon og lindring etter fysisk aktivitet.",
                 LabelDescription = "Kjølende – Muskelpleie",
@@ -220,7 +220,7 @@ public static class TestData
             new()
             {
                 ProductName = "Victory Aloe Vera Sport Extreme 120 ml",
-                ProductPrice = 219,
+                ProductPriceInVAT = 219,
                 StockCount = 50,
                 ProductDescription = "Sterk kjølende sportskrem med Aloe Vera og mentol for økt sirkulasjon.",
                 LabelDescription = "Sport – Aloe Vera",
@@ -230,7 +230,7 @@ public static class TestData
             new()
             {
                 ProductName = "Victory Aloe Vera Strong Hot 120 ml",
-                ProductPrice = 219,
+                ProductPriceInVAT = 219,
                 StockCount = 40,
                 ProductDescription = "Varmende Aloe Vera-krem for lindring av stive og ømme muskler.",
                 LabelDescription = "Varmende – Aloe Vera",
@@ -240,7 +240,7 @@ public static class TestData
             new()
             {
                 ProductName = "Victory Therapeutic Massage 250 ml",
-                ProductPrice = 249,
+                ProductPriceInVAT = 249,
                 StockCount = 30,
                 ProductDescription = "Massasjekrem med behagelig tekstur – ideell for velvære og terapi.",
                 LabelDescription = "Massasje – Terapi",
@@ -250,7 +250,7 @@ public static class TestData
             new()
             {
                 ProductName = "EmuMedica EmuCream 120 ml",
-                ProductPrice = 249,
+                ProductPriceInVAT = 249,
                 StockCount = 45,
                 ProductDescription = "Multifunksjonell krem med Emu-olje som roer ned sensitiv hud.",
                 LabelDescription = "Hudpleie – Kropp",
@@ -260,7 +260,7 @@ public static class TestData
             new()
             {
                 ProductName = "HeatMed AloeV Cold 125 ml",
-                ProductPrice = 239,
+                ProductPriceInVAT = 239,
                 StockCount = 30,
                 ProductDescription = "Kjølende Aloe Vera-gel som lindrer overanstrengte muskler og ledd.",
                 LabelDescription = "Aloe Vera – Massasje",
@@ -270,7 +270,7 @@ public static class TestData
             new()
             {
                 ProductName = "Crystal Clean Desinfiserende Håndgel 5L",
-                ProductPrice = 399,
+                ProductPriceInVAT = 399,
                 StockCount = 20,
                 ProductDescription = "Effektiv hånddesinfeksjon for profesjonell bruk – 70% alkohol.",
                 LabelDescription = "Desinfeksjon – Hender",
@@ -280,7 +280,7 @@ public static class TestData
             new()
             {
                 ProductName = "Eco-Bac 85% Håndsprit 1L",
-                ProductPrice = 199,
+                ProductPriceInVAT = 199,
                 StockCount = 40,
                 ProductDescription = "Håndsprit med 85% alkohol – effektiv og mild mot huden.",
                 LabelDescription = "Desinfeksjon – Hender",

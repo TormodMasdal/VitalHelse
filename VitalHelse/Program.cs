@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VitalHelse.Data;
 using VitalHelse.Models;
+using VitalHelse.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 });
+
+builder.Services.AddScoped<TripletexService>();
+builder.Services.AddScoped<TripletexSyncService>();
+
 
 var app = builder.Build();
 
@@ -68,5 +73,12 @@ app.MapControllerRoute(
 
 app.MapRazorPages()
     .WithStaticAssets();
+
+using (var scope = app.Services.CreateScope())
+{
+    var syncService = scope.ServiceProvider.GetRequiredService<TripletexSyncService>();
+    var result = await syncService.SyncProductsAsync();
+    Console.WriteLine($"Tripletex Sync Completed: Added={result.added}, Updated={result.updated}, Hidden={result.hidden}");
+}
 
 app.Run();

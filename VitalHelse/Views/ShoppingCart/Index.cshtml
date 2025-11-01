@@ -29,12 +29,12 @@ else
             <tr id="row-@item.ProductId">
                 <td><button onclick="removItemShoppingCart(@item.ProductId)">-</button>
                     @item.Product.ProductName</td>
-                <td><button onclick="DecreaseQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPrice))">-</button>
+                <td><button onclick="DecreaseQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))">-</button>
                     <span id="quantity-@item.ProductId">@item.Quantity</span> 
-                    <button onclick="AddQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPrice))">+</button>
+                    <button onclick="AddQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))">+</button>
                     </td>
                 <td id="total-@item.ProductId">
-                    @(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPrice * item.Quantity) kr
+                    @(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPriceInVAT * item.Quantity) kr
                 </td>
             </tr>
         }
@@ -42,7 +42,7 @@ else
     </table>
 }
 @section Scripts {
-    <script src="~/js/ShoppingCart.js"></script>
+    <script src="~/js/components/shoppingCart.js"></script>
 }
 
 

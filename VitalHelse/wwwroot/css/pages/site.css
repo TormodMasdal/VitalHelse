@@ -21,7 +21,7 @@ html, body {
     color: #111827;
     background:
             linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
-            url("../images/backgrounds/spa-texture.jpg");
+            url("/images/backgrounds/spa-texture.jpg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
