@@ -84,7 +84,6 @@ public class StripeWebHook : Controller
                 .Include(cp => cp.Product)
                 .Where(cp => cp.AspNetUsersId == userId)
                 .ToListAsync();
-
             // Move items in shoppingcart into order table
             foreach (var item in cartItems)
             { 
@@ -92,6 +91,8 @@ public class StripeWebHook : Controller
                     ProductId = item.Product.ProductId,
                     Quantity = item.Quantity
                 });
+                
+                item.Product.StockCount -= item.Quantity;
             }
             // Adds order, and removes the shopping cart
             _db.Orders.Add(order);
