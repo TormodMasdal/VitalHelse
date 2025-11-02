@@ -1,0 +1,48 @@
+@*
+  Fil: Views/Shared/_AdminLayout.cshtml
+  Brukes kun for admin-sider (Dashboard, Produkter, Kategorier, osv.)
+*@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VitalHelse Admin</title>
+
+    <link rel="stylesheet" href="~/css/pages/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components/productgrid.css" asp-append-version="true"/>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<div class="admin-layout">
+    <aside class="sidebar">
+        <a asp-controller="Home" asp-action="Index">
+            <img class="vital-logo" src="~/images/logo/logo.svg" alt="VitalHelse">
+        </a>
+        <nav>
+            <a asp-controller="Admin" asp-action="Dashboard" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">Dashboard</a>
+            <a asp-controller="Admin" asp-action="Products" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Products" ? "active" : "")">Produkter</a>
+            <a asp-controller="Admin" asp-action="Categories" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Categories" ? "active" : "")">Kategorier</a>
+            <a asp-controller="Admin" asp-action="Banners" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Banners" ? "active" : "")">Bannere</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <header class="topbar">
+            <h1>@ViewData["Title"]</h1>
+            <span class="admin-user">Admin ⚙️ Vitalhelse</span>
+        </header>
+
+        <section class="admin-body">
+            @RenderBody()
+        </section>
+    </main>
+</div>
+
+@RenderSection("Scripts", required: false)
+</body>
+</html>
