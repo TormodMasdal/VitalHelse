@@ -1,11 +1,11 @@
+@using VitalHelse.Models.Enums
 @model List<CartProduct>
 
 @{
     ViewBag.Title = "title";
-    Layout = "_Layout";
+    Layout = "_CheckoutLayout";
+    ViewData["CheckoutStep"] = CheckoutStep.Cart;
 }
-
-<div id="error-box" style="color:red; font-weight:bold; margin-top:10px;"></div>
 
 
 @if (Model == null || !Model.Any())
@@ -15,110 +15,57 @@
 else
 {
     @Html.AntiForgeryToken()
-    
-    <div class="container mt-4">
-        <ul class="nav checkout-steps border-bottom pb-1">
-            <li class="nav-item">
-                <a class="nav-link active fw-semibold" href="#">Kasse</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Personalia</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Levering</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Betaling</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Fullført</a>
-            </li>
-        </ul>
-    </div>
-    
-    <div class="container mt-3">
-        <div class="row g-3">
-            <div class="col-md-8">
-                <div class="card border-1">
-                    <div class="list-group list-group-flush">
-                        @foreach (var item in Model)
-                        {
-                            <div class="list-group-item py-4 px-6">
-                                <div id="row-@item.ProductId" class="row align-items-center gy-3">
 
-                                    <!-- Bilde -->
-                                    <div class="col-3 col-sm-2">
-                                        <img class="w-75" src="@(item.Product.ProductPictures.FirstOrDefault()?.PicturePath ?? "/images/products/default.png")"
-                                             alt="@item.Product.ProductName"/>
-                                    </div>
+        @foreach (var item in Model)
+        {
+            <div id="row-@item.ProductId" class="list-group-item py-4 px-6">
+                <div  class="row align-items-center gy-3">
 
-                                    <!-- Tittel + status -->
-                                    <div class="col">
-                                        <h6 class="mb-2">@item.Product.ProductName</h6>
-                                        <div>@item.Product.StockCount</div>
-                                        <ul class="list-unstyled small text-muted mb-0">
-                                            
-                                            <li><span class="text-success me-2">●</span>På lager i <a href="#" class="link-secondary">443 apotek</a></li>
-                                        </ul>
-                                    </div>
-
-                                    <!-- Antall -->
-                                    <div class="col-auto">
-                                        <div class="input-group">
-                                            <button onclick="DecreaseQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))" class="btn btn-outline-secondary" type="button">&minus;</button>
-                                            <input id="quantity-@item.ProductId" class="form-control text-center" style="max-width:60px" value="@item.Quantity" onchange="UpdateQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))">
-                                            <button onclick="AddQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))" class="btn btn-outline-secondary" type="button">+</button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Pris -->
-                                    <div class="col-4 col-sm-3 col-lg-2 text-end">
-                                        <div id="total-@item.ProductId" class="fw-semibold">@(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPriceInVAT * item.Quantity) kr</div>
-                                    </div>
-                                    
-
-                                    <!-- Fjern -->
-                                    <div onclick="removItemShoppingCart(@item.ProductId)" class="col-auto text-end">
-                                        <button class="trash-btn" type="button" aria-label="Fjern">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                 width="24" height="24" fill="none" stroke="currentColor"
-                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="3 6 5 6 21 6" />
-                                                <path d="M19 6l-1 14H6L5 6m3 0V4h8v2" />
-                                                <line x1="10" y1="11" x2="10" y2="17" />
-                                                <line x1="14" y1="11" x2="14" y2="17" />
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        }
+                    <!-- Product image -->
+                    <div class="col-3 col-sm-2">
+                        <img class="w-75" src="@(item.Product.ProductPictures.FirstOrDefault()?.PicturePath ?? "/images/products/default.png")"
+                             alt="@item.Product.ProductName"/>
                     </div>
+
+                    <!-- Product name and stock -->
+                    <div class="col">
+                        <h6 class="mb-2">@item.Product.ProductName</h6>
+                        <div>På lager: @item.Product.StockCount</div>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="col-auto">
+                        <div class="input-group change-quantity">
+                            <button onclick="DecreaseQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))" class="btn btn-outline-secondary" type="button">&minus;</button>
+                            <input id="quantity-@item.ProductId" class="form-control text-center" style="max-width:60px" value="@item.Quantity" onchange="UpdateQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))">
+                            <button onclick="AddQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))" class="btn btn-outline-secondary" type="button">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="col-4 col-sm-3 col-lg-2 text-end">
+                        <div id="total-@item.ProductId" class="fw-semibold">@(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPriceInVAT * item.Quantity) kr</div>
+                    </div>
+                    
+
+                    <!-- Trash bin icon/Remove button -->
+                    <div onclick="removItemShoppingCart(@item.ProductId)" class="col-auto text-end">
+                        <button class="trash-btn" type="button" aria-label="Fjern">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                 width="24" height="24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14H6L5 6m3 0V4h8v2" />
+                                <line x1="10" y1="11" x2="10" y2="17" />
+                                <line x1="14" y1="11" x2="14" y2="17" />
+                            </svg>
+                        </button>
+                    </div>
+
                 </div>
             </div>
-
-            
-            <div class="summary col-md-4 text-white">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>Sammendrag</h5>
-                        <hr/>
-                        <p>Totalsum </p>
-                        <a class="btn-submit w-100"
-                           href="@Url.Action("Detail","ShoppingCart")">
-                            Gå videre til leveringsinfo
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
+        }
 }
-@section Scripts {
-    <script src="~/js/components/shoppingCart.js"></script>
-    <script src="~/js/components/checkout.js"></script>
-}
+
 
 

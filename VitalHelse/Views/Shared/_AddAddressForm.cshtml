@@ -1,0 +1,23 @@
+@model VitalHelse.Models.Address
+
+<form asp-action="AddAddress" method="post" class="row g-3">
+    @Html.AntiForgeryToken()
+    <div class="col-12">
+        <label asp-for="Street" class="form-label"></label>
+        <input asp-for="Street" class="form-control" />
+        <span asp-validation-for="Street" class="text-danger"></span>
+    </div>
+    <div class="col-sm-4">
+        <label asp-for="PostalCode" class="form-label"></label>
+        <input asp-for="PostalCode" class="form-control" />
+        <span asp-validation-for="PostalCode" class="text-danger"></span>
+    </div>
+    <div class="col-sm-8">
+        <label asp-for="City" class="form-label"></label>
+        <input asp-for="City" class="form-control" />
+        <span asp-validation-for="City" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Lagre adresse</button>
+    </div>
+</form>

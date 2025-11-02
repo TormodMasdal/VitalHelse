@@ -19,6 +19,8 @@ async function removItemShoppingCart(productId) {
         // If there is no items left, reload the entire page
         window.location.reload();
     }
+    
+    Summary();
 }
 
 async function AddToCart(productId){
@@ -82,6 +84,9 @@ async function AddQuantity(productId, unitPrice) {
         document.getElementById("error-box").innerText = msg;
         setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
     }
+    else {
+        Summary();
+    }
 }
 
 
@@ -105,7 +110,6 @@ async function DecreaseQuantity(productId, unitPrice) {
         quantityElement.value = String(newQuantity);
         totalElement.innerText = nok.format(newQuantity * unitPrice);
     }
-    
     
     // Saves antiforgerytoken to protect against CSRF-attacks
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
@@ -131,7 +135,10 @@ async function DecreaseQuantity(productId, unitPrice) {
         const msg = await response.text();
         document.getElementById("error-box").innerText = msg;
         setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
-    } 
+    }
+    else {
+        Summary();
+    }
 }
 
 
@@ -142,13 +149,14 @@ async function UpdateQuantity(productId, unitPrice) {
     const totalElement = document.getElementById(`total-${productId}`);
     
     // Parse inputvalue to int
-    const newQuantity = parseInt(quantityElement.value, 10);
+    let newQuantity = parseInt(quantityElement.value, 10);
 
     // If the user inputs something other that a number
     if (isNaN(newQuantity) || newQuantity <= 0) {
-        // Set the value to 1
+        // Set the value to 1 and update summary
+        newQuantity = 1;
         quantityElement.value = 1;
-        return;
+        Summary();
     }
 
     // Update the total price
@@ -157,7 +165,7 @@ async function UpdateQuantity(productId, unitPrice) {
     // Saves antiforgerytoken to protect against CSRF-attacks
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-    // Send the new quantity
+    // Send the new quantity in to the ShoppingCart controller (SetQuantity action)
     const response = await fetch(`/ShoppingCart/SetQuantity/?id=${productId}&quantity=${newQuantity}`, {
         method: 'PATCH',
         headers: { 'RequestVerificationToken': token }
@@ -168,10 +176,40 @@ async function UpdateQuantity(productId, unitPrice) {
         const msg = await response.text();
         document.getElementById("error-box").innerText = msg;
         setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
-    } else {
+    } 
+    else {
         // If the server adjusted the quantity, update it in the input box
         const data = await response.json();
         quantityElement.value = data.correctedQuantity;
         totalElement.innerText = nok.format(data.correctedQuantity * unitPrice);
+        Summary();
+    }
+}
+
+async function Summary() {
+    try {
+        // Fetch the data by sending a request to the Summary action in the controller that returns JSON-data
+        const response = await fetch('/ShoppingCart/Summary', {
+            credentials: 'same-origin',
+            cache: 'no-store'
+        });
+
+        // If response wasnt 200 then throw error and go to catch
+        if (!response.ok) throw new Error();
+
+        // Save the JSON-data
+        const s = await response.json();
+
+        // Update the HTML
+        document.getElementById('sum-products').textContent = nok.format(s.sumProducts);
+        document.getElementById('sum-before').textContent = nok.format(s.sumBefore);
+        // Show a "-" when it is a discount
+        document.getElementById('sum-discount').textContent = (s.discount > 0 ? '-' : '') + nok.format(Math.abs(s.discount));
+        document.getElementById('sum-shipping').textContent = nok.format(s.shipping);
+        document.getElementById('sum-total').textContent = nok.format(s.total);
+
+    } catch {// If we get an error show 0,00 kr
+        ['sum-products','sum-before','sum-discount','sum-shipping','sum-total']
+            .forEach(id => document.getElementById(id).textContent = '0,00 kr');
     }
 }

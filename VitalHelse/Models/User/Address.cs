@@ -4,11 +4,13 @@ namespace VitalHelse.Models;
 
 public class Address
 {
-    Address() {}
+    public Address() {}
     
-    public int AddressId { get; set; }
-    [Required] public AspNetUsers? AspNetUsers { get; set; }
-    [StringLength(450)] public string AspNetUsersId { get; set; } = null!;
+    public int? AddressId { get; set; }
+    public AspNetUsers? AspNetUsers { get; set; }
+    
+    // Gjorde den om slik at den kan være NULL foreløpig siden det funket ikke ellers
+    [StringLength(450)] public string? AspNetUsersId { get; set; } = null!;
     
     [Required] 
     [StringLength(100)]
@@ -21,7 +23,7 @@ public class Address
     public string City { get; set; } = string.Empty;
     
     [Required] 
-    [MinLength(4), MaxLength(4)]
+    [StringLength(4, MinimumLength = 4)]
     [Display(Name = "Postal Code")]
-    public int Postalcode { get; set; }
+    public string PostalCode { get; set; } = string.Empty;
 }
