@@ -70,17 +70,8 @@ public class IndexModel : PageModel
 
         [Display(Name = "Etternavn")]
         public string? LastName { get; set; }
-        
-
-        [Display(Name = "Adresse")]
-        public string? Address { get; set; }
-
-        [MaxLength(4), MinLength(4)]
-        [Display(Name = "Postnummer")]
-        public string? PostalCode { get; set; }
-        
-        [Display(Name = "Poststed")]
-        public string? PostalPlace { get; set; }
+      
+    
         
     }
 
@@ -96,9 +87,6 @@ public class IndexModel : PageModel
             FirstName = user.FirstName,
             LastName = user.LastName,
             PhoneNumber = phoneNumber,
-            Address = user.Address,
-            PostalCode = user.PostalCode,
-            PostalPlace = user.PostalPlace,
         };
     }
 
@@ -141,9 +129,6 @@ public class IndexModel : PageModel
         
         user.FirstName = Input.FirstName;
         user.LastName = Input.LastName;
-        user.Address = Input.Address;
-        user.PostalCode = Input.PostalCode;
-        user.PostalPlace = Input.PostalPlace;
         
         var updateResult = await _userManager.UpdateAsync(user);
         if (!updateResult.Succeeded)

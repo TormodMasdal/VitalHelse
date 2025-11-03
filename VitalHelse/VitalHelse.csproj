@@ -36,6 +36,9 @@
       <Compile Update="Areas\Identity\Pages\Account\Manage\BusinessProfile.cs">
         <DependentUpon>BusinessProfile.cshtml</DependentUpon>
       </Compile>
+      <Compile Update="Areas\Identity\Pages\Account\Manage\Address.cs">
+        <DependentUpon>Address.cshtml</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>
