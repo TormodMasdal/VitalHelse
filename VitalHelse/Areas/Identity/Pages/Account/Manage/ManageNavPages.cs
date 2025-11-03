@@ -13,6 +13,8 @@ namespace VitalHelse.Areas.Identity.Pages.Account.Manage;
 public static class ManageNavPages
 {
     public static string BusinessProfile => "BusinessProfile";
+    public static string Address => "Address";
+    
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
@@ -110,6 +112,9 @@ public static class ManageNavPages
     public static string? TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
 
     public static string? BusinessNavClass(ViewContext viewContext) => PageNavClass(viewContext, BusinessProfile);
+    
+    public static string? AddressNavClass(ViewContext viewContext) => PageNavClass(viewContext, Address);
+    
     
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
