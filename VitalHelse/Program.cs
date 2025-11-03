@@ -6,7 +6,7 @@ using Stripe.Checkout;
 using VitalHelse.Configuration;
 using VitalHelse.Data;
 using VitalHelse.Models;
-using VitalHelse.Services;
+/*using VitalHelse.Services;*/
 using Product = Stripe.Product;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,8 +36,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true;
 });
 
-builder.Services.AddScoped<TripletexService>();
-builder.Services.AddScoped<TripletexSyncService>();
+/*builder.Services.AddScoped<TripletexService>();
+builder.Services.AddScoped<TripletexSyncService>();*/
 
 builder.Services.Configure<StripeOptions>(options =>
 {
@@ -94,12 +94,12 @@ app.MapControllerRoute(
 app.MapRazorPages()
     .WithStaticAssets();
 
-using (var scope = app.Services.CreateScope())
+/*using (var scope = app.Services.CreateScope())
 {
     var syncService = scope.ServiceProvider.GetRequiredService<TripletexSyncService>();
     var result = await syncService.SyncProductsAsync();
     Console.WriteLine($"Tripletex Sync Completed: Added={result.added}, Updated={result.updated}, Hidden={result.hidden}");
-}
+}*/
 app.MapControllers();
 
 app.Run();

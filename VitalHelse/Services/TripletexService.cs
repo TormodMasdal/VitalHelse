@@ -1,4 +1,4 @@
-using System.Net.Http.Headers;
+/*using System.Net.Http.Headers;
 using System.Text.Json;
 using VitalHelse.Models;
 
@@ -116,4 +116,4 @@ public class TripletexService
         var stockElement = doc.RootElement.GetProperty("value").GetProperty("stockOfGoods");
         return stockElement.GetDouble();
     }
-}
+}*/
