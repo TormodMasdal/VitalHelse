@@ -1,11 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,80 +6,62 @@ using VitalHelse.Models;
 
 namespace VitalHelse.Areas.Identity.Pages.Account.Manage;
 
-public class IndexModel : PageModel
+public class BuisnessProfileModel : PageModel
 {
     private readonly UserManager<AspNetUsers> _userManager;
     private readonly SignInManager<AspNetUsers> _signInManager;
 
-    public IndexModel(
+    public BuisnessProfileModel(
         UserManager<AspNetUsers> userManager,
         SignInManager<AspNetUsers> signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
     }
-
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    public string? Username { get; set; }
-
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     [TempData]
     public string? StatusMessage { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    [BindProperty]
+    [BindProperty] 
     public InputModel Input { get; set; } = default!;
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     public class InputModel
     {
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        [Phone]
-        [Display(Name = "Mobilnummer")]
-        public string? PhoneNumber { get; set; }
+
+        // All entities that shall be added from the businessRegister page
         
-        [Display(Name = "E-post")]
+        [Display(Name = "Email")]
         public string? Email { get; set; }
-        [Display(Name = "Brukernavn")]
-        public string? Username { get; set; }
 
-        [Display(Name = "Fornavn")]
-        public string? FirstName { get; set; }
+        [Required]
+        [Display(Name = "Phone Number")]
+        [Phone]
+        public string PhoneNumber { get; set; } = null!;
 
-        [Display(Name = "Etternavn")]
-        public string? LastName { get; set; }
-      
-    
+       
+        [StringLength(100)]
+        [Display(Name = "Organization Name")]
+        public string OrgName { get; set; } = null!;
         
+        [MinLength(9), MaxLength(9)]
+        [Display(Name = "Organization Number")]
+        public string? OrgNr { get; set; }
+        
+
     }
 
     private async Task LoadAsync(AspNetUsers user)
     {
         var email = await _userManager.GetEmailAsync(user);
-        var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
         Input = new InputModel
         {
             Email = user.Email,
-            Username = user.UserName,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            PhoneNumber = phoneNumber,
+            PhoneNumber = user.PhoneNumber,
+            OrgName = user.OrgName,
+            OrgNr = user.OrgNr,
         };
     }
 
@@ -97,7 +72,6 @@ public class IndexModel : PageModel
         {
             return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
         }
-
         await LoadAsync(user);
         return Page();
     }
@@ -127,18 +101,19 @@ public class IndexModel : PageModel
             }
         }
         
-        user.FirstName = Input.FirstName;
-        user.LastName = Input.LastName;
+        user.OrgName = Input.OrgName;
         
         var updateResult = await _userManager.UpdateAsync(user);
         if (!updateResult.Succeeded)
         {
-            StatusMessage = "En uventet feil oppstod ved lagring av brukerdata";
-            return RedirectToPage();
+            StatusMessage = "En uventet feil oppsto ved lagring av brukerdata";
+                return RedirectToPage();
         }
-
+        
         await _signInManager.RefreshSignInAsync(user);
         StatusMessage = "Profilen har blitt oppdatert";
         return RedirectToPage();
     }
+    
+    
 }

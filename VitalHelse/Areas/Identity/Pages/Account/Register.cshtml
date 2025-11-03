@@ -47,10 +47,10 @@
                 <input id="postnummer" asp-for="Input.PostalCode" placeholder="Postnummer" />
                 <span asp-validation-for="Input.PostalCode" class="text-danger"></span>
             </div>
-
+            
             <div class="form-group">
-                <label for="poststed">Poststed</label>
-                <input id="poststed" placeholder="Poststed" readonly />
+                <label asp-for="Input.PostalPlace">Poststed</label>
+                <input asp-for="Input.PostalPlace" id="poststed" placeholder="Poststed" readonly />
             </div>
 
             <div class="form-group">
@@ -76,6 +76,6 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/postlookup.js"></script>
+    <script src="~/js/utils/postLookup.js"></script>
     <partial name="_ValidationScriptsPartial" />
 }

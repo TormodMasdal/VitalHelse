@@ -82,13 +82,27 @@
                             <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"></path>
                         </svg>
                     </a>
-                    <a href="/Account/Profile" class="icon-link" title="Min side">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="7" r="4"></circle>
-                            <path d="M5.5 20a6.5 6.5 0 0 1 13 0"></path>
-                        </svg>
-                    </a>
+                    
+                    @if(User.Identity.IsAuthenticated){
+                      <a href="/Identity/Account/Manage/RedirectAfterLogin" class="icon-link" title="Min side">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <circle cx="12" cy="7" r="4"></circle>
+                              <path d="M5.5 20a6.5 6.5 0 0 1 13 0"></path>
+                          </svg>
+                      </a> 
+                    }
+                    else
+                    {
+                        <a href="/Identity/Account/Login?returnUrl=/Identity/Account/Manage/RedirectAfterLogin" class="icon-link" title="Min side">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="7" r="4"></circle>
+                                <path d="M5.5 20a6.5 6.5 0 0 1 13 0"></path>
+                            </svg>
+                        </a>  
+                    }
+                    
                     <a asp-controller="ShoppingCart" asp-action="Index" class="icon-link" title="Handlevogn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -113,13 +127,18 @@
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privat</a>
                     </li>-->
                     
-                    @foreach (var cat in topCategories)
-                    {
+                    @foreach (var cat in topCategories) {
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["categoryPath"]?.ToString()?.ToLower() == cat.CategoryName.ToLower() ? "active" : "")"
                                href="/produkt/@cat.CategoryName">
                                 @cat.CategoryName
                             </a>
+                        </li>
+                    }
+                    
+                    @if (User.IsInRole("Admin")) {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Admin</a>
                         </li>
                     }
                     

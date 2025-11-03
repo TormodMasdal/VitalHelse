@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <h5>Dagens inntekt</h5>
+        <p>kr 12 500</p>
+    </div>
+    <div class="stat-card">
+        <h5>Ordrer siste uke</h5>
+        <p>35</p>
+    </div>
+    <div class="stat-card">
+        <h5>Mest solgte produkt</h5>
+        <p>Ginger Gel</p>
+    </div>
+    <div class="stat-card">
+        <h5>Total inntekt</h5>
+        <p>kr 350 000</p>
+    </div>
+</section>
+
+<section class="manage-grid">
+    <div class="manage-card">
+        <div class="icon">📦</div>
+        <h3>Produkter</h3>
+        <a asp-controller="Admin" asp-action="Products" class="btn">Administrer</a>
+    </div>
+    <div class="manage-card">
+        <div class="icon">🏷️</div>
+        <h3>Kategorier</h3>
+        <a asp-controller="Admin" asp-action="Categories" class="btn">Administrer</a>
+    </div>
+    <div class="manage-card">
+        <div class="icon">🖼️</div>
+        <h3>Bannere</h3>
+        <a asp-controller="Admin" asp-action="Banners" class="btn">Administrer</a>
+    </div>
+</section>

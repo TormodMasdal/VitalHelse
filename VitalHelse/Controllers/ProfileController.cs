@@ -1,9 +1,10 @@
-namespace VitalHelse.Controllers;
-
 using Microsoft.AspNetCore.Identity;
 using VitalHelse.Data;
 using VitalHelse.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace VitalHelse.Controllers;
 
 public class ProfileController : Controller
 {
@@ -16,7 +17,6 @@ public class ProfileController : Controller
         _logger = logger; 
         _um = um;
     }
-
     public IActionResult PrivateCustomer()
     {
         return View();

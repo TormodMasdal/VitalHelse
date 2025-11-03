@@ -5,12 +5,26 @@
     bool isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? false;
 }
 
+@{
+    bool isAdminView = ViewData["IsAdminView"] as bool? ?? false;
+}
+
+
 @if (Model != null && Model.Any())
 {
     <div class="product-grid">
         @foreach (var product in Model)
         {
-            <div class="product-card">
+            var isHidden = product.LabelDescription?.ToLower().Contains("hidden") ?? false;
+
+            <div class="product-card @(isHidden ? "hidden-product" : "")">
+                @if (isAdminView)
+                {
+                    <div class="admin-product-actions">
+                        <a href="#" class="btn-edit">Edit</a>
+                    </div>
+                }
+
                 <button type="button"
                         class="heart-btn @(product.IsFavorite ? "active" : "")"
                         data-id="@product.ProductId"
@@ -18,13 +32,13 @@
                     <i class="@(product.IsFavorite ? "fa-solid" : "fa-regular") fa-heart"></i>
                 </button>
 
-                <img src="@(product.ProductPictures.FirstOrDefault()?.PicturePath ?? "/images/products/default.png")"
+                <img src="@Url.Content(product.ProductPictures.FirstOrDefault()?.PicturePath ?? "~/images/products/default.png")"
                      alt="@product.ProductName"
-                     class="product-img" />
+                     class="product-img"/>
 
                 <h5>@product.ProductName</h5>
                 <p class="desc">@product.ProductDescription</p>
-       
+
                 <div class="price">
                     @if (product.ProductCampaignPrice.HasValue)
                     {
@@ -36,9 +50,16 @@
                         <span class="price-now">@product.ProductPriceInVAT.ToString("0.00") kr</span>
                     }
                 </div>
+
+                @if (isHidden)
+                {
+                    <span class="hidden-tag">Hidden</span>
+                }
+
                 <a class="learn-more" href="@SlugHelper.BuildProductPath(product)">Se produkt</a>
             </div>
         }
+
     </div>
 }
 else

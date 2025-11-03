@@ -14,6 +14,9 @@ public class AspNetUsers : IdentityUser
     [Display(Name = "Postal Code")]
     public string? PostalCode { get; set; }
     
+    [Display(Name = "Poststed")]
+    public string? PostalPlace { get; set; }
+    
     [StringLength(100)]
     [Display(Name = "First name")]
     public string? FirstName { get; set; }

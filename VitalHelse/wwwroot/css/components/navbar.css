@@ -108,6 +108,7 @@
     gap: 1.8rem;
 }
 
+
 .icon-link {
     color: #111827 !important;
     text-decoration: none;
@@ -212,4 +213,11 @@
         width: 22px;
         height: 22px;
     }
+}
+
+/* Profile navbar*/
+.profile-navbar{
+    position: static;
+    background: none;
+    justify-content: center;
 }

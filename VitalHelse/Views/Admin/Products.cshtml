@@ -1,0 +1,25 @@
+@model IEnumerable<VitalHelse.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+    Layout = "_AdminLayout";
+}
+
+<section class="category-page">
+    <h1 class="category-title">All Products</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <p class="text-muted text-center mt-4">No products found.</p>
+    }
+    else
+    {
+        @await Html.PartialAsync("_ProductGrid",
+            Model,
+            new ViewDataDictionary(ViewData)
+            {
+                { "IsAuthenticated", User.Identity?.IsAuthenticated ?? false },
+                { "IsAdminView", true } // Admin context
+            })
+    }
+</section>

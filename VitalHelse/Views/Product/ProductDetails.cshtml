@@ -28,7 +28,7 @@
 </nav>
 
 <div class="row">
-    <div class="col">
+    <div class="col-12 col-md-6">
         @if (Model.CurrentProduct.ProductPictures.Any())
         {
             <div id="pictures" class="carousel slide" data-bs-ride="carousel">
@@ -39,7 +39,7 @@
                     }
                 </div>
                 <div class="carousel-inner">
-                    @{ int index = 0;}
+                    @{ int index = 0; }
                     @foreach (var pic in Model.CurrentProduct.ProductPictures)
                     {
                         <div class="carousel-item @(index == 0 ? "active" : "")">
@@ -65,10 +65,11 @@
     </div>
 
     <div class="col ms-4">
-        <h1 style="font-size: 2rem"> @Model.CurrentProduct.ProductName</h1>
-        <h4 class="text-end m-4"> kr @Model.CurrentProduct.ProductPriceInVAT</h4>
+        <h1 class="product-title"> @Model.CurrentProduct.ProductName</h1>
+        <h4 class="product-price m-4 "> kr @Model.CurrentProduct.ProductPriceInVAT</h4>
         <p class="mt-3"> @Model.CurrentProduct.ProductDescription</p>
         
+     
         <div class="text-center mt-2">
             <button type="button" class="btn btn-outline-dark w-100" onclick="AddToCart(@Model.CurrentProduct.ProductId)"> Legg i handlekurv </button>
             <div id="error-box" style="color:red; font-weight:bold; margin-top:10px;"></div>
@@ -102,6 +103,7 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script src="~/js/components/shoppingCart.js"></script>
 }
