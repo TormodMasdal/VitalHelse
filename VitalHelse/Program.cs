@@ -1,10 +1,19 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Stripe;
+using Stripe.Checkout;
+using VitalHelse.Configuration;
 using VitalHelse.Data;
 using VitalHelse.Models;
-using VitalHelse.Services;
+/*using VitalHelse.Services;*/
+using Product = Stripe.Product;
 
 var builder = WebApplication.CreateBuilder(args);
+
+DotNetEnv.Env.Load();
+StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
@@ -27,9 +36,17 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.AllowedForNewUsers = true;
 });
 
-builder.Services.AddScoped<TripletexService>();
-builder.Services.AddScoped<TripletexSyncService>();
+/*builder.Services.AddScoped<TripletexService>();
+builder.Services.AddScoped<TripletexSyncService>();*/
 
+builder.Services.Configure<StripeOptions>(options =>
+{
+    options.PublishableKey = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY");
+    options.SecretKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+    options.WebhookSecret = Environment.GetEnvironmentVariable("STRIPE_WEBHOOK_SECRET");
+    options.Price = Environment.GetEnvironmentVariable("PRICE");
+    options.Domain = Environment.GetEnvironmentVariable("DOMAIN");
+});
 
 var app = builder.Build();
 
@@ -59,9 +76,12 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-app.UseRouting();
 
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -74,11 +94,12 @@ app.MapControllerRoute(
 app.MapRazorPages()
     .WithStaticAssets();
 
-using (var scope = app.Services.CreateScope())
+/*using (var scope = app.Services.CreateScope())
 {
     var syncService = scope.ServiceProvider.GetRequiredService<TripletexSyncService>();
     var result = await syncService.SyncProductsAsync();
     Console.WriteLine($"Tripletex Sync Completed: Added={result.added}, Updated={result.updated}, Hidden={result.hidden}");
-}
+}*/
+app.MapControllers();
 
 app.Run();

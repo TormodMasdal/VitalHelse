@@ -38,6 +38,7 @@ public class Product
     /// <summary>
     /// Price including VAT (Tripletex controlled).
     /// </summary>
+    
     [Required]
     public double ProductPriceInVAT { get; set; }
 
@@ -69,6 +70,12 @@ public class Product
     public ICollection<OrderProduct> OrderProducts { get; } = new List<OrderProduct>();
     public ICollection<CartProduct> CartProducts { get; } = new List<CartProduct>();
 
+    [StringLength(100)]
+    public string? StripeProductId { get; set; }  // f.eks. "prod_Qwe123ABC"
+
+    [StringLength(100)]
+    public string? StripePriceId { get; set; }
+    
     [NotMapped]
     public bool IsFavorite { get; set; } = false;
 }
