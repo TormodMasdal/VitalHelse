@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+/*using Microsoft.AspNetCore.Mvc;
 using VitalHelse.Services;
 
 namespace VitalHelse.Controllers;
@@ -26,5 +26,5 @@ public class TestController : Controller
         var session = await _tripletex.GetSessionTokenAsync();
         var json = await _tripletex.GetProductDetailsAsync(session, id);
         return Content(json, "application/json");
-    }*/
-}
+    }
+}*/
