@@ -8,16 +8,22 @@
         Layout = "/Views/Shared/_Layout.cshtml";
     }
 }
+
 <h1 class="category-title">@ViewBag.Title</h1>
+
 <partial name="_ManageNav"/>
 
 <div class="container-fluid">
-        <div class="row mt-2">
-            <div class="col-md-8">
-                @RenderBody()
-            </div>
+    <div class="row mt-2">
+        <div class="col-md-8">
+            @RenderBody()
         </div>
+    </div>
 </div>
+
+<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+     <button type="submit" class="nav-item subcategory-link">LOGG UT</button>
+</form>
 
 
 @section Scripts {
