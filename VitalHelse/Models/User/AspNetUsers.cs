@@ -34,5 +34,10 @@ public class AspNetUsers : IdentityUser
     public ICollection<Order> Orders { get; } = new List<Order>();
     public ICollection<CartProduct> ShoppingCarts { get; } = new List<CartProduct>();
     public ICollection<DiscountUsage> DiscountUsages { get; } = new List<DiscountUsage>();
+    
+    // Fjerne addresses etterpå!
     public ICollection<Address> Addresses { get; } = new List<Address>();
+    
+    
+    public ICollection<ShippingInformation> ShippingInformations { get; } = new List<ShippingInformation>();
 }

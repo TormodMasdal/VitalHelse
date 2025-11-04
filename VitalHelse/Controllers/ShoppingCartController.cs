@@ -133,9 +133,12 @@ public class ShoppingCartController : Controller
         if (quantity <= 0)
             return BadRequest("Antall må være minst 1.");
         
-        /*// If quantity is more than stock then set quantity to stock 
-        if (quantity > shoppingCart.Product.StockCount)
-            quantity = shoppingCart.Product.StockCount;*/
+        // If stock is NULL (not set) then use 0
+        var stock = shoppingCart.Product.StockCount ?? 0;
+        
+        // If quantity is more than stock then set quantity to stock 
+        if (quantity > stock)
+            quantity = stock;
         
         // Update the quantity 
         shoppingCart.Quantity = quantity;
@@ -287,6 +290,25 @@ public class ShoppingCartController : Controller
         TempData["SelectedAddressId"] = form.AddressId;
         return RedirectToAction(nameof(Address));
     }
+
+    public async Task<IActionResult> ShippingInformation()
+    {
+        return View();
+    }
     
+    public async Task<IActionResult> AddShippingInformation()
+    {
+        
+        // Fetch the user id
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        // Query to get all the users Addresses
+        var list = await _db.ShippingInformations
+            .Where(a => a.AspNetUsersId == userId)
+            .OrderByDescending(a => a.Id)
+            .ToListAsync();
+        
+        return View();
+    }
     
 }

@@ -1,8 +1,10 @@
-@model VitalHelse.Models.Product
+@using VitalHelse.Models.Enums
+@model ShippingInformation
 
 @{
     ViewBag.Title = "title";
-    Layout = "_Layout";
+    Layout = "_CheckoutLayout";
+    ViewData["CheckoutStep"] = CheckoutStep.Cart;
 }
 
-<h2>title</h2>
+@Html.Partial("_AddAddressForm", Model) 
