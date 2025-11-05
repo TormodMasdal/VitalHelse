@@ -9,9 +9,11 @@
 
     <ItemGroup>
         <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+        <None Include="wwwroot\canceled.html" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="DotNetEnv" Version="3.1.1" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.10" />
@@ -21,11 +23,22 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+        <PackageReference Include="Stripe.net" Version="49.1.0" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="wwwroot\images\products\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Areas\Identity\Pages\Account\Manage\BusinessProfile.cs">
+        <DependentUpon>BusinessProfile.cshtml</DependentUpon>
+      </Compile>
+      <Compile Update="Areas\Identity\Pages\Account\Manage\Address.cs">
+        <DependentUpon>Address.cshtml</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

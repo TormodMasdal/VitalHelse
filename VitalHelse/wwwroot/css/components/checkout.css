@@ -1,0 +1,90 @@
+/* =============================
+   "CHECKOUT NAVBAR BUTTONS"
+   ============================= */
+
+.checkout-steps .nav-link {
+    color: #6c757d; /* Grå lenker */
+    font-weight: 500;
+    position: relative;
+}
+
+.checkout-steps .nav-link.active {
+    color: #000;
+    font-weight: 600;
+}
+
+.checkout-steps .nav-link.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 2px;
+    background-color: #cda996; /* Line under text*/
+    border-radius: 1px;
+}
+
+
+/* =============================
+   TRASHBIN ICON
+   ============================= */
+.trash-btn {
+    border: none;
+    background: none;
+    padding: 0.75rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.trash-btn:hover {
+    background-color: #f3f3f3; 
+    cursor: pointer;
+}
+
+.trash-btn:active {
+    background-color: #e2e2e2; 
+    transform: scale(0.95);
+}
+
+/* =============================
+   BUTTONS AND INPUTFIELD TO CHANGE QUANTITY
+   ============================= */
+
+.change-quantity:focus {
+    outline: none;
+    outline-color: #cda996;
+    box-shadow: none;
+}
+
+.change-quantity .btn:focus,
+.change-quantity .btn:active,
+.change-quantity .btn:focus-visible,
+.change-quantity input:focus {
+    outline: none;
+    outline-color: #cda996;
+    box-shadow: none;
+}
+
+.change-quantity .btn {
+    border-color: #cda996;
+}
+
+.change-quantity .btn:hover {
+    background-color: #cda996;
+}
+
+.btn-next {
+    background-color: #e8cfc3;
+    color: #333;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-next:hover {
+    background-color: #e0bcae;
+    transform: translateY(-2px);
+}

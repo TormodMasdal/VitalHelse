@@ -57,7 +57,7 @@ public class SearchController : Controller
                 description = p.ProductDescription != null && p.ProductDescription.Length > 50 
                     ? p.ProductDescription.Substring(0, 50) + "..." 
                     : p.ProductDescription,
-                price = p.ProductPrice
+                price = p.ProductPriceInVAT
             })
             .ToListAsync();
         //Returns the list of suggestions as a JSON object

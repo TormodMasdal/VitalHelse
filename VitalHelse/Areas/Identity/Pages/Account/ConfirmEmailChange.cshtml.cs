@@ -29,6 +29,7 @@ public class ConfirmEmailChangeModel : PageModel
     /// </summary>
     [TempData]
     public string? StatusMessage { get; set; }
+    
 
     public async Task<IActionResult> OnGetAsync(string userId, string email, string code)
     {
@@ -50,7 +51,7 @@ public class ConfirmEmailChangeModel : PageModel
             StatusMessage = "Error changing email.";
             return Page();
         }
-
+        
         // In our UI email and user name are one and the same, so when we update the email
         // we need to update the user name.
         var setUserNameResult = await _userManager.SetUserNameAsync(user, email);

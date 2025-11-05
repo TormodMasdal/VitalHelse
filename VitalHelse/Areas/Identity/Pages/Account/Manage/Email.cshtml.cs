@@ -49,6 +49,13 @@ public class EmailModel : PageModel
     /// </summary>
     [TempData]
     public string? StatusMessage { get; set; }
+    
+    // Disse to under med TempData skal kunne fjernes når e-post faktisk blir sendt
+    [TempData]
+    public bool DisplayConfirmEmailChangeLink { get; set; }
+
+    [TempData]
+    public string? EmailChangeConfirmationUrl { get; set; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -69,7 +76,7 @@ public class EmailModel : PageModel
         /// </summary>
         [Required]
         [EmailAddress]
-        [Display(Name = "New email")]
+        [Display(Name = "Ny e-post")]
         public string NewEmail { get; set; } = default!;
     }
 
@@ -123,16 +130,21 @@ public class EmailModel : PageModel
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                 protocol: Request.Scheme)!;
+
+            // Disse to linjene skal kunne fjernes når e-post faktisk blir sendt
+            DisplayConfirmEmailChangeLink = true;
+            EmailChangeConfirmationUrl = callbackUrl;
+            
             await _emailSender.SendEmailAsync(
                 Input.NewEmail,
-                "Confirm your email",
+                "Bekreft e-post",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-            StatusMessage = "Confirmation link to change email sent. Please check your email.";
+            StatusMessage = "Bekreftelseslenke for å endre e-post er sendt. Vennligst sjekk e-posten din.";
             return RedirectToPage();
         }
 
-        StatusMessage = "Your email is unchanged.";
+        StatusMessage = "Din e-post er uendret.";
         return RedirectToPage();
     }
 
@@ -161,10 +173,10 @@ public class EmailModel : PageModel
             protocol: Request.Scheme)!;
         await _emailSender.SendEmailAsync(
             email!,
-            "Confirm your email",
-            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            "Bekreft e-post",
+            $"Venligst bekreft din e-post <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>ved p klikke her</a>.");
 
-        StatusMessage = "Verification email sent. Please check your email.";
+        StatusMessage = "Bekreftelseslenke for å endre e-post er sendt. Vennligst sjekk e-posten din.";
         return RedirectToPage();
     }
 }

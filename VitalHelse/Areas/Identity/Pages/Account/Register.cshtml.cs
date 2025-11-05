@@ -92,6 +92,9 @@ public class RegisterModel : PageModel
         [MaxLength(4), MinLength(4)]
         public string? PostalCode { get; set; }
         
+        [Display(Name = "Poststed")]
+        public string? PostalPlace { get; set; }
+        
         [Required] 
         [StringLength(100)]
         [Display(Name = "First name")]
@@ -143,6 +146,7 @@ public class RegisterModel : PageModel
             user.Address = Input.Address;
             user.PhoneNumber = Input.PhoneNumber;
             user.PostalCode = Input.PostalCode;
+            user.PostalPlace = Input.PostalPlace;
             user.FirstName = Input.FirstName;
             user.LastName = Input.LastName;
             var result = await _userManager.CreateAsync(user, Input.Password);
