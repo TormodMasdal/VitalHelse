@@ -28,12 +28,12 @@
                 <div class="price">
                     @if (product.ProductCampaignPrice.HasValue)
                     {
-                        <span class="price-old">@product.ProductPrice.ToString("0.00") kr</span>
+                        <span class="price-old">@product.ProductPriceInVAT.ToString("0.00") kr</span>
                         <span class="price-new">@product.ProductCampaignPrice.Value.ToString("0.00") kr</span>
                     }
                     else
                     {
-                        <span class="price-now">@product.ProductPrice.ToString("0.00") kr</span>
+                        <span class="price-now">@product.ProductPriceInVAT.ToString("0.00") kr</span>
                     }
                 </div>
                 <a class="learn-more" href="@SlugHelper.BuildProductPath(product)">Se produkt</a>

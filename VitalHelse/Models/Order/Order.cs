@@ -7,12 +7,14 @@ public class Order
     public Order(){}
 
     public int OrderId { get; set; }
+    public string StripePaymentIntentId { get; set; }
 
+    
     public DateTime OrderDate { get; set; }
-    [StringLength(50)] public string Status { get; set; }
+    [StringLength(50)] public string Status { get; set; } = "Posesseres";
     public double TotCost { get; set; }
     [StringLength(100)] public string? TrackingNumber { get; set; }
-    [StringLength(50)] public string ShippingProvider { get; set; }
+    [StringLength(50)] public string? ShippingProvider { get; set; }
 
     public DiscountCode? DiscountCode { get; set; }
     [StringLength(500)] public string? DiscountCodeId { get; set; }
