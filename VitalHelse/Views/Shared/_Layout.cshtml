@@ -26,8 +26,12 @@
     <link rel="stylesheet" href="~/css/components/productpage.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/components/account.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/components/productgrid.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/css/components/checkout.css" asp-append-version="true"/>
-    
+    <link rel="stylesheet" href="~/css/components/checkout.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/components/product-form-images.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/components/product-form-dropdown.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/components/product-form-tags.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/components/sideBarFilter.css" asp-append-version="true"/>
+
     <link rel="stylesheet" href="~/VitalHelse.styles.css" asp-append-version="true"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
@@ -71,6 +75,12 @@
                 <a asp-controller="Home" asp-action="Index">
                     <img class="vital-logo" src="~/images/logo/logo.svg" alt="VitalHelse">
                 </a>
+                
+                <!-- if admin or staff, the add product link shows-->
+                <!--@if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                    {
+                        <a class="addproduct" asp-controller="AdminProduct" asp-action="AddProduct">Legg til et produkt</a>
+                    }  -->
                 
                 <!-- Høyre: ikoner -->
                 <div class="nav-icons">
@@ -165,6 +175,7 @@
 
 <script src="~/js/components/searchSuggestions.js" asp-append-version="true"></script>
 <script src="~/js/components/navbarAnimation.js" asp-append-version="true"></script>
+<script src="~/js/temp/sidebarFilter.js" asp-append-version="true"></script>
 
 @await RenderSectionAsync("Scripts", required: false)
 </body>

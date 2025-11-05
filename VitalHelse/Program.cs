@@ -24,6 +24,18 @@ builder.Services.AddDefaultIdentity<AspNetUsers>(options => options.SignIn.Requi
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+//required for session storage
+builder.Services.AddDistributedMemoryCache(); 
+builder.Services.AddSession(options =>
+{
+    //session expires in 30 min
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
+    //prevents js access
+    options.Cookie.HttpOnly = true;     
+    //required for GDPR compliance
+    options.Cookie.IsEssential = true;           
+});
+
 builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
 
 builder.Services.Configure<IdentityOptions>(options =>
@@ -95,6 +107,7 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
