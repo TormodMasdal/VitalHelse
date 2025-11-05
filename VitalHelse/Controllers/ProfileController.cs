@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+/*using Microsoft.AspNetCore.Identity;
 using VitalHelse.Data;
 using VitalHelse.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -22,4 +22,4 @@ public class ProfileController : Controller
         return View();
     }
     
-}
+} */
