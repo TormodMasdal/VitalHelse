@@ -2,8 +2,38 @@
 @{
     Layout = "_Layout";
     
-    // Gets what checkout step user is on, if checkout is none for some reason then return to Cart
-    var step = ViewData["CheckoutStep"] is CheckoutStep s ? s : CheckoutStep.Cart;
+    var step = ViewBag.Step is CheckoutStep s ? s : CheckoutStep.Cart;
+
+    string btnText;
+    string? nextAction = null;
+    
+    switch (step)
+    {
+        case CheckoutStep.Cart:
+            btnText = "Gå videre til personalia";
+            nextAction = "BeginCheckout";
+            break;
+        case CheckoutStep.Address:
+            btnText = "Gå videre til levering";
+            nextAction = "Shipping";
+            break;
+        case CheckoutStep.Shipping:
+            btnText = "Gå videre til betaling";
+            nextAction = "Payment";
+            break;
+        case CheckoutStep.Payment:
+            btnText = "Fullfør bestilling";
+            nextAction = "Complete";
+            break;
+        case CheckoutStep.Complete:
+        default:
+            btnText = "";
+            nextAction = null;
+            break;
+    }
+
+    // Disable-knapp kun på Cart-siden hvis handlekurven faktisk er tom
+    bool disable = step == CheckoutStep.Cart && (Model is IEnumerable<object> col ? !col.Any() : true);
 }
 
 
@@ -15,23 +45,23 @@
     <li class="nav-item">
         <!-- Check if the user is on the given steå then change the class  -->
         <a class="nav-link @(step == CheckoutStep.Cart ? "active" : "")"
-           asp-controller="ShoppingCart" asp-action="Index">Kasse</a>
+           asp-controller="Checkout" asp-action="Index">Kasse</a>
     </li>
     <li class="nav-item">
         <a class="nav-link @(step==CheckoutStep.Address ? "active" : "")"
-           asp-controller="ShoppingCart" asp-action="Address">Personalia</a>
+           asp-controller="Checkout" asp-action="Address">Personalia</a>
     </li>
     <li class="nav-item">
         <a class="nav-link @(step==CheckoutStep.Shipping ? "active" : "")"
-           asp-controller="ShoppingCart" asp-action="Shipping">Levering</a>
+           asp-controller="Checkout" asp-action="Shipping">Levering</a>
     </li>
     <li class="nav-item">
         <a class="nav-link @(step==CheckoutStep.Payment ? "active" : "")"
-           asp-controller="ShoppingCart" asp-action="Review">Betaling</a>
+           asp-controller="Checkout" asp-action="Payment">Betaling</a>
     </li>
     <li class="nav-item">
         <a class="nav-link @(step==CheckoutStep.Complete ? "active" : "")"
-           asp-controller="ShoppingCart" asp-action="ShippingInformation">Fullført</a>
+           asp-controller="Checkout" asp-action="Complete">Fullført</a>
     </li>
 </ul>
 
@@ -60,7 +90,24 @@
                     <div class="d-flex justify-content-between fw-semibold"><span>Totalsum</span><span id="sum-total">–</span></div>
                     
                     <div class="d-grid mt-3">
-                        <a class="btn-next" href="@Url.Action("Address","ShoppingCart")">Gå videre til leveringsinfo</a>
+                        <a class="btn-next" href="@Url.Action("Address","Checkout")">Gå videre til leveringsinfo</a>
+                        <div class="d-grid mt-3">
+                            @if (!string.IsNullOrEmpty(btnText) && nextAction != null)
+                            {
+                                if (disable)
+                                {
+                                    <button class="btn btn-primary w-100" disabled aria-disabled="true">@btnText</button>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-controller="Checkout" asp-action="@nextAction">
+                                        <button type="submit" class="btn btn-primary w-100">@btnText</button>
+                                    </form>
+                                    
+                                }
+                            }
+                        </div>
+
                     </div>
                 </div>
             </div>

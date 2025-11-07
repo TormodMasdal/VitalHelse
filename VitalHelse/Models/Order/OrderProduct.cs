@@ -14,4 +14,6 @@ public class OrderProduct
     public int ProductId { get; set; }
     public int OrderId { get; set; }
     [Required] public int Quantity { get; set; }
+    
+    public decimal UnitPrice { get; set; }
 }

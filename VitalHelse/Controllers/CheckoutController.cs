@@ -1,136 +1,211 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Stripe;
-using Stripe.Checkout;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
-
-
-using VitalHelse.Configuration;
 using VitalHelse.Data;
+using VitalHelse.Models;
+using VitalHelse.Models.Enums;
+
 namespace VitalHelse.Controllers;
 
-[Route("create-checkout-session")]
-[ApiController]
+[Authorize]
 public class CheckoutController : Controller
 {
     private readonly ApplicationDbContext _db;
-    private readonly IOptions<StripeOptions> _stripeOptions;
+    private readonly UserManager<AspNetUsers> _userManager;
 
-    public CheckoutController(ApplicationDbContext db, IOptions<StripeOptions> stripeOptions)
+    public CheckoutController(ApplicationDbContext db, UserManager<AspNetUsers> userManager)
     {
         _db = db;
-        _stripeOptions = stripeOptions;
+        _userManager = userManager;
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> Summary()
+    {
+        // Fetch the user id
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        
+        // Get all the items in the shopping cart
+        var items = await _db.CartProducts
+            .Include(cp => cp.Product)
+            .Include(cp => cp.AspNetUsers)
+            .Where(cp => cp.AspNetUsersId == userId)
+            .ToListAsync();
+        
+        // If shopping cart is empty then return 0 values
+        if (!items.Any())
+        {
+            return Json(new { sumProducts = 0, sumBefore = 0, discount = 0, shipping = 0, total = 0 });
+        }
+        
+        // midlertidig bruk av decimal pga mulige endringer i modellen 
+        
+        decimal sumBefore = items.Sum(i => (decimal)i.Product.ProductPriceInVAT * i.Quantity);
+        decimal sumProducts = items.Sum(i => (decimal)(i.Product.ProductCampaignPrice ?? i.Product.ProductPriceInVAT) * i.Quantity);
+        decimal discount = sumBefore - sumProducts;
+        decimal shipping = 0; 
+        decimal total= sumProducts + shipping;
+
+        // Return all the values as JSON
+        return Json(new { sumProducts, sumBefore, discount, shipping, total });
+    }    
+    
+    // GET
+    public async Task<IActionResult> Index()
+    {
+        ViewBag.Step = CheckoutStep.Cart;
+        
+        // Finds the user id
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        // Query to get all items in the shopping cart
+        var items = _db.CartProducts
+            .Include(cp => cp.Product)
+            .Include(cp => cp.Product.ProductPictures)
+            .Include(cp => cp.AspNetUsers)
+            .Where(cp => cp.AspNetUsersId == userId)
+            .ToList();
+
+        // Returns the items to the view
+        return View(items);
     }
 
-    /// <summary>
-    /// Creates a checkout session for the logged-in user.
-    /// Takes the products and quantities from the shopping cart,
-    /// checks their prices, and includes them in the checkout.
-    /// </summary>
-
-    /// <returns> A checkout page</returns>
     [HttpPost]
-    public async Task<IActionResult> CreateCheckoutSession()
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BeginCheckout()
     {
-        // Finds the user id of the user creating the checkout session
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
-            return Unauthorized();
 
+        
         // Fetch all the items from the cart
-        var cartItems = await _db.CartProducts
+        var cart = await _db.CartProducts
             .Include(cp => cp.Product)
             .Where(cp => cp.AspNetUsersId == userId)
             .ToListAsync();
 
-        var productService = new ProductService();
-        var priceService = new PriceService();
-        var lineItems = new List<SessionLineItemOptions>();
-
-        // For every item in the cart
-        foreach (var item in cartItems)
+        if (!cart.Any())
         {
-            var product = item.Product;
+            TempData["CheckoutError"] = "Handlekurven er tom.";
+            return RedirectToAction(nameof(Index));
+        }
 
-            // If the product doesn't exist on the owners stripe account, create a new one
-            if (string.IsNullOrEmpty(product.StripeProductId))
-            {
-                var stripeProduct = await productService.CreateAsync(new ProductCreateOptions
-                {
-                    Name = product.ProductName
-                });
-                product.StripeProductId = stripeProduct.Id;
-            }
+        // Slett eventuell tidligere draft
+        var oldDrafts = await _db.Orders
+            .Where(o => o.AspNetUsersId == userId && o.Status == "Draft")
+            .ToListAsync();
+        _db.Orders.RemoveRange(oldDrafts);
 
-            // If the product price doesn't exist on the owners stripe account, create a new one
-            if (string.IsNullOrEmpty(product.StripePriceId))
+        // Lag ny ordre (draft) + lines
+        var order = new Order
+        {
+            AspNetUsersId = userId,
+            OrderDate = DateTime.UtcNow,
+            Status = "Draft",
+        };
+
+        foreach (var item in cart)
+        {
+            order.OrderProducts.Add(new OrderProduct
             {
-                // Checks if the price is on campaign, if so use the campaign price, else use the normal price
-                var effectivePrice = product.ProductCampaignPrice ?? product.ProductPriceInVAT;
-                var stripePrice = await priceService.CreateAsync(new PriceCreateOptions
-                {
-                    UnitAmount = (long)(effectivePrice * 100),
-                    Currency = "nok",
-                    Product = product.StripeProductId,
-                });
-                product.StripePriceId = stripePrice.Id;
-            }
-            
-            lineItems.Add(new SessionLineItemOptions
-            {
+                ProductId = item.ProductId,
                 Quantity = item.Quantity,
-                Price = product.StripePriceId
+                UnitPrice = (decimal)(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT)
             });
         }
 
-        await _db.SaveChangesAsync();
+        order.TotalCost = order.OrderProducts.Sum(op => op.UnitPrice * op.Quantity);
 
-        // Creates checkout details
-        var host = $"{Request.Scheme}://{Request.Host}";
-        var options = new SessionCreateOptions
+        _db.Orders.Add(order);
+        await _db.SaveChangesAsync();
+        
+        return RedirectToAction(nameof(Address));
+    }
+    
+    
+    
+    
+    [HttpGet]
+    public async Task<IActionResult> Address()
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        var vm = new UserAddressViewModel
         {
-            // Makes the checkout embedded to our website
-            UiMode = "embedded",
-            Mode = "payment",
-            LineItems = lineItems,
-            ReturnUrl = host + "/return.html?session_id={CHECKOUT_SESSION_ID}",
-            
-            // Saves the userId for the webhook later
-            PaymentIntentData = new SessionPaymentIntentDataOptions
-            {
-                Metadata = new Dictionary<string, string>
-                {
-                    { "userId", userId }
-                }
-            }
+            Existing = await _db.UserAddresses
+                .Where(a => a.AspNetUserId == userId)
+                .OrderByDescending(a => a.Id)
+                .ToListAsync()
         };
 
-        var service = new SessionService();
-        
-        // Create the session with the given details (options)
-        Session session = service.Create(options);
-
-        return Json(new { clientSecret = session.ClientSecret });
+        ViewBag.Step = CheckoutStep.Address;
+        return View(vm);
     }
-}
 
-/// <summary>
-/// Gets confirmation from stripe when purchase confirmed
-/// Not safe to create orders, may be manipulated
-/// </summary>
-[Route("session-status")]
-[ApiController]
-public class SessionStatusController : Controller
-{
-    [HttpGet]
-    public ActionResult SessionStatus([FromQuery] string session_id)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddAddress(UserAddressViewModel vm)
     {
-        var sessionService = new SessionService();
-        Session session = sessionService.Get(session_id);
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        return Json(new {status = session.Status,  customer_email = session.CustomerDetails.Email});
+        if (!ModelState.IsValid)
+        {
+            // Husk å fylle Existing igjen når validering feiler
+            vm.Existing = await _db.UserAddresses.Where(a => a.AspNetUserId == userId).ToListAsync();
+            ViewBag.Step = CheckoutStep.Address;
+            return View("Address", vm);
+        }
+
+        vm.NewAddress.AspNetUserId = userId!;
+        _db.UserAddresses.Add(vm.NewAddress);
+        await _db.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Address)); // PRG
     }
-}
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult UseAddress(UserAddressViewModel vm)
+    {
+        if (vm.SelectedAddressId == null)
+        {
+            // Ingen valgt – gå tilbake med feilmelding
+            ModelState.AddModelError(nameof(vm.SelectedAddressId), "Velg en adresse.");
+            return RedirectToAction(nameof(Address));
+        }
 
+        var selectedId = vm.SelectedAddressId.Value;
+
+        
+        return NoContent();
+    }
+    
+    public async Task<IActionResult> Shipping(){
+        ViewBag.Step = CheckoutStep.Shipping;
+        
+        return View();
+    }
+    
+    public async Task<IActionResult> Payment(){
+        ViewBag.Step = CheckoutStep.Payment;
+        
+        return View();
+    }
+    
+    public async Task<IActionResult> Complete(){
+        ViewBag.Step = CheckoutStep.Complete;
+        return View();
+    }
+    
+    public async Task<IActionResult> Orderss()
+    {
+        var orders = await _db.Orders
+            .Include(o => o.AspNetUsers)
+            .Include(o => o.UserAddress)
+            .Include(o => o.OrderProducts).ThenInclude(op => op.Product)
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+        return View(orders);
+    }
+
+}

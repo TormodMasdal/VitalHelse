@@ -4,15 +4,15 @@ using Newtonsoft.Json;
 
 namespace VitalHelse.Models;
 
-public class ShippingInformation
+public class UserAddress
 {
-    public ShippingInformation() {}
+    public UserAddress() {}
     
     public int Id { get; set; }
     public AspNetUsers? AspNetUsers { get; set; }
     
     // Gjorde den om slik at den kan være NULL foreløpig siden det funket ikke ellers
-    [StringLength(450)] public string? AspNetUsersId { get; set; } = null!;
+    [StringLength(450)] public string? AspNetUserId { get; set; } = null!;
     
     [Required]
     [StringLength(100)]
@@ -43,5 +43,4 @@ public class ShippingInformation
     [StringLength(4, MinimumLength = 4)]
     [Display(Name = "Postnummer")]
     public string PostalCode { get; set; } = string.Empty;
-    
 }

@@ -39,5 +39,5 @@ public class AspNetUsers : IdentityUser
     public ICollection<Address> Addresses { get; } = new List<Address>();
     
     
-    public ICollection<ShippingInformation> ShippingInformations { get; } = new List<ShippingInformation>();
+    public ICollection<UserAddress> UserAddresses { get; } = new List<UserAddress>();
 }

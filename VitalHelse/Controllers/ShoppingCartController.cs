@@ -20,24 +20,7 @@ public class ShoppingCartController : Controller
         _db = db;
         _userManager = userManager;
     }
-
-    // GET
-    public IActionResult Index()
-    {
-        // Finds the user id
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        // Query to get all items in the shopping cart
-        var items = _db.CartProducts
-            .Include(cp => cp.Product)
-            .Include(cp => cp.Product.ProductPictures)
-            .Include(cp => cp.AspNetUsers)
-            .Where(cp => cp.AspNetUsersId == userId)
-            .ToList();
-
-        // Returns the items to the view
-        return View(items);
-    }
+    
 
     [HttpDelete]
     [ValidateAntiForgeryToken]
@@ -57,7 +40,7 @@ public class ShoppingCartController : Controller
         // Save the changes
         await _db.SaveChangesAsync();
 
-        return RedirectToAction("Index");
+        return NoContent();
     }
 
     [HttpPatch]
@@ -85,7 +68,7 @@ public class ShoppingCartController : Controller
             await _db.SaveChangesAsync();
         }
 
-        return RedirectToAction("Index");
+        return NoContent();
     }
 
     [HttpPatch]
@@ -109,8 +92,8 @@ public class ShoppingCartController : Controller
         // Decrease the quantity by one
         shoppingCart.Quantity -= 1;
         await _db.SaveChangesAsync();
-
-        return RedirectToAction("Index");
+        
+        return NoContent();
     }
     
     [HttpPatch]
@@ -200,115 +183,4 @@ public class ShoppingCartController : Controller
         // Dont change the view
         return NoContent();
     }
-    
-    [HttpGet]
-    public async Task<IActionResult> Summary()
-    {
-        // Fetch the user id
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
-        // Get all the items in the shopping cart
-        var items = await _db.CartProducts
-            .Include(cp => cp.Product)
-            .Include(cp => cp.AspNetUsers)
-            .Where(cp => cp.AspNetUsersId == userId)
-            .ToListAsync();
-        
-        // If shopping cart is empty then return 0 values
-        if (!items.Any())
-        {
-            return Json(new { sumProducts = 0, sumBefore = 0, discount = 0, shipping = 0, total = 0 });
-        }
-        
-        // midlertidig bruk av decimal pga mulige endringer i modellen 
-        
-        decimal sumBefore = items.Sum(i => (decimal)i.Product.ProductPriceInVAT * i.Quantity);
-        decimal sumProducts = items.Sum(i => (decimal)(i.Product.ProductCampaignPrice ?? i.Product.ProductPriceInVAT) * i.Quantity);
-        decimal discount = sumBefore - sumProducts;
-        decimal shipping = 0; 
-        decimal total= sumProducts + shipping;
-
-        // Return all the values as JSON
-        return Json(new { sumProducts, sumBefore, discount, shipping, total });
-    }    
-    
-    public async Task<IActionResult> Shipping(){
-        return View();
-    }
-    
-    public async Task<IActionResult> Review(){
-        return View();
-    }
-    
-    public async Task<IActionResult> Complete(){
-        return View();
-    }
-    
-    [HttpGet]
-    public async Task<IActionResult> Address()
-    {
-        // Fetch the user id
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        // Query to get all the users Addresses
-        var list = await _db.Addresses
-            .Where(a => a.AspNetUsersId == userId)
-            .OrderByDescending(a => a.AddressId)
-            .ToListAsync();
-
-        // Add the addresses in a Viewbag
-        ViewBag.Addresses = list;
-        // Decide which address is going to be selected, if SelectedAddressId exists then use, if not use the first in the list
-        ViewBag.SelectedAddressId = (TempData["SelectedAddressId"] as int?) ?? list.FirstOrDefault()?.AddressId;
-
-        return View("Address", new Address());
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddAddress([Bind("Street,City,PostalCode")] Address form)
-    {
-        // Fetch the user id
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        // Check if model is valid
-        if (!ModelState.IsValid)
-        {
-            ViewBag.Addresses = await _db.Addresses
-                .Where(a => a.AspNetUsersId == userId)
-                .OrderByDescending(a => a.AddressId)
-                .ToListAsync();
-            
-            return View("Address", form);
-        }
-        
-        form.AspNetUsersId = userId;
-        
-        _db.Add(form);
-        await _db.SaveChangesAsync();
-
-        TempData["SelectedAddressId"] = form.AddressId;
-        return RedirectToAction(nameof(Address));
-    }
-
-    public async Task<IActionResult> ShippingInformation()
-    {
-        return View();
-    }
-    
-    public async Task<IActionResult> AddShippingInformation()
-    {
-        
-        // Fetch the user id
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        // Query to get all the users Addresses
-        var list = await _db.ShippingInformations
-            .Where(a => a.AspNetUsersId == userId)
-            .OrderByDescending(a => a.Id)
-            .ToListAsync();
-        
-        return View();
-    }
-    
 }
