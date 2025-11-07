@@ -1,0 +1,92 @@
+@model List<VitalHelse.Models.UserRoleViewModel>
+
+@{
+    ViewData["Title"] = "Administrer Brukere";
+    Layout = "_AdminLayout";
+
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Administrer Brukere & Roller</h2>
+        <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Tilbake
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="product-grid">
+            @foreach (var user in Model)
+            {
+                <div class="product-card">
+                    <div class="admin-product-actions">
+                        <a asp-controller="UserManagement" asp-action="EditRoles" asp-route-id="@user.UserId" class="btn-edit">
+                            <i class="fas fa-edit"></i> Rediger
+                        </a>
+                    </div>
+
+                    <div class="text-center mb-3">
+                        <i class="fas fa-user-circle fa-5x text-secondary"></i>
+                    </div>
+
+                    <h5 class="text-center">@user.Email</h5>
+
+                    <div class="text-center mt-3">
+                        @if (user.CurrentRoles.Any())
+                        {
+                            @foreach (var role in user.CurrentRoles)
+                            {
+                                <span class="badge bg-primary me-1 mb-1">@role</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Ingen roller</span>
+                        }
+                    </div>
+
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">Bruker ID: @user.UserId.Substring(0, 8)...</small>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted text-center mt-4">Ingen brukere funnet.</p>
+    }
+</div>
+
+<style>
+    .admin-product-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+    }
+
+    .btn-edit {
+        background-color: rgba(13, 110, 253, 0.9);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: background-color 0.2s;
+    }
+
+    .btn-edit:hover {
+        background-color: rgba(13, 110, 253, 1);
+        color: white;
+    }
+</style>
