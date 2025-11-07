@@ -1,0 +1,101 @@
+@model VitalHelse.Models.AddUserViewModel
+
+@{
+    ViewData["Title"] = "Legg til ny bruker";
+    Layout = "_AdminLayout";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Legg til ny bruker</h4>
+                    <a asp-action="Index" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Tilbake
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <form asp-action="AddUser" method="post">
+                        <div class="row">
+                            <!-- Email -->
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="Email" class="form-label">E-postadresse</label>
+                                <input asp-for="Email" class="form-control" placeholder="bruker@vitalhelse.no" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Password" class="form-label">Passord</label>
+                                <input asp-for="Password" class="form-control" placeholder="Minimum 6 tegn" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ConfirmPassword" class="form-label">Bekreft passord</label>
+                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Gjenta passord" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Roles -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tildel roller:</label>
+                            <div class="form-text mb-2">
+                                Velg hvilke(n) rolle(r) den nye brukeren skal ha
+                            </div>
+                            @for (int i = 0; i < Model.Roles.Count; i++)
+                            {
+                                <div class="form-check">
+                                    <input type="hidden" asp-for="Roles[i].RoleName" />
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           asp-for="Roles[i].IsSelected" 
+                                           id="role_@i" />
+                                    <label class="form-check-label" for="role_@i">
+                                        @Model.Roles[i].RoleName
+                                    </label>
+                                </div>
+                            }
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-user-plus"></i> Opprett bruker
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Avbryt
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Password requirements info -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-info-circle"></i> Passordkrav
+                    </h6>
+                    <ul class="mb-0">
+                        <li>Minimum 6 tegn</li>
+                        <li>Brukeren kan endre passordet etter første pålogging</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -5,7 +5,11 @@
     Layout = "_AdminLayout";
 
 }
-
+<div class="container-fluid">
+    <a asp-controller="UserManagement" asp-action="AddUser" class="btn-edit employee-add-button">
+        <i class="fas "></i> Legg Til Bruker
+    </a>
+</div>
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Administrer Brukere & Roller</h2>
@@ -29,7 +33,7 @@
             {
                 <div class="product-card">
                     <div class="admin-product-actions">
-                        <a asp-controller="UserManagement" asp-action="EditRoles" asp-route-id="@user.UserId" class="btn-edit">
+                        <a asp-controller="UserManagement" asp-action="EditRoles" asp-route-id="@user.UserId" class="btn-edit employee-edit-button">
                             <i class="fas fa-edit"></i> Rediger
                         </a>
                     </div>
@@ -88,5 +92,9 @@
     .btn-edit:hover {
         background-color: rgba(13, 110, 253, 1);
         color: white;
+    }
+    
+    .employee-edit-button {
+       background-color: #C7A47A;
     }
 </style>

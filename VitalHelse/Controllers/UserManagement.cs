@@ -88,7 +88,6 @@ public class UserManagementController : Controller
         var selectedRoles = model.Roles.Where(r => r.IsSelected).Select(r => r.RoleName).ToList();
         Console.WriteLine($"Selected roles: {string.Join(", ", selectedRoles)}");
 
-        // Remove roles
         var rolesToRemove = userRoles.Except(selectedRoles).ToList();
         if (rolesToRemove.Any())
         {
@@ -96,7 +95,6 @@ public class UserManagementController : Controller
             await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
         }
 
-        // Add roles
         var rolesToAdd = selectedRoles.Except(userRoles).ToList();
         if (rolesToAdd.Any())
         {
@@ -106,6 +104,90 @@ public class UserManagementController : Controller
 
         Console.WriteLine("Changes saved!");
         TempData["Success"] = $"Roller oppdatert for {user.Email}";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet("AddUser")]
+    public async Task<IActionResult> AddUser()
+    {
+        var allRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+        
+        var model = new AddUserViewModel
+        {
+            Roles = allRoles.Select(role => new RoleSelection
+            {
+                RoleName = role,
+                IsSelected = false
+            }).ToList()
+        };
+        
+        return View("~/Views/Admin/UserManagement/AddUser.cshtml",model);
+    }
+
+    [HttpPost("AddUser")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddUser(AddUserViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var allRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            model.Roles = allRoles.Select(role => new RoleSelection
+            {
+                RoleName = role,
+                IsSelected = model.Roles?.Any(r => r.RoleName == role && r.IsSelected) ?? false
+            }).ToList();
+            
+            return View("~/Views/Admin/UserManagement/AddUser.cshtml", model);
+        }
+
+        var existingUser = await _userManager.FindByEmailAsync(model.Email);
+        if (existingUser != null)
+        {
+            ModelState.AddModelError("Email", "En bruker med denne e-postadressen finnes allerede");
+            
+            var allRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            model.Roles = allRoles.Select(role => new RoleSelection
+            {
+                RoleName = role,
+                IsSelected = model.Roles?.Any(r => r.RoleName == role && r.IsSelected) ?? false
+            }).ToList();
+            
+            return View("~/Views/Admin/UserManagement/AddUser.cshtml", model);
+        }
+
+        var newUser = new AspNetUsers
+        {
+            UserName = model.Email,
+            Email = model.Email,
+            EmailConfirmed = true  
+        };
+
+        var createResult = await _userManager.CreateAsync(newUser, model.Password);
+
+        if (!createResult.Succeeded)
+        {
+            foreach (var error in createResult.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+            
+            var allRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            model.Roles = allRoles.Select(role => new RoleSelection
+            {
+                RoleName = role,
+                IsSelected = model.Roles?.Any(r => r.RoleName == role && r.IsSelected) ?? false
+            }).ToList();
+            
+            return View(model);
+        }
+
+        var selectedRoles = model.Roles.Where(r => r.IsSelected).Select(r => r.RoleName).ToList();
+        if (selectedRoles.Any())
+        {
+            await _userManager.AddToRolesAsync(newUser, selectedRoles);
+        }
+
+        TempData["Success"] = $"Bruker {model.Email} ble opprettet med {selectedRoles.Count} rolle(r)";
         return RedirectToAction(nameof(Index));
     }
 }
