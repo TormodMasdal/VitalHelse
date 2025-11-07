@@ -8,72 +8,118 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Legg til ny bruker</h4>
-                    <a asp-action="Index" class="btn btn-sm btn-secondary">
+            <div class="card adduser-main-card">
+                <div class="card-header adduser-header-section">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Legg til ny bruker
+                    </h4>
+                    <a asp-action="Index" class="adduser-back-button">
                         <i class="fas fa-arrow-left"></i> Tilbake
                     </a>
                 </div>
-                <div class="card-body">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <div class="card-body p-4">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger adduser-validation-alert"></div>
 
                     <form asp-action="AddUser" method="post">
-                        <div class="row">
-                            <!-- Email -->
-                            <div class="col-md-12 mb-3">
-                                <label asp-for="Email" class="form-label">E-postadresse</label>
-                                <input asp-for="Email" class="form-control" placeholder="bruker@vitalhelse.no" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-
-                            <!-- Password -->
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Password" class="form-label">Passord</label>
-                                <input asp-for="Password" class="form-control" placeholder="Minimum 6 tegn" />
-                                <span asp-validation-for="Password" class="text-danger"></span>
-                            </div>
-
-                            <!-- Confirm Password -->
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="ConfirmPassword" class="form-label">Bekreft passord</label>
-                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Gjenta passord" />
-                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <hr class="my-4" />
-
-                        <!-- Roles -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Tildel roller:</label>
-                            <div class="form-text mb-2">
-                                Velg hvilke(n) rolle(r) den nye brukeren skal ha
-                            </div>
-                            @for (int i = 0; i < Model.Roles.Count; i++)
-                            {
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="Roles[i].RoleName" />
-                                    <input class="form-check-input" 
-                                           type="checkbox" 
-                                           asp-for="Roles[i].IsSelected" 
-                                           id="role_@i" />
-                                    <label class="form-check-label" for="role_@i">
-                                        @Model.Roles[i].RoleName
-                                    </label>
+                        <div class="adduser-form-section">
+                            <h6 class="adduser-section-title">
+                                <i class="fas fa-user-circle me-2"></i>
+                                Brukerinformasjon
+                            </h6>
+                            
+                            <div class="row">
+                                <!-- Email -->
+                                <div class="col-md-12 mb-3">
+                                    <label asp-for="Email" class="form-label">E-postadresse *</label>
+                                    <div class="adduser-input-wrapper">
+                                        <i class="fas fa-envelope adduser-input-icon"></i>
+                                        <input asp-for="Email" class="form-control adduser-input-field" placeholder="bruker@vitalhelse.no" />
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
                                 </div>
-                            }
+                            </div>
                         </div>
 
-                        <hr class="my-4" />
+                        <div class="adduser-form-section">
+                            <h6 class="adduser-section-title">
+                                <i class="fas fa-lock me-2"></i>
+                                Sikkerhetsinnstillinger
+                            </h6>
+                            
+                            <div class="row">
+                                <!-- Password -->
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Password" class="form-label">Passord *</label>
+                                    <div class="adduser-input-wrapper">
+                                        <i class="fas fa-key adduser-input-icon"></i>
+                                        <input asp-for="Password" class="form-control adduser-input-field" placeholder="••••••••" />
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ConfirmPassword" class="form-label">Bekreft passord *</label>
+                                    <div class="adduser-input-wrapper">
+                                        <i class="fas fa-check-circle adduser-input-icon"></i>
+                                        <input asp-for="ConfirmPassword" class="form-control adduser-input-field" placeholder="••••••••" />
+                                    </div>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="adduser-form-section">
+                            <h6 class="adduser-section-title">
+                                <i class="fas fa-user-tag me-2"></i>
+                                Rolletildeling
+                            </h6>
+                            
+                            <p class="adduser-section-description">
+                                Velg hvilken rolle(r) den nye brukeren skal ha. Rollene bestemmer tilgangsnivået i systemet.
+                            </p>
+                            
+                            <div class="adduser-roles-container">
+                                @for (int i = 0; i < Model.Roles.Count; i++)
+                                {
+                                    <div class="adduser-role-checkbox-wrapper">
+                                        <input type="hidden" asp-for="Roles[i].RoleName" />
+                                        <input class="form-check-input adduser-role-checkbox-input" 
+                                               type="checkbox" 
+                                               asp-for="Roles[i].IsSelected" 
+                                               id="role_@i" />
+                                        <label class="form-check-label adduser-role-checkbox-label" for="role_@i">
+                                            <span class="adduser-role-name">@Model.Roles[i].RoleName</span>
+                                            <span class="adduser-role-description">
+                                                @switch (Model.Roles[i].RoleName)
+                                                {
+                                                    case "Admin":
+                                                        <small class="text-muted">Full tilgang</small>
+                                                        break;
+                                                    case "Staff":
+                                                        <small class="text-muted">Ansatt tilgang</small>
+                                                        break;
+                                                    case "BusinessCustomer":
+                                                        <small class="text-muted">Bedriftskunde</small>
+                                                        break;
+                                                }
+                                            </span>
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
 
                         <!-- Buttons -->
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-user-plus"></i> Opprett bruker
+                        <div class="adduser-action-buttons">
+                            <button type="submit" class="adduser-submit-button">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Opprett bruker
                             </button>
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Avbryt
+                            <a asp-action="Index" class="adduser-cancel-button">
+                                <i class="fas fa-times me-2"></i>
+                                Avbryt
                             </a>
                         </div>
                     </form>
@@ -81,20 +127,281 @@
             </div>
 
             <!-- Password requirements info -->
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h6 class="card-title">
-                        <i class="fas fa-info-circle"></i> Passordkrav
-                    </h6>
-                    <ul class="mb-0">
-                        <li>Minimum 6 tegn</li>
-                        <li>Brukeren kan endre passordet etter første pålogging</li>
+            <div class="adduser-info-card">
+                <div class="adduser-info-card-header">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Passordkrav og informasjon
+                </div>
+                <div class="adduser-info-card-body">
+                    <ul class="adduser-info-list">
+                        <li><i class="fas fa-check-circle text-success me-2"></i>Minimum 6 tegn</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i>Brukeren kan endre passordet etter første pålogging</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i>E-posten blir automatisk bekreftet</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Main card styling */
+    .adduser-main-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .adduser-header-section {
+        background: linear-gradient(135deg, #C7A47A 0%, #b89563 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+    }
+
+    .adduser-header-section h4 {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .adduser-back-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .adduser-back-button:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    /* Form sections */
+    .adduser-form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .adduser-form-section:last-of-type {
+        border-bottom: none;
+    }
+
+    .adduser-section-title {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        margin-left: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .adduser-section-title i {
+        color: #C7A47A;
+    }
+
+    .adduser-section-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        padding-left: 0.5rem;
+    }
+
+    /* Input styling */
+    .adduser-input-wrapper {
+        position: relative;
+    }
+
+    .adduser-input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #C7A47A;
+        z-index: 10;
+    }
+
+    .adduser-input-field {
+        padding-left: 2.75rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .adduser-input-field:focus {
+        border-color: #C7A47A;
+        box-shadow: 0 0 0 0.2rem rgba(199, 164, 122, 0.15);
+    }
+
+    .adduser-input-field::placeholder {
+        color: #adb5bd;
+    }
+
+    /* Roles container and checkbox styling */
+    .adduser-roles-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .adduser-role-checkbox-wrapper {
+        background-color: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .adduser-role-checkbox-wrapper:hover {
+        background-color: #fff;
+        border-color: #C7A47A;
+        transform: translateX(4px);
+        box-shadow: 0 2px 8px rgba(199, 164, 122, 0.1);
+    }
+
+    .adduser-role-checkbox-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+        border: 2px solid #C7A47A;
+    }
+
+    .adduser-role-checkbox-input:checked {
+        background-color: #C7A47A;
+        border-color: #C7A47A;
+    }
+
+    .adduser-role-checkbox-label {
+        cursor: pointer;
+        margin-bottom: 0;
+        margin-left: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .adduser-role-name {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .adduser-role-description small {
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    /* Form action buttons */
+    .adduser-action-buttons {
+        display: flex;
+        gap: 1rem;
+        padding-top: 1rem;
+        justify-content: center;
+    }
+
+    .adduser-submit-button {
+        background: linear-gradient(135deg, #C7A47A 0%, #b89563 100%);
+        align-content: center;
+        color: white;
+        border: none;
+        padding: 0.875rem 2.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(199, 164, 122, 0.3);
+    }
+
+    .adduser-submit-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(199, 164, 122, 0.4);
+    }
+
+    .adduser-submit-button:active {
+        transform: translateY(0);
+    }
+
+    .adduser-cancel-button {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 1rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .adduser-cancel-button:hover {
+        background-color: #5a6268;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+
+    /* Info card styling */
+    .adduser-info-card {
+        margin-top: 1.5rem;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid #e3f2fd;
+        background-color: #fff;
+    }
+
+    .adduser-info-card-header {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #1976d2;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .adduser-info-card-body {
+        padding: 1.5rem;
+    }
+
+    .adduser-info-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .adduser-info-list li {
+        padding: 0.5rem 0;
+        color: #495057;
+        display: flex;
+        align-items: center;
+    }
+
+    .adduser-info-list li i {
+        font-size: 0.875rem;
+    }
+
+    /* Validation alert */
+    .adduser-validation-alert {
+        border-radius: 8px;
+        border-left: 4px solid #dc3545;
+    }
+
+   
+</style>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

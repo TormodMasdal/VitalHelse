@@ -69,10 +69,6 @@ public class UserManagementController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateRoles(EditUserRolesViewModel model)
     {
-        Console.WriteLine("=== POST UpdateRoles Called ===");
-        Console.WriteLine($"UserId: {model?.UserId}");
-        Console.WriteLine($"Email: {model?.Email}");
-            
         var user = await _userManager.FindByIdAsync(model.UserId);
         if (user == null)
         {
@@ -91,18 +87,18 @@ public class UserManagementController : Controller
         var rolesToRemove = userRoles.Except(selectedRoles).ToList();
         if (rolesToRemove.Any())
         {
-            Console.WriteLine($"Removing: {string.Join(", ", rolesToRemove)}");
+            //Console.WriteLine($"Removing: {string.Join(", ", rolesToRemove)}");
             await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
         }
 
         var rolesToAdd = selectedRoles.Except(userRoles).ToList();
         if (rolesToAdd.Any())
         {
-            Console.WriteLine($"Adding: {string.Join(", ", rolesToAdd)}");
+            //Console.WriteLine($"Adding: {string.Join(", ", rolesToAdd)}");
             await _userManager.AddToRolesAsync(user, rolesToAdd);
         }
 
-        Console.WriteLine("Changes saved!");
+        //Console.WriteLine("Changes saved!");
         TempData["Success"] = $"Roller oppdatert for {user.Email}";
         return RedirectToAction(nameof(Index));
     }
