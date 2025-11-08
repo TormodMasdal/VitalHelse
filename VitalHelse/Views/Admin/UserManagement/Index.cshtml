@@ -21,10 +21,12 @@ Layout = "_AdminLayout";
 
     @if (TempData["Success"] != null)
     {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+        <div class="alert alert-success alert-dismissible fade show index-role-updated" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <i class="fas fa-times index-role-updated-x-icon"></i>
+            </button>
+        </div>
     }
 
     @if (Model != null && Model.Any())
@@ -141,7 +143,19 @@ Layout = "_AdminLayout";
         box-shadow: 0 2px 8px rgba(199, 164, 122, 0.3);
     }
 
-    /* Ensure gap works */
+    .index-role-updated {
+        margin-top: 2rem;
+    }
+    .index-role-updated-x-icon {
+        opacity: 1;
+        transition: all 0.1s ease;
+      
+    }
+    .index-role-updated-x-icon:hover {
+        color: #ff0101;
+        transform: rotate(90deg);
+    }
+    
     .d-flex.gap-3 > * + * {
         margin-left: 1rem;
     }

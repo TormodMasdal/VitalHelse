@@ -23,10 +23,10 @@
 
                     <form asp-action="AddUser" method="post">
                         <div class="adduser-form-section">
-                            <h6 class="adduser-section-title">
+                            <h5 class="adduser-section-title">
                                 <i class="fas fa-user-circle me-2"></i>
                                 Brukerinformasjon
-                            </h6>
+                            </h5>
                             
                             <div class="row">
                                 <!-- Email -->
@@ -36,45 +36,45 @@
                                         <i class="fas fa-envelope adduser-input-icon"></i>
                                         <input asp-for="Email" class="form-control adduser-input-field" placeholder="bruker@vitalhelse.no" />
                                     </div>
-                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                    <span asp-validation-for="Email" class="text-danger small add-user-error"></span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="adduser-form-section">
-                            <h6 class="adduser-section-title">
+                            <h5 class="adduser-section-title">
                                 <i class="fas fa-lock me-2"></i>
                                 Sikkerhetsinnstillinger
-                            </h6>
+                            </h5>
                             
                             <div class="row">
                                 <!-- Password -->
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="Password" class="form-label">Passord *</label>
-                                    <div class="adduser-input-wrapper">
+                                    <label asp-for="Password" class="form-label mb-3">Passord *</label>
+                                    <div class="adduser-input-wrapper mb-3">
                                         <i class="fas fa-key adduser-input-icon"></i>
                                         <input asp-for="Password" class="form-control adduser-input-field" placeholder="••••••••" />
                                     </div>
-                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                    <span asp-validation-for="Password" class="text-danger small add-user-error"></span>
                                 </div>
 
                                 <!-- Confirm Password -->
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="ConfirmPassword" class="form-label">Bekreft passord *</label>
-                                    <div class="adduser-input-wrapper">
+                                    <label asp-for="ConfirmPassword" class="form-label mb-3">Bekreft passord *</label>
+                                    <div class="adduser-input-wrapper mb-3">
                                         <i class="fas fa-check-circle adduser-input-icon"></i>
                                         <input asp-for="ConfirmPassword" class="form-control adduser-input-field" placeholder="••••••••" />
                                     </div>
-                                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small add-user-error"></span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="adduser-form-section">
-                            <h6 class="adduser-section-title">
+                            <h5 class="adduser-section-title">
                                 <i class="fas fa-user-tag me-2"></i>
                                 Rolletildeling
-                            </h6>
+                            </h5>
                             
                             <p class="adduser-section-description">
                                 Velg hvilken rolle(r) den nye brukeren skal ha. Rollene bestemmer tilgangsnivået i systemet.
@@ -162,11 +162,14 @@
         align-items: center;
         border: none;
     }
+  
 
     .adduser-header-section h4 {
         font-weight: 600;
         display: flex;
         align-items: center;
+        gap: 1rem;
+
     }
 
     .adduser-back-button {
@@ -188,9 +191,9 @@
 
     /* Form sections */
     .adduser-form-section {
-        margin-bottom: 2rem;
         padding-bottom: 2rem;
         border-bottom: 1px solid #e9ecef;
+        align-content: center;
     }
 
     .adduser-form-section:last-of-type {
@@ -204,6 +207,7 @@
         margin-left: 0.5rem;
         display: flex;
         align-items: center;
+        gap: 1rem;
     }
 
     .adduser-section-title i {
@@ -220,10 +224,15 @@
     /* Input styling */
     .adduser-input-wrapper {
         position: relative;
+        height: 3rem;
+        border-radius: 8px;
+        align-items: center;
+        gap: 1rem;
     }
 
     .adduser-input-icon {
         position: absolute;
+        height: 2rem;
         left: 1rem;
         top: 50%;
         transform: translateY(-50%);
@@ -232,8 +241,8 @@
     }
 
     .adduser-input-field {
-        padding-left: 2.75rem;
         border: 2px solid #e9ecef;
+        margin-top: 0.5rem;
         border-radius: 8px;
         transition: all 0.3s ease;
         font-size: 0.95rem;
@@ -262,12 +271,15 @@
         padding: 1rem 1.25rem;
         transition: all 0.3s ease;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center; 
+        gap: 0.75rem; 
     }
 
     .adduser-role-checkbox-wrapper:hover {
         background-color: #fff;
         border-color: #C7A47A;
-        transform: translateX(4px);
+        transform: translateY(-4px);
         box-shadow: 0 2px 8px rgba(199, 164, 122, 0.1);
     }
 
@@ -276,6 +288,7 @@
         height: 1.25rem;
         cursor: pointer;
         border: 2px solid #C7A47A;
+        flex-shrink: 0;
     }
 
     .adduser-role-checkbox-input:checked {
@@ -286,7 +299,7 @@
     .adduser-role-checkbox-label {
         cursor: pointer;
         margin-bottom: 0;
-        margin-left: 0.5rem;
+        margin-left: 0; 
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -296,6 +309,7 @@
     .adduser-role-name {
         font-weight: 500;
         color: #2c3e50;
+        
     }
 
     .adduser-role-description small {
@@ -323,6 +337,7 @@
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 4px 12px rgba(199, 164, 122, 0.3);
+        margin-bottom: 1rem;
     }
 
     .adduser-submit-button:hover {
@@ -336,16 +351,17 @@
 
     .adduser-cancel-button {
         background-color: #6c757d;
+        align-content: center;
         color: white;
         border: none;
-        padding: 0.875rem 2rem;
+        padding: 0.875rem 2.5rem;
         border-radius: 8px;
-        font-weight: 500;
+        font-weight: 600;
         font-size: 1rem;
-        text-decoration: none;
         cursor: pointer;
         transition: all 0.3s ease;
-        display: inline-block;
+        box-shadow: 0 4px 12px rgba(199, 164, 122, 0.3);
+        margin-bottom: 1rem;
     }
 
     .adduser-cancel-button:hover {
@@ -371,10 +387,12 @@
         font-weight: 600;
         display: flex;
         align-items: center;
+        gap: 1rem;
     }
 
-    .adduser-info-card-body {
+    .adduser-info-card-body li {
         padding: 1.5rem;
+        gap: 1rem;
     }
 
     .adduser-info-list {
@@ -388,6 +406,9 @@
         color: #495057;
         display: flex;
         align-items: center;
+        gap: 0.5rem;
+        margin-left: 1.5rem;
+
     }
 
     .adduser-info-list li i {
@@ -399,7 +420,11 @@
         border-radius: 8px;
         border-left: 4px solid #dc3545;
     }
-
+    
+    .add-user-error {
+        color: #dc3545;
+        margin-bottom: 0.5rem;
+    }
    
 </style>
 

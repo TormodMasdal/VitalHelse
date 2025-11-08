@@ -3,49 +3,81 @@
 @{
     ViewData["Title"] = "Rediger Roller";
     Layout = "_AdminLayout";
-
 }
 
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0">Rediger Roller</h4>
+            <div class="card editroles-main-card">
+                <div class="card-header editroles-header-section">
+                    <h4 class="mb-0 editroles-header-title">
+                        <i class="fas fa-user-edit me-2"></i>
+                        Rediger Roller
+                    </h4>
+                    <a asp-action="Index" class="edituser-back-button">
+                        <i class="fas fa-arrow-left"></i> Tilbake
+                    </a>
                 </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-user-circle fa-5x text-secondary"></i>
-                        <h5 class="mt-3">@Model.Email</h5>
+                <div class="card-body editroles-card-body">
+                    <!-- User Profile Section -->
+                    <div class="editroles-user-profile">
+                        <div class="editroles-avatar-circle">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <h5 class="editroles-user-email">@Model.Email</h5>
                     </div>
 
                     <form asp-controller="UserManagement" asp-action="UpdateRoles" method="post">
                         <input type="hidden" asp-for="UserId" />
                         <input type="hidden" asp-for="Email" />
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Velg roller:</label>
-                            @for (int i = 0; i < Model.Roles.Count; i++)
-                            {
-                                <div class="form-check">
-                                    <input type="hidden" asp-for="Roles[i].RoleName" />
-                                    <input class="form-check-input" 
-                                           type="checkbox" 
-                                           asp-for="Roles[i].IsSelected" 
-                                           id="role_@i" />
-                                    <label class="form-check-label" for="role_@i">
-                                        @Model.Roles[i].RoleName
-                                    </label>
-                                </div>
-                            }
+                        <!-- Roles Section -->
+                        <div class="editroles-form-section">
+                            <label class="editroles-section-label">
+                                <i class="fas fa-user-tag me-2"></i>
+                                Velg roller:
+                            </label>
+                            
+                            <div class="editroles-roles-container">
+                                @for (int i = 0; i < Model.Roles.Count; i++)
+                                {
+                                    <div class="editroles-role-item">
+                                        <input type="hidden" asp-for="Roles[i].RoleName" />
+                                        <input class="form-check-input editroles-checkbox" 
+                                               type="checkbox" 
+                                               asp-for="Roles[i].IsSelected" 
+                                               id="role_@i" />
+                                        <label class="editroles-role-label" for="role_@i">
+                                            <span class="editroles-role-name">@Model.Roles[i].RoleName</span>
+                                            <span class="editroles-role-badge">
+                                                @switch (Model.Roles[i].RoleName)
+                                                {
+                                                    case "Admin":
+                                                        <small>Full tilgang</small>
+                                                        break;
+                                                    case "Staff":
+                                                        <small>Ansatt</small>
+                                                        break;
+                                                    case "BusinessCustomer":
+                                                        <small>Bedriftskunde</small>
+                                                        break;
+                                                }
+                                            </span>
+                                        </label>
+                                    </div>
+                                }
+                            </div>
                         </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Lagre
+                        <!-- Action Buttons -->
+                        <div class="editroles-action-buttons">
+                            <button type="submit" class="editroles-save-button">
+                                <i class="fas fa-save me-2"></i>
+                                Lagre
                             </button>
-                            <a asp-controller="UserManagement" asp-action="Index" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Avbryt
+                            <a asp-controller="UserManagement" asp-action="Index" class="editroles-cancel-button">
+                                <i class="fas fa-times me-2"></i>
+                                Avbryt
                             </a>
                         </div>
                     </form>
@@ -54,3 +86,230 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Main card styling */
+    .editroles-main-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+   
+
+    /* Header section */
+    .editroles-header-section {
+        background: linear-gradient(135deg, #C7A47A 0%, #b89563 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+    }
+
+    .editroles-header-title {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .edituser-back-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Card body */
+    .editroles-card-body {
+        padding: 2rem;
+    }
+
+    /* User profile section */
+    .editroles-user-profile {
+        text-align: center;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #f8f9fa;
+    }
+
+    .editroles-avatar-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .editroles-avatar-circle i {
+        font-size: 4rem;
+        color: #C7A47A;
+    }
+
+    .editroles-user-email {
+        color: #2c3e50;
+        font-weight: 500;
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    /* Form section */
+    .editroles-form-section {
+        margin-bottom: 2rem;
+    }
+
+    .editroles-section-label {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .editroles-section-label i {
+        color: #C7A47A;
+    }
+
+    /* Roles container */
+    .editroles-roles-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .editroles-role-item {
+        background-color: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.9rem 1.1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .editroles-role-item:hover {
+        background-color: #fff;
+        border-color: #C7A47A;
+        transform: translateX(4px);
+        box-shadow: 0 2px 8px rgba(199, 164, 122, 0.15);
+    }
+
+    /* Checkbox styling */
+    .editroles-checkbox {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+        border: 2px solid #C7A47A;
+        flex-shrink: 0;
+    }
+
+    .editroles-checkbox:checked {
+        background-color: #C7A47A;
+        border-color: #C7A47A;
+    }
+
+    .editroles-checkbox:focus {
+        border-color: #C7A47A;
+        box-shadow: 0 0 0 0.2rem rgba(199, 164, 122, 0.25);
+    }
+
+    /* Role label */
+    .editroles-role-label {
+        cursor: pointer;
+        margin: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .editroles-role-name {
+        font-weight: 500;
+        color: #2c3e50;
+        font-size: 0.95rem;
+    }
+
+    .editroles-role-badge {
+        background-color: #e9ecef;
+        color: #6c757d;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-style: italic;
+    }
+
+    .editroles-role-item:hover .editroles-role-badge {
+        background-color: #fff4e6;
+        color: #C7A47A;
+    }
+
+    /* Action buttons */
+    .editroles-action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        padding-top: 1rem;
+    }
+
+    .editroles-save-button {
+        background: linear-gradient(135deg, #C7A47A 0%, #b89563 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(199, 164, 122, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .editroles-save-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(199, 164, 122, 0.4);
+    }
+
+    .editroles-save-button:active {
+        transform: translateY(0);
+    }
+
+    .editroles-cancel-button {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .editroles-cancel-button:hover {
+        background-color: #5a6268;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+    
+</style>
