@@ -70,6 +70,7 @@
         <p class="mt-3"> @Model.CurrentProduct.ProductDescription</p>
         
         <div class="text-center mt-2">
+            @Html.AntiForgeryToken()
             <button type="button" class="btn btn-outline-dark w-100" onclick="AddToCart(@Model.CurrentProduct.ProductId)"> Legg i handlekurv </button>
             <div id="error-box" style="color:red; font-weight:bold; margin-top:10px;"></div>
         </div>
