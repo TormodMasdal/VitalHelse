@@ -127,8 +127,7 @@
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privat</a>
                     </li>-->
                     
-                    @foreach (var cat in topCategories)
-                    {
+                    @foreach (var cat in topCategories) {
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["categoryPath"]?.ToString()?.ToLower() == cat.CategoryName.ToLower() ? "active" : "")"
                                href="/produkt/@cat.CategoryName">
@@ -137,7 +136,13 @@
                         </li>
                     }
                     
-                
+                    @if (User.IsInRole("Admin")) {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Admin</a>
+                        </li>
+                    }
+                    
+                    <partial name="_LoginPartial"/>
                 </ul>
                 
             </div>

@@ -185,7 +185,8 @@ public static class TestData
                 ProductDescription = "Intensiv krem for ru og tørre hender og føtter – mykgjør og beskytter.",
                 LabelDescription = "Ekstra rik – Hender/Føtter",
                 ProductPictures = { new() { PicturePath = "/images/products/Hand & Foot Creme Extreme, 100 gr.png" } },
-                ProductCategories = { new() { Category = hudHender } }
+                ProductCategories = { new() { Category = hudHender } },
+                ProductVisibility = true
             },
             new()
             {
