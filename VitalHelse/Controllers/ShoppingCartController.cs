@@ -85,7 +85,8 @@ public class ShoppingCartController : Controller
             await _db.SaveChangesAsync();
         }
 
-        return RedirectToAction("Index");
+        //return RedirectToAction("Index");
+        return NoContent();
     }
 
     [HttpPatch]
@@ -110,7 +111,8 @@ public class ShoppingCartController : Controller
         shoppingCart.Quantity -= 1;
         await _db.SaveChangesAsync();
 
-        return RedirectToAction("Index");
+        //return RedirectToAction("Index");
+        return NoContent();
     }
     
     [HttpPatch]
@@ -133,9 +135,9 @@ public class ShoppingCartController : Controller
         if (quantity <= 0)
             return BadRequest("Antall må være minst 1.");
         
-        /*// If quantity is more than stock then set quantity to stock 
-        if (quantity > shoppingCart.Product.StockCount)
-            quantity = shoppingCart.Product.StockCount;*/
+        // If quantity is more than stock then set quantity to stock 
+        if (quantity > shoppingCart.Product.StockCount.GetValueOrDefault())
+            quantity = shoppingCart.Product.StockCount.GetValueOrDefault();
         
         // Update the quantity 
         shoppingCart.Quantity = quantity;
@@ -147,7 +149,7 @@ public class ShoppingCartController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddToCart(int id)
+    public async Task<IActionResult> AddToCart(int id, int quantity)
     {
         // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -164,27 +166,40 @@ public class ShoppingCartController : Controller
 
         // The stock count has to be higher than 0 to add the item to cart.
         if (product.StockCount <= 0) return NoContent();
-
+        
         // If the item already exists in the shoppingcart increment the quantity.
         if (shoppingCart != null)
-        {
+        { 
+            var newQuantity = shoppingCart.Quantity + quantity;
+            if (newQuantity >= product.StockCount)
+            {
+                return BadRequest("Vi har desverre ikke dette antallet tilgjengelig på lager");
+            } 
+            
+            /*
             // If the quantity tries to go higher than the stock count
             if (shoppingCart.Quantity >= product.StockCount)
             {
                 // Returns a 400 bad request if the quantity is too low to use this function
-                return BadRequest("Vi har desverre ikke dette antaller tilgjengelig på lager");
-            }
+                return BadRequest("Vi har desverre ikke dette antallet tilgjengelig på lager");
+            } */
+            
+            shoppingCart.Quantity = newQuantity;
 
-            shoppingCart.Quantity += 1;
+           // shoppingCart.Quantity += 1; 
         }
 
         // If not. Create a new row and add the item
         else
         {
+            if (quantity > product.StockCount)
+                return BadRequest("Vi har desverre ikke dette antallet tilgjengelig på lager");
+            
             // Creates a new row
             CartProduct cartProduct = new CartProduct
             {
-                Quantity = 1,
+                Quantity = quantity,
+                //Quantity = 1,
                 AspNetUsersId = userId,
                 ProductId = id
             };
@@ -193,11 +208,12 @@ public class ShoppingCartController : Controller
         }
 
         await _db.SaveChangesAsync();
+        
 
         // Dont change the view
         return NoContent();
     }
-    
+        
     [HttpGet]
     public async Task<IActionResult> Summary()
     {

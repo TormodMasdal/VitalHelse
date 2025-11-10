@@ -24,16 +24,24 @@ async function removItemShoppingCart(productId) {
 }
 
 async function AddToCart(productId){
+    const quantityElement = document.getElementById(`quantity-${productId}`);
+    const quantity = quantityElement ? parseInt(quantityElement.value, 10) || 1:1;
     
     // Saves antiforgerytoken to protect against CSRF-attacks
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
+    const formData = new FormData();
+    formData.append("id", productId);
+    formData.append("quantity", quantity);
+    
     // Fetch the delete function from the controller
-   const response = await fetch(`/ShoppingCart/AddToCart/?id=${productId}`, {
+   //const response = await fetch(`/ShoppingCart/AddToCart/?id=${productId}&quantity=${quantity}`, {
+    const response = await fetch("/ShoppingCart/AddToCart", {
         method: 'POST',
         headers: {
             'RequestVerificationToken': token
-        }
+        },
+        body: formData
     });
 
     // Prints the error message if bad request is returned, and keeps it there for 3 seconds
@@ -51,33 +59,44 @@ const nok = new Intl.NumberFormat('no-NO', { style: 'currency', currency: 'NOK' 
 
 async function AddQuantity(productId, unitPrice) {
     const quantityElement = document.getElementById(`quantity-${productId}`);
+    if(!quantityElement) return; // if element does not exist
+    
     const totalElement = document.getElementById(`total-${productId}`);
 
     // Save old values in case of rollback, parse to int because we will treat it as a number
     const oldQuantity = parseInt(quantityElement.value, 10) || 0; // || 0 means if the field is not a number(empty or error) then use 0
-    const oldTotal = totalElement.innerText;
+    //const oldTotal = totalElement.innerText;
+    const oldTotal = totalElement ? totalElement.innerText : '';
 
     // Add quantity
     const newQuantity = oldQuantity + 1;
     
     // Display the new value
     quantityElement.value = String(newQuantity);
-    totalElement.innerText = nok.format(newQuantity * unitPrice);
-
+    // If in shopping cart view, update price
+    if(totalElement) {
+        totalElement.innerText = nok.format(newQuantity * unitPrice);
+    }
+    
+    // If on product page, stop here
+    const productPage = document.getElementById(`product-page`);
+    if(productPage) return;
+    
+    // If in shopping cart, send PATCH-request to server
     // Saves the Anti forgery token
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     // Fetch the response in case of error
     const response = await fetch(`/ShoppingCart/AddQuantity/?id=${productId}`, {
         method: 'PATCH',
-        headers: { 'RequestVerificationToken': token }
+        headers: { 'RequestVerificationToken': token },
     });
 
     // If the response is an error
     if (!response.ok) {
         // Rollback to the cart values before the error occured
         quantityElement.value = String(oldQuantity);
-        totalElement.innerText = oldTotal;
+        if(totalElement) totalElement.innerText = oldTotal;
 
         // Prints error message
         const msg = await response.text();
@@ -93,11 +112,13 @@ async function AddQuantity(productId, unitPrice) {
 async function DecreaseQuantity(productId, unitPrice) {
 
     const quantityElement = document.getElementById(`quantity-${productId}`);
+    if(!quantityElement) return;
+    
     const totalElement = document.getElementById(`total-${productId}`);
 
     // Save old values in case of rollback, parse to int because we will treat it as a number
     const oldQuantity = parseInt(quantityElement.value, 10) || 0;
-    const oldTotal = totalElement.innerText;
+    const oldTotal = totalElement ? totalElement.innerText : '';
     
     // Decrease quantity
     const newQuantity = oldQuantity - 1;
@@ -107,17 +128,27 @@ async function DecreaseQuantity(productId, unitPrice) {
         document.getElementById(`row-${productId}`).remove();
     }
     else {
+        // Display new value
         quantityElement.value = String(newQuantity);
-        totalElement.innerText = nok.format(newQuantity * unitPrice);
+        
+        // If in shopping cart view, update price
+        if (totalElement) {
+            totalElement.innerText = nok.format(newQuantity * unitPrice);
+        }
     }
-    
+
+    // If on product page, stop here
+    const productPage = document.getElementById(`product-page`);
+    if(productPage) return;
+
+    // If in shopping cart, send PATCH-request to server
     // Saves antiforgerytoken to protect against CSRF-attacks
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     // Saves the response from the decreaseQuantity function, so that we may print out error message if they try to decrease more than allowed
     const response = await fetch(`/ShoppingCart/DecreaseQuantity/?id=${productId}`, {
         method: 'PATCH',
-        headers: { 'RequestVerificationToken': token }
+        headers: { 'RequestVerificationToken': token },
     });
 
     // Prints the error message if bad request is returned, and keeps it there for 3 seconds
@@ -128,7 +159,7 @@ async function DecreaseQuantity(productId, unitPrice) {
         else {
             // Rollback to the cart values before the error occured
             quantityElement.value = String(oldQuantity);
-            totalElement.innerText = oldTotal;
+            if(totalElement) totalElement.innerText = oldTotal;
         }
         
         // Prints error message
@@ -161,14 +192,14 @@ async function UpdateQuantity(productId, unitPrice) {
 
     // Update the total price
     totalElement.innerText = nok.format(newQuantity * unitPrice);
-
+    
     // Saves antiforgerytoken to protect against CSRF-attacks
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
+    
     // Send the new quantity in to the ShoppingCart controller (SetQuantity action)
     const response = await fetch(`/ShoppingCart/SetQuantity/?id=${productId}&quantity=${newQuantity}`, {
         method: 'PATCH',
-        headers: { 'RequestVerificationToken': token }
+        headers: { 'RequestVerificationToken': token },
     });
 
     // If an error occours
@@ -185,8 +216,21 @@ async function UpdateQuantity(productId, unitPrice) {
         Summary();
     }
 }
+function UpdateQuantityLocal(productId) {
+    const quantityElement = document.getElementById(`quantity-${productId}`);
+
+    let newQuantity = parseInt(quantityElement.value, 10);
+
+    if (isNaN(newQuantity) || newQuantity < 1) {
+        newQuantity = 1;
+        quantityElement.value = 1;
+    }
+} 
 
 async function Summary() {
+    const sumProducts = document.getElementById('sum-products');
+    if (!sumProducts) return; // return if user is on productpage 
+    
     try {
         // Fetch the data by sending a request to the Summary action in the controller that returns JSON-data
         const response = await fetch('/ShoppingCart/Summary', {
@@ -194,7 +238,7 @@ async function Summary() {
             cache: 'no-store'
         });
 
-        // If response wasnt 200 then throw error and go to catch
+        // If response was not 200 then throw error and go to catch
         if (!response.ok) throw new Error();
 
         // Save the JSON-data

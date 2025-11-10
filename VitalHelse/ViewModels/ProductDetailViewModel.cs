@@ -6,5 +6,7 @@ public class ProductDetailViewModel
     public Category CurrentCategory { get; set; }
     public Category? ParentCategory { get; set; }
     public string? CategoryPath { get; set; }
- 
+   // public CartProduct CartProduct { get; set; }
+    public bool IsFavorite { get; set; }
+
 }

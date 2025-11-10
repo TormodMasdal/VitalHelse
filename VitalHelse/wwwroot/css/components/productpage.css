@@ -52,3 +52,11 @@
     font-weight: 700;
     font-size: 1.8rem;
 }
+
+.breadcrumb a {
+    color: #e0bcae; 
+}
+
+#product-page {
+   margin-top: 3rem;
+}

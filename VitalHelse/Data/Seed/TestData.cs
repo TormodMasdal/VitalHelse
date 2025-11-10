@@ -144,7 +144,7 @@ public static class TestData
                 ProductCampaignPrice = 200,
                 ProductDescription = "Lett og fuktighetsgivende dagkrem som gir huden glød og mykhet.",
                 LabelDescription = "Fuktighetskrem – Ansikt",
-                ProductPictures = { new() { PicturePath = "/images/products/Hyaluronic Acid Day Cream 50 ml.png" } },
+                ProductPictures = { new() { PicturePath = "/images/products/Hyaluronic Acid Day Cream 50 ml.png" }, new(){ PicturePath = "/images/products/Hyaluronic Acid Night Cream 50 ml.png" } },
                 ProductCategories = { new() { Category = hudAnsikt } }
             },
             new()

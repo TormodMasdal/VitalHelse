@@ -67,13 +67,14 @@ else
     <p class="text-muted text-center mt-4">Ingen produkter funnet.</p>
 }
 
+
 <script>
 (function () {
   const isAuthenticated = @( (ViewData["IsAuthenticated"] as bool? ?? false).ToString().ToLower() );
-
+  
   // Finn gridden denne partialen nettopp renderte (scriptet står rett etter)
   const grid = document.currentScript.previousElementSibling;
-
+        
   // Event delegation – én lytter for alle hjerter, også de som kommer/forsvinner
   grid.addEventListener('click', async (e) => {
     const btn = e.target.closest('.heart-btn');
@@ -118,4 +119,5 @@ else
     }
   });
 })();
+
 </script>
