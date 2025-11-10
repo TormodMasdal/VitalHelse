@@ -105,6 +105,25 @@
                         <p> @Model.CurrentProduct.ProductInstructions</p>
                     </div>
                 </div>
+<<<<<<< HEAD
+=======
+                <div class="accordion-item border-bottom">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseThree">
+                            INGREDIENSER
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p> @Model.CurrentProduct.ProductIngredients</p>
+                        </div>
+                    </div>
+                </div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                {
+                    <a class="editproduct" asp-controller="AdminProduct" asp-action="EditProduct" asp-route-id="@Model.CurrentProduct.ProductId">Rediger produkt</a>
+                }
+>>>>>>> c01eaa2 (noe opprydding)
             </div>
             <div class="accordion-item border-bottom">
                 <h2 class="accordion-header">
@@ -130,11 +149,8 @@
 
 
 @section Scripts {
-<<<<<<< HEAD
     <script>window.isAuthenticated = @(User.Identity.IsAuthenticated.ToString().ToLower());</script>
-=======
     <script> window.isAuthenticated = @( (ViewData["IsAuthenticated"] as bool? ?? false) ? "true" : "false" ); </script>
->>>>>>> 7e9e6a8 (Added favorite button and quantity button to productpage)
     <script src="~/js/components/addFavorites.js"></script>
     <script src="~/js/components/shoppingCart.js"></script>
 }

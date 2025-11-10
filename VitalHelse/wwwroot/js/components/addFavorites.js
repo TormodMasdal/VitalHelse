@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch('/Favorites/ToggleFavorite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `productId=${encodeURIComponent(id)}`
+                body: `productId=${encodeURIComponent(id)}`,
             });
 
             if (!res.ok) return;
@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Sett flag hvis vi endrer favoritt for å oppdatere grid når man går tilbake
             sessionStorage.setItem('favoritesChanged', 'true');
             
+
         } catch (err) {
             console.error("Feil ved toggling av favoritt:", err);
         }
