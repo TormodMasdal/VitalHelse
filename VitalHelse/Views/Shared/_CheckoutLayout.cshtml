@@ -2,26 +2,28 @@
 @{
     Layout = "_Layout";
     
+    // Get the current step from viewbag
     var step = ViewBag.Step is CheckoutStep s ? s : CheckoutStep.Cart;
 
     string btnText;
-    string? nextAction = null;
+    string? nextAction;
     
+    // Switch case to determine button text and action depending on the checkout step
     switch (step)
     {
         case CheckoutStep.Cart:
-            btnText = "Gå videre til personalia";
+            btnText = "Gå videre til leveringsinfo";
             nextAction = "BeginCheckout";
             break;
         case CheckoutStep.Address:
-            btnText = "Gå videre til levering";
-            nextAction = "Shipping";
+            btnText = "Gå videre til leveringmetode";
+            nextAction = "SelectAddress";
             break;
         case CheckoutStep.Shipping:
             btnText = "Gå videre til betaling";
-            nextAction = "Payment";
+            nextAction = "ReviewOrder";
             break;
-        case CheckoutStep.Payment:
+        case CheckoutStep.ReviewOrder:
             btnText = "Fullfør bestilling";
             nextAction = "Complete";
             break;
@@ -32,7 +34,7 @@
             break;
     }
 
-    // Disable-knapp kun på Cart-siden hvis handlekurven faktisk er tom
+    // Disable if Cart is empty
     bool disable = step == CheckoutStep.Cart && (Model is IEnumerable<object> col ? !col.Any() : true);
 }
 
@@ -43,7 +45,7 @@
 <!-- Checkout steps/Mini navbar -->
 <ul class="nav checkout-steps border-bottom pb-1">
     <li class="nav-item">
-        <!-- Check if the user is on the given steå then change the class  -->
+        <!-- Check if the user is on the given step then change the class  -->
         <a class="nav-link @(step == CheckoutStep.Cart ? "active" : "")"
            asp-controller="Checkout" asp-action="Index">Kasse</a>
     </li>
@@ -56,8 +58,8 @@
            asp-controller="Checkout" asp-action="Shipping">Levering</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link @(step==CheckoutStep.Payment ? "active" : "")"
-           asp-controller="Checkout" asp-action="Payment">Betaling</a>
+        <a class="nav-link @(step==CheckoutStep.ReviewOrder ? "active" : "")"
+           asp-controller="Checkout" asp-action="ReviewOrder">Betaling</a>
     </li>
     <li class="nav-item">
         <a class="nav-link @(step==CheckoutStep.Complete ? "active" : "")"
@@ -70,18 +72,14 @@
     <div class="row g-3">
         
         <div class="col-md-8">
-            <div class="card border-1">
-                <div class="list-group list-group-flush">
-                    @RenderBody()
-                </div>
-            </div>
+            @RenderBody()
         </div>
         
         <!-- Summary -->
         <div class="summary col-md-4 text-white">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="d-flex justify-content-between fw-semibold">Sammendrag</h4>
+            <div class="list-group">
+                <div class="list-group-item">
+                    <h4 class="d-flex justify-content-between fw-semibold mt-1">Sammendrag</h4>
                     <div class="d-flex justify-content-between"><h6>Produkter:</h6><h6 id="sum-products">–</h6></div>
                     <div class="d-flex justify-content-between text-muted"><h6>Produkter før rabatt:</h6><h6 id="sum-before">–</h6></div>
                     <div class="d-flex justify-content-between text-success"><h6>Rabatt på produkter</h6><h6 id="sum-discount">–</h6></div>
@@ -89,26 +87,38 @@
                     <hr/>
                     <div class="d-flex justify-content-between fw-semibold"><span>Totalsum</span><span id="sum-total">–</span></div>
                     
-                    <div class="d-grid mt-3">
-                        <a class="btn-next" href="@Url.Action("Address","Checkout")">Gå videre til leveringsinfo</a>
-                        <div class="d-grid mt-3">
-                            @if (!string.IsNullOrEmpty(btnText) && nextAction != null)
+                        
+                    <div class="d-grid mt-3"> <!-- skal fikse dette rote nede senere når shipping er på plass -->
+                        @if (!string.IsNullOrEmpty(btnText) && !string.IsNullOrEmpty(nextAction))
+                        {
+                            if (disable)
                             {
-                                if (disable)
+                                <button class="btn-next w-100 mb-2" disabled aria-disabled="true">@btnText</button>
+                            }
+                            else
+                            {
+                                if (step == CheckoutStep.Address)
                                 {
-                                    <button class="btn btn-primary w-100" disabled aria-disabled="true">@btnText</button>
+                                    <!-- Button for select address form -->
+                                    <button type="submit" form="select-address-form" class="btn-next w-100 mb-2">@btnText</button>
+                                }
+                                else if (step == CheckoutStep.ReviewOrder)
+                                {
+                                    <form action="/checkout.html" method="GET">
+                                        <button type="submit" class="btn-next w-100 mb-2">@btnText</button>
+                                    </form>
                                 }
                                 else
                                 {
                                     <form method="post" asp-controller="Checkout" asp-action="@nextAction">
-                                        <button type="submit" class="btn btn-primary w-100">@btnText</button>
+                                        <button type="submit" class="btn-next w-100 mb-2">@btnText</button>
                                     </form>
-                                    
                                 }
+                                
                             }
-                        </div>
-
+                        }
                     </div>
+
                 </div>
             </div>
         </div>

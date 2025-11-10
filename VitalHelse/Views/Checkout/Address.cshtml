@@ -1,111 +1,40 @@
 @using VitalHelse.Models.Enums
 @model VitalHelse.Models.UserAddressViewModel
+
 @{
     Layout = "_CheckoutLayout";
     ViewBag.Step = CheckoutStep.Address;
 
-    var hasAddresses = Model.Existing != null && Model.Existing.Any();
-    var showForm = !hasAddresses || !ViewData.ModelState.IsValid; // vis skjema hvis ingen adresser eller valideringsfeil
+    var hasAddresses = Model.Existing != null && Model.Existing.Any(); // Checks if list with addresses exists and if there exists at least 1 element in there
+    var showForm = !ViewData.ModelState.IsValid; // Checks if the model is not valid, show form if invalid (true), hide if valid (false)
 }
 
-<!-- side-wrapper med flagg som JS kan lese -->
 <div id="address-page" data-has-addresses="@(hasAddresses.ToString().ToLower())">
-
-    <!-- Liste (bare hvis det finnes adresser) -->
     @if (hasAddresses)
     {
-        <div id="address-list-wrapper" class="list-group-item py-4 px-6" style="@(showForm ? "display:none;" : "")">
-            <h5 class="mb-3">Mine adresser</h5>
-            @await Html.PartialAsync("_AddressList", Model)
-        </div>
-
-        <div id="add-link-box" class="list-group-item py-3 px-6" style="@(showForm ? "display:none;" : "")">
-            Ønsker du å legge til en ny adresse?
-            <a href="#" id="show-form-link">Legg til ny adresse</a>
+        <div id="address-list-wrapper" style="@(showForm ? "display:none;" : "")">
+            <form id="select-address-form" method="post" asp-controller="Checkout" asp-action="SelectAddress">
+                @await Html.PartialAsync("_AddressList", Model)
+            </form>
         </div>
     }
     else
     {
-        <!-- Ingen adresser-melding -->
-        <div id="no-address-box" class="list-group-item py-4 px-6" style="@(showForm ? "display:none;" : "")">
-            <div class="card">
-                <div class="card-body">
-                    Du har ingen lagrede adresser.
-                    <a href="#" id="show-form-link">Legg til ny adresse</a>
-                </div>
-            </div>
-        </div>
+        <ul class="list-group">
+            <li id="no-address-box" class="list-group-item py-4 px-6" style="@(showForm ? "display:none;" : "")">
+                Du har ingen lagrede adresser. <a href="#" id="show-form-link">Legg til ny adresse</a>
+            </li>
+        </ul>
     }
-
-    <!-- Skjema: skjules når bruker har adresser og ikke har trykket lenken -->
-    <div id="add-address-form-wrapper" class="mt-4" style="@(showForm ? "" : "display:none;")">
-        <h5 class="mb-3">Legg til ny adresse</h5>
+    
+    <!-- Form to add address -->
+    <div id="add-address-form-wrapper" style="@(showForm ? "" : "display:none;")">
         @await Html.PartialAsync("_AddUserAddressForm", Model)
     </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />    
     <script src="~/js/utils/postLookup.js" asp-append-version="true"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const hasAddresses = document.getElementById("address-page").dataset.hasAddresses === "true";
-
-            const link = document.getElementById("show-form-link");
-            const cancelBtn = document.getElementById("cancel-add-address");
-
-            const formWrap = document.getElementById("add-address-form-wrapper");
-            const listWrap = document.getElementById("address-list-wrapper");
-            const addLinkBox = document.getElementById("add-link-box");
-            const noAddressBox = document.getElementById("no-address-box");
-
-            // Vis skjema + skjul liste/tekst
-            function showFormOnly() {
-                if (listWrap) listWrap.style.display = "none";
-                if (addLinkBox) addLinkBox.style.display = "none";
-                if (noAddressBox) noAddressBox.style.display = "none";
-                formWrap.style.display = "block";
-            }
-
-            // Tilbake til liste/tekst (skjul skjema)
-            function showListOrEmpty() {
-                formWrap.style.display = "none";
-                if (hasAddresses) {
-                    if (listWrap) listWrap.style.display = "block"; // vis listen
-                    if (addLinkBox) addLinkBox.style.display = "block"; // vis "legg til"-lenken igjen
-                } else {
-                    if (noAddressBox) noAddressBox.style.display = "block"; // vis "ingen adresser"
-                }
-            }
-
-            if (link) {
-                link.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    showFormOnly();
-                });
-            }
-
-            if (cancelBtn) {
-                cancelBtn.addEventListener("click", function () {
-                    showListOrEmpty();
-                });
-            }
-
-            if (cancelBtn) {
-                cancelBtn.addEventListener("click", function () {
-
-                    // 1) Nullstill alle inputfeltene i skjemaet
-                    const form = document.getElementById("add-address-form");
-                    if (form) form.reset();
-
-                    // 2) Fjern valideringsfeil som står igjen
-                    const validationMessages = form.querySelectorAll(".text-danger");
-                    validationMessages.forEach(el => el.innerText = "");
-
-                    // 3) Gå tilbake til liste/tekstvisning
-                    showListOrEmpty();
-                });
-            }
-        });
-    </script>
+    <script src="~/js/components/addressFormManager.js" asp-append-version="true"></script>
 }

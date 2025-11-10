@@ -51,7 +51,6 @@ public class CheckoutController : Controller
         return Json(new { sumProducts, sumBefore, discount, shipping, total });
     }    
     
-    // GET
     public async Task<IActionResult> Index()
     {
         ViewBag.Step = CheckoutStep.Cart;
@@ -60,12 +59,12 @@ public class CheckoutController : Controller
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
         // Query to get all items in the shopping cart
-        var items = _db.CartProducts
+        var items = await _db.CartProducts
             .Include(cp => cp.Product)
             .Include(cp => cp.Product.ProductPictures)
             .Include(cp => cp.AspNetUsers)
             .Where(cp => cp.AspNetUsersId == userId)
-            .ToList();
+            .ToListAsync();
 
         // Returns the items to the view
         return View(items);
@@ -75,28 +74,29 @@ public class CheckoutController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> BeginCheckout()
     {
+        // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
         
         // Fetch all the items from the cart
         var cart = await _db.CartProducts
             .Include(cp => cp.Product)
             .Where(cp => cp.AspNetUsersId == userId)
             .ToListAsync();
-
+        
+        // If cart is empty
         if (!cart.Any())
         {
-            TempData["CheckoutError"] = "Handlekurven er tom.";
+            // HUSK: fiks error melding
             return RedirectToAction(nameof(Index));
         }
 
-        // Slett eventuell tidligere draft
+        // Remove old draft (fikser senere at carten blir bare oppdatert)
         var oldDrafts = await _db.Orders
             .Where(o => o.AspNetUsersId == userId && o.Status == "Draft")
             .ToListAsync();
         _db.Orders.RemoveRange(oldDrafts);
 
-        // Lag ny ordre (draft) + lines
+        // Create a new order
         var order = new Order
         {
             AspNetUsersId = userId,
@@ -104,6 +104,7 @@ public class CheckoutController : Controller
             Status = "Draft",
         };
 
+        // Add all cart products in order
         foreach (var item in cart)
         {
             order.OrderProducts.Add(new OrderProduct
@@ -113,9 +114,11 @@ public class CheckoutController : Controller
                 UnitPrice = (decimal)(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT)
             });
         }
-
+        
+        // Save total cost
         order.TotalCost = order.OrderProducts.Sum(op => op.UnitPrice * op.Quantity);
 
+        // Save and add to database
         _db.Orders.Add(order);
         await _db.SaveChangesAsync();
         
@@ -124,15 +127,17 @@ public class CheckoutController : Controller
     
     
     
-    
     [HttpGet]
     public async Task<IActionResult> Address()
     {
+        // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
+        // Create a viewmodel and add user addresses
         var vm = new UserAddressViewModel
         {
             Existing = await _db.UserAddresses
+                .Include(a => a.AspNetUsers )
                 .Where(a => a.AspNetUserId == userId)
                 .OrderByDescending(a => a.Id)
                 .ToListAsync()
@@ -146,39 +151,68 @@ public class CheckoutController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddAddress(UserAddressViewModel vm)
     {
+        // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
+        // If model is invalid (missing input)
         if (!ModelState.IsValid)
         {
-            // Husk å fylle Existing igjen når validering feiler
             vm.Existing = await _db.UserAddresses.Where(a => a.AspNetUserId == userId).ToListAsync();
             ViewBag.Step = CheckoutStep.Address;
             return View("Address", vm);
         }
-
+    
+        // Save the new values and add to database
         vm.NewAddress.AspNetUserId = userId!;
+        vm.NewAddress.AspNetUsers =  await _userManager.GetUserAsync(User);
         _db.UserAddresses.Add(vm.NewAddress);
         await _db.SaveChangesAsync();
 
-        return RedirectToAction(nameof(Address)); // PRG
+        return RedirectToAction(nameof(Address));
     }
     
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult UseAddress(UserAddressViewModel vm)
+    public async Task<IActionResult> SelectAddress(UserAddressViewModel vm)
     {
+        // Fetch the user id
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        
+        // If none addresses are selected
         if (vm.SelectedAddressId == null)
         {
-            // Ingen valgt – gå tilbake med feilmelding
-            ModelState.AddModelError(nameof(vm.SelectedAddressId), "Velg en adresse.");
+            var userIdForError = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            vm.Existing = await _db.UserAddresses
+                .Include(a => a.AspNetUsers)
+                .Where(a => a.AspNetUserId == userIdForError)
+                .OrderByDescending(a => a.Id)
+                .ToListAsync();
+
+            ViewBag.Step = CheckoutStep.Address;
             return RedirectToAction(nameof(Address));
         }
-
-        var selectedId = vm.SelectedAddressId.Value;
-
         
-        return NoContent();
+        // Find the users order
+        var order = await _db.Orders
+            .Where(o => o.AspNetUsersId == userId && o.Status == "Draft")
+            .OrderByDescending(o => o.OrderDate)
+            .FirstOrDefaultAsync();
+
+        if (order == null)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+        // Save the selected id
+        var selectedId = vm.SelectedAddressId.Value;
+        
+        order.UserAddress = await _db.UserAddresses.FindAsync(selectedId);
+
+        await _db.SaveChangesAsync();
+        
+        return RedirectToAction(nameof(Shipping));
     }
+    
+    
     
     public async Task<IActionResult> Shipping(){
         ViewBag.Step = CheckoutStep.Shipping;
@@ -186,10 +220,46 @@ public class CheckoutController : Controller
         return View();
     }
     
-    public async Task<IActionResult> Payment(){
-        ViewBag.Step = CheckoutStep.Payment;
+    public async Task<IActionResult> ReviewOrder(){
+        ViewBag.Step = CheckoutStep.ReviewOrder;
         
-        return View();
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        
+        if (userId == null)
+        {
+            return NoContent();
+        }
+        
+        var order = await _db.Orders
+            .Include(o => o.UserAddress)
+            .Include(o => o.AspNetUsers )
+            .Include(o => o.OrderProducts)
+            .ThenInclude(op => op.Product)
+            .Include(o => o.OrderProducts)
+            .ThenInclude(op => op.Product.ProductPictures)
+            .Where(o => o.AspNetUsersId == userId && o.Status == "Draft")
+            .OrderByDescending(o => o.OrderDate)
+            .FirstOrDefaultAsync();
+
+        if (order == null)
+        {
+            // HUSK: Legge til error
+            return RedirectToAction("Index", "Checkout");
+        }
+
+        // Add data to the view model
+        var vm = new ReviewOrderViewModel
+        {
+            UserAddress = order.UserAddress ?? new UserAddress(),
+            CartProducts = order.OrderProducts.Select(op => new CartProduct
+            {
+                ProductId = op.ProductId,
+                Quantity = op.Quantity,
+                Product = op.Product
+            }).ToList()
+        };
+
+        return View(vm);
     }
     
     public async Task<IActionResult> Complete(){
@@ -197,6 +267,7 @@ public class CheckoutController : Controller
         return View();
     }
     
+    // View for the orders page
     public async Task<IActionResult> Orderss()
     {
         var orders = await _db.Orders
