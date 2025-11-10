@@ -64,14 +64,14 @@ builder.Services.Configure<AuthMessageSenderOptions>(options =>
     options.SenderGridKey = Environment.GetEnvironmentVariable("AUTHMESSAGESENDEROPTIONS__SENDERGRIDKEY");
 });
 
-/*builder.Services
+
+builder.Services
     .AddAuthentication()
     .AddGoogle(googleOptions =>
     {
         googleOptions.ClientId = Environment.GetEnvironmentVariable("AUTHENTICATION__GOOGLE__CLIENTID");
         googleOptions.ClientSecret = Environment.GetEnvironmentVariable("AUTHENTICATION__GOOGLE__CLIENTSECRET");
-    });*/
-
+    });
 
 
 var app = builder.Build();
