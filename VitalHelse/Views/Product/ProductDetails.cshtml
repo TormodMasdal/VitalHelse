@@ -1,6 +1,5 @@
 ﻿@model VitalHelse.Models.ProductDetailViewModel
 
-
 @{
     ViewBag.Title = "title";
     Layout = "_Layout";
@@ -131,7 +130,7 @@
 
 
 @section Scripts {
-    <script> window.isAuthenticated = @( (ViewData["IsAuthenticated"] as bool? ?? false) ? "true" : "false" ); </script>
+    <script>window.isAuthenticated = @(User.Identity.IsAuthenticated.ToString().ToLower());</script>
     <script src="~/js/components/addFavorites.js"></script>
     <script src="~/js/components/shoppingCart.js"></script>
 }

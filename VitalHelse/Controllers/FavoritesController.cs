@@ -80,6 +80,7 @@ namespace VitalHelse.Controllers
         /// Returns a 404 if the product does not exist.
         /// </returns>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> ToggleFavorite(int productId)
         {
             var user = await _um.GetUserAsync(User);
