@@ -7,12 +7,12 @@ public class Order
     public Order(){}
 
     public int OrderId { get; set; }
-    public string StripePaymentIntentId { get; set; }
+    public string? StripePaymentIntentId { get; set; }
 
     
-    public DateTime OrderDate { get; set; }
-    [StringLength(50)] public string Status { get; set; } = "Posesseres";
-    public double TotCost { get; set; }
+    public DateTime? OrderDate { get; set; }
+    [StringLength(50)] public string Status { get; set; } = "Draft";
+    public decimal TotalCost { get; set; }
     [StringLength(100)] public string? TrackingNumber { get; set; }
     [StringLength(50)] public string? ShippingProvider { get; set; }
 
@@ -21,6 +21,8 @@ public class Order
 
     [Required] public AspNetUsers? AspNetUsers { get; set; }
     [StringLength(450)] public string? AspNetUsersId { get; set; }
+    
+    public UserAddress? UserAddress { get; set; }
 
     public ICollection<OrderProduct> OrderProducts { get; } = new List<OrderProduct>();
 }

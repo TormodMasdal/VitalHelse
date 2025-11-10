@@ -189,7 +189,7 @@ async function UpdateQuantity(productId, unitPrice) {
 async function Summary() {
     try {
         // Fetch the data by sending a request to the Summary action in the controller that returns JSON-data
-        const response = await fetch('/ShoppingCart/Summary', {
+        const response = await fetch('/Checkout/Summary', {
             credentials: 'same-origin',
             cache: 'no-store'
         });

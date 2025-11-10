@@ -32,6 +32,8 @@ public class ApplicationDbContext : IdentityDbContext<AspNetUsers>
     public DbSet<FavoriteProduct> FavoriteProducts => Set<FavoriteProduct>();
     public DbSet<Address> Addresses => Set<Address>();
     
+    public DbSet<UserAddress> UserAddresses => Set<UserAddress>();
+    
     #endregion
 
     #region Misc

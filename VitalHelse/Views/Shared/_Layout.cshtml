@@ -26,8 +26,12 @@
     <link rel="stylesheet" href="~/css/components/productpage.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/components/account.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/components/productgrid.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/css/components/checkout.css" asp-append-version="true"/>
-    
+    <link rel="stylesheet" href="~/css/components/checkout.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/components/product-form-images.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/components/product-form-dropdown.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/components/product-form-tags.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/components/sideBarFilter.css" asp-append-version="true"/>
+
     <link rel="stylesheet" href="~/VitalHelse.styles.css" asp-append-version="true"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
@@ -72,6 +76,12 @@
                     <img class="vital-logo" src="~/images/logo/logo.svg" alt="VitalHelse">
                 </a>
                 
+                <!-- if admin or staff, the add product link shows-->
+                <!--@if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                    {
+                        <a class="addproduct" asp-controller="AdminProduct" asp-action="AddProduct">Legg til et produkt</a>
+                    }  -->
+                
                 <!-- Høyre: ikoner -->
                 <div class="nav-icons">
                     <a href="/favoritter"
@@ -103,7 +113,7 @@
                         </a>  
                     }
                     
-                    <a asp-controller="ShoppingCart" asp-action="Index" class="icon-link" title="Handlevogn">
+                    <a asp-controller="Checkout" asp-action="Index" class="icon-link" title="Handlevogn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="9" cy="21" r="1"></circle>
@@ -165,6 +175,7 @@
 
 <script src="~/js/components/searchSuggestions.js" asp-append-version="true"></script>
 <script src="~/js/components/navbarAnimation.js" asp-append-version="true"></script>
+<script src="~/js/temp/sidebarFilter.js" asp-append-version="true"></script>
 
 @await RenderSectionAsync("Scripts", required: false)
 </body>

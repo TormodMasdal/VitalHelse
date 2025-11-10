@@ -7,16 +7,21 @@
     ViewData["CheckoutStep"] = CheckoutStep.Cart;
 }
 
+
 @if (Model == null || !Model.Any())
 {
-    <p>Handlekurven er tom.</p>
+    <ul class="list-group">
+        <li class="list-group-item py-4 px-6">
+            Handlekurven er tom
+        </li>
+    </ul>
 }
 else
 {
-    @Html.AntiForgeryToken()
+    <ul class="list-group">
         @foreach (var item in Model)
         {
-            <div id="row-@item.ProductId" class="list-group-item py-4 px-6">
+            <li id="row-@item.ProductId" class="list-group-item py-4 px-6">
                 <div  class="row align-items-center gy-3">
 
                     <!-- Product image -->
@@ -28,7 +33,7 @@ else
                     <!-- Product name and stock -->
                     <div class="col">
                         <h6 class="mb-2">@item.Product.ProductName</h6>
-                        <div>PÃ¥ lager: @item.Product.StockCount</div>
+                        <div>På lager: @item.Product.StockCount</div>
                     </div>
 
                     <!-- Quantity -->
@@ -44,7 +49,6 @@ else
                     <div class="col-4 col-sm-3 col-lg-2 text-end">
                         <div id="total-@item.ProductId" class="fw-semibold">@(item.Product.ProductCampaignPrice * item.Quantity ?? item.Product.ProductPriceInVAT * item.Quantity) kr</div>
                     </div>
-                    
 
                     <!-- Trash bin icon/Remove button -->
                     <div onclick="removItemShoppingCart(@item.ProductId)" class="col-auto text-end">
@@ -59,8 +63,15 @@ else
                             </svg>
                         </button>
                     </div>
-
+                    
+                    <form action="/checkout.html" method="GET">
+                        <input type="hidden" name="product" value="serum" />
+                        <input type="number" name="quantity" value="2" min="1" />
+                        <button type="submit">Kjøp nå</button>
+                    </form>
+                    
                 </div>
-            </div>
+            </li>
         }
+    </ul>
 }

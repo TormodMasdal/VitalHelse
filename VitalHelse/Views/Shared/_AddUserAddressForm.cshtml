@@ -1,0 +1,65 @@
+@model VitalHelse.Models.UserAddressViewModel
+
+<!-- Form for adding address -->
+<form asp-action="AddAddress" method="post" id="add-address-form">
+    <ul class="list-group">
+        <li class="list-group-item py-4 px-6">
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="floating-border-label">
+                        <input asp-for="NewAddress.FirstName" type="text" class="form-control" placeholder=""/>
+                        <label asp-for="NewAddress.FirstName"></label>
+                        <span asp-validation-for="NewAddress.FirstName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="floating-border-label">
+                        <input asp-for="NewAddress.LastName" type="text" class="form-control" placeholder=""/>
+                        <label asp-for="NewAddress.LastName"></label>
+                        <span asp-validation-for="NewAddress.LastName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="floating-border-label">
+                        <input asp-for="NewAddress.PhoneNumber" type="text" class="form-control" placeholder=""/>
+                        <label asp-for="NewAddress.PhoneNumber"></label>
+                        <span asp-validation-for="NewAddress.PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col">
+                    <div class="floating-border-label">
+                        <input asp-for="NewAddress.Street" type="text" class="form-control" placeholder="" />
+                        <label asp-for="NewAddress.Street"></label>
+                        <span asp-validation-for="NewAddress.Street" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="floating-border-label">
+                        <input asp-for="NewAddress.PostalCode" id="postalcode" type="text" class="form-control" placeholder="" />
+                        <label asp-for="NewAddress.PostalCode"></label>
+                        <span asp-validation-for="NewAddress.PostalCode" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="floating-border-label">
+                        <input asp-for="NewAddress.City" id="city" type="text" class="form-control" placeholder="" />
+                        <label asp-for="NewAddress.City"></label>
+                        <span asp-validation-for="NewAddress.City" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-3 d-flex gap-2 justify-content-center">
+                    <button class="btn-next" type="submit">Lagre adresse</button>
+                    <button class="btn btn-outline-secondary" type="button" id="cancel-add-address">Avbryt</button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</form>

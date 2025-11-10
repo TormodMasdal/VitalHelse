@@ -5,18 +5,30 @@
 my idea is when a user clicks a product the user gets redirected
 to the SEO product page, e.g instead of /search/search-query?whatever
 it gets taken to "/vitaminer/c-vitaminer/berits-c-vitamin" -->
-
+<!-- Sidebar Filter -->
 @{
     ViewData["Title"] = "Søk";
     var searchQuery = ViewData["SearchQuery"] as string ?? "";
 }
 
-<section class="category-header text-center mb-5">
-    <h1 class="category-title">
-        @(Model.Any()
-            ? $"{Model.Count()} produkter funnet for \"{searchQuery}\""
-            : $"Ingen produkter funnet for \"{searchQuery}\"")
-    </h1>
-</section>
+<div class="search-results-container">
+    
+    <aside class="filters-sidebar">
+        @await Html.PartialAsync("_SideBarFilter")
+    </aside>
 
-@await Html.PartialAsync("_ProductGrid", Model)
+    <div class="product-results">
+    
+        <section class="category-header text-center mb-5">
+            <h1 class="category-title">
+                @(Model.Any()
+                    ? $"{Model.Count()} produkter funnet for \"{searchQuery}\""
+                    : $"Ingen produkter funnet for \"{searchQuery}\"")
+            </h1>
+        </section>
+        
+        @await Html.PartialAsync("_ProductGrid", Model)
+    </div>
+</div>
+
+

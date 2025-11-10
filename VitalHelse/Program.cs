@@ -1,14 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Stripe;
-using Stripe.Checkout;
+using VitalHelse.Services;
 using VitalHelse.Configuration;
 using VitalHelse.Data;
 using VitalHelse.Models;
-using VitalHelse.Services;
-/*using VitalHelse.Services;*/
-using Product = Stripe.Product;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +23,18 @@ builder.Services.AddDefaultIdentity<AspNetUsers>(options => options.SignIn.Requi
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+//required for session storage
+builder.Services.AddDistributedMemoryCache(); 
+builder.Services.AddSession(options =>
+{
+    //session expires in 30 min
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
+    //prevents js access
+    options.Cookie.HttpOnly = true;     
+    //required for GDPR compliance
+    options.Cookie.IsEssential = true;           
+});
 
 builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
 
@@ -48,6 +57,22 @@ builder.Services.Configure<StripeOptions>(options =>
     options.Price = Environment.GetEnvironmentVariable("PRICE");
     options.Domain = Environment.GetEnvironmentVariable("DOMAIN");
 });
+
+builder.Services.AddTransient<IEmailSender, RegisterAndForgottenPassService>();
+builder.Services.Configure<AuthMessageSenderOptions>(options =>
+{
+    options.SenderGridKey = Environment.GetEnvironmentVariable("AUTHMESSAGESENDEROPTIONS__SENDERGRIDKEY");
+});
+
+builder.Services
+    .AddAuthentication()
+    .AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = Environment.GetEnvironmentVariable("AUTHENTICATION__GOOGLE__CLIENTID");
+        googleOptions.ClientSecret = Environment.GetEnvironmentVariable("AUTHENTICATION__GOOGLE__CLIENTSECRET");
+    });
+
+
 
 var app = builder.Build();
 
@@ -82,6 +107,7 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
