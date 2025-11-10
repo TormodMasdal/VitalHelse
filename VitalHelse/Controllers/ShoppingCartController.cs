@@ -67,7 +67,7 @@ public class ShoppingCartController : Controller
             shoppingCart.Quantity += 1;
             await _db.SaveChangesAsync();
         }
-        
+
         //return RedirectToAction("Index");
         return NoContent();
     }
@@ -124,6 +124,7 @@ public class ShoppingCartController : Controller
         // If quantity is more than stock then set quantity to stock 
         if (quantity > stock)
             quantity = stock;
+
         // If quantity is more than stock then set quantity to stock 
         if (quantity > shoppingCart.Product.StockCount.GetValueOrDefault())
             quantity = shoppingCart.Product.StockCount.GetValueOrDefault();

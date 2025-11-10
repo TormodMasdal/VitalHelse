@@ -130,7 +130,11 @@
 
 
 @section Scripts {
+<<<<<<< HEAD
     <script>window.isAuthenticated = @(User.Identity.IsAuthenticated.ToString().ToLower());</script>
+=======
+    <script> window.isAuthenticated = @( (ViewData["IsAuthenticated"] as bool? ?? false) ? "true" : "false" ); </script>
+>>>>>>> 7e9e6a8 (Added favorite button and quantity button to productpage)
     <script src="~/js/components/addFavorites.js"></script>
     <script src="~/js/components/shoppingCart.js"></script>
 }

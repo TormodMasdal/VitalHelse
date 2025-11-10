@@ -160,7 +160,5 @@ namespace VitalHelse.Controllers
             return NoContent();
         }
 
-        
-        
     }
 }
