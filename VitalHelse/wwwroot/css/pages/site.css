@@ -19,9 +19,9 @@ html, body {
     font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight: 300;
     color: #111827;
-    /*background:
+    background:
             linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
-            url("/images/backgrounds/spa-texture.jpg");*/
+            url("/images/backgrounds/background.jpeg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
