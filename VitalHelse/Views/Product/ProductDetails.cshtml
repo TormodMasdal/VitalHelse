@@ -75,7 +75,6 @@
         <h1 class="product-title mt-4"> @Model.CurrentProduct.ProductName</h1>
         <h4 class="product-price m-4 "> kr @Model.CurrentProduct.ProductPriceInVAT</h4>
         <p class="mt-3"> @Model.CurrentProduct.ProductDescription</p>
-        
      
         <div class="row align-items-center">
             @Html.AntiForgeryToken()
@@ -93,37 +92,43 @@
                 <button type="button" class="btn btn-submit w-100" onclick="AddToCart(@Model.CurrentProduct.ProductId)"> Legg i handlekurv </button>
                 <div id="error-box" style="color:red; font-weight:bold; margin-top:10px;"></div>
             </div>
-        </div>
 
-        <div class="accordion accordion-flush mt-4" id="productAccordion">
-            <div class="accordion-item border-bottom">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseThree">
-                        BRUK
-                    </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        <p> Beskrivelse av hvordan produktet brukes</p>
+            <div class="accordion accordion-flush mt-4" id="productAccordion">
+                <div class="accordion-item border-bottom">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseThree">
+                            BRUK
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p> @Model.CurrentProduct.ProductInstructions</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="accordion-item border-bottom">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseThree">
-                        INGREDIENSER
-                    </button>
-                </h2>
-                <div id="collapseTwo" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        <p> @Model.CurrentProduct.ProductIngredients</p>
+                <div class="accordion-item border-bottom">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseThree">
+                            INGREDIENSER
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p> @Model.CurrentProduct.ProductIngredients</p>
+                        </div>
                     </div>
                 </div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                {
+                    <a class="editproduct" asp-controller="AdminProduct" asp-action="EditProduct" asp-route-id="@Model.CurrentProduct.ProductId">Rediger produkt</a>
+                }
+
             </div>
         </div>
     </div>
+    </div>
 </div>
-</div>
+
 
 
 @section Scripts {

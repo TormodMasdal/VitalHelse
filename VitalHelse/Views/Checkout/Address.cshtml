@@ -1,0 +1,40 @@
+@using VitalHelse.Models.Enums
+@model VitalHelse.Models.UserAddressViewModel
+
+@{
+    Layout = "_CheckoutLayout";
+    ViewBag.Step = CheckoutStep.Address;
+
+    var hasAddresses = Model.Existing != null && Model.Existing.Any(); // Checks if list with addresses exists and if there exists at least 1 element in there
+    var showForm = !ViewData.ModelState.IsValid; // Checks if the model is not valid, show form if invalid (true), hide if valid (false)
+}
+
+<div id="address-page" data-has-addresses="@(hasAddresses.ToString().ToLower())">
+    @if (hasAddresses)
+    {
+        <div id="address-list-wrapper" style="@(showForm ? "display:none;" : "")">
+            <form id="select-address-form" method="post" asp-controller="Checkout" asp-action="SelectAddress">
+                @await Html.PartialAsync("_AddressList", Model)
+            </form>
+        </div>
+    }
+    else
+    {
+        <ul class="list-group">
+            <li id="no-address-box" class="list-group-item py-4 px-6" style="@(showForm ? "display:none;" : "")">
+                Du har ingen lagrede adresser. <a href="#" id="show-form-link">Legg til ny adresse</a>
+            </li>
+        </ul>
+    }
+    
+    <!-- Form to add address -->
+    <div id="add-address-form-wrapper" style="@(showForm ? "" : "display:none;")">
+        @await Html.PartialAsync("_AddUserAddressForm", Model)
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />    
+    <script src="~/js/utils/postLookup.js" asp-append-version="true"></script>
+    <script src="~/js/components/addressFormManager.js" asp-append-version="true"></script>
+}

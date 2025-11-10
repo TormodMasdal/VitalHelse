@@ -56,4 +56,13 @@ public class AdminController : Controller
         ViewData["Title"] = "Banners";
         return View();
     }
+    
+    // ============================================
+    // EMPLOYEES (manage employees)
+    // ============================================
+    public IActionResult Employees()
+    {
+        ViewData["Title"] = "Employees";
+        return View();
+    }
 }

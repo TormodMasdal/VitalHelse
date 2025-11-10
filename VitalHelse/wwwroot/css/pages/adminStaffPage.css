@@ -1,0 +1,84 @@
+﻿.admin-product-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.product-grid {
+    margin-top: 3rem;
+}
+
+.employee-add-button,
+.employee-back-button {
+    display: inline-block;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    border: none;
+    cursor: pointer;
+}
+
+.employee-add-button {
+    background-color: #C7A47A;
+    color: white;
+}
+
+.employee-add-button:hover {
+    background-color: #b89563;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(199, 164, 122, 0.3);
+}
+
+.employee-back-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.employee-back-button:hover {
+    background-color: #5a6268;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Edit button on cards */
+.employee-edit-button {
+    background-color: #C7A47A;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.employee-edit-button:hover {
+    background-color: #b89563;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(199, 164, 122, 0.3);
+}
+
+.index-role-updated {
+    margin-top: 2rem;
+}
+.index-role-updated-x-icon {
+    opacity: 1;
+    transition: all 0.1s ease;
+
+}
+.index-role-updated-x-icon:hover {
+    color: #ff0101;
+    transform: rotate(90deg);
+}
+
+.d-flex.gap-3 > * + * {
+    margin-left: 1rem;
+}

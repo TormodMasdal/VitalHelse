@@ -5,6 +5,6 @@ public enum CheckoutStep
     Cart,
     Address,
     Shipping,
-    Payment,
+    ReviewOrder,
     Complete
 }

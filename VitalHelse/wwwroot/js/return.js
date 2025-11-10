@@ -1,5 +1,10 @@
 initialize();
 
+function returnHome(){
+    window.location.href = "Home/Index";
+}
+
+
 async function initialize() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);

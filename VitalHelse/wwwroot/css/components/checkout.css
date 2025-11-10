@@ -84,7 +84,98 @@
     transition: all 0.2s ease;
 }
 
-.btn-next:hover {
+.btn-next:not(:disabled):hover {
     background-color: #e0bcae;
     transform: translateY(-2px);
+}
+
+.btn-next:disabled,
+.btn-next[aria-disabled="true"] {
+    cursor: not-allowed;
+    transform: none;
+    background-color: #e8cfc3;
+    pointer-events: none;
+}
+
+
+.btn-radio {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #c8c8c8;
+    background-color: #fff;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.btn-radio:hover {
+    background-color: #f8f8f8;
+    border-color: #b0b0b0;
+}
+
+.btn-radio:checked {
+    border-color: #e0bcae; 
+    background-color: #e0bcae;
+}
+
+/* Inner dot */
+.btn-radio:checked::after {
+    content: "";
+    position: relative;
+    display: block;
+    width: 8px;
+    height: 8px;
+    margin: 4px auto;
+    background: #fff;
+    border-radius: 50%;
+}
+
+
+
+/* =============================
+   INPUT/LABEL
+   ============================= */
+
+.floating-border-label{
+    position: relative;
+}
+
+.floating-border-label .form-control{
+    padding: 16px 12px 12px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.floating-border-label label{
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 .25rem;
+    background: var(--bs-body-bg);
+    color: var(--bs-secondary-color);
+    pointer-events: none;
+    z-index: 2;
+    transition: top .18s ease, transform .18s ease, font-size .18s ease, color .18s ease;
+}
+
+.floating-border-label .form-control:focus{
+    border-color: #e8cfc3;
+    box-shadow: 0 0 0 .1rem #e8cfc3;
+}
+
+.floating-border-label .form-control:focus + label,
+.floating-border-label .form-control:not(:placeholder-shown) + label{
+    top: 0;
+    transform: translateY(-50%);   
+    font-size: .75rem;
+    color: black;
+}
+
+.floating-border-label .form-control:focus + label,
+.floating-border-label .form-control:not(:placeholder-shown) + label{
+    border-radius: .25rem;
 }

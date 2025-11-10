@@ -9,8 +9,8 @@ fetch("/js/data/postdata.json")
     .catch(err => console.log(err));
 
 function updateArea() {
-    const postalCodeInput = document.getElementById('postnummer');
-    const areaInput = document.getElementById('poststed');
+    const postalCodeInput = document.getElementById('postalcode');
+    const areaInput = document.getElementById('city');
     const postalCode = postalCodeInput.value.trim();
 
     // Finn objektet med riktig postnummer
@@ -24,6 +24,6 @@ function updateArea() {
 }
     
 document.addEventListener('DOMContentLoaded', () => {
-    const postalCodeInput = document.getElementById('postnummer');
+    const postalCodeInput = document.getElementById('postalcode');
     postalCodeInput.addEventListener('input', updateArea);
-});
+}); 

@@ -34,6 +34,10 @@ public class Product
 
     [StringLength(1000)]
     public string? ProductIngredients { get; set; }
+    
+    [StringLength(1000)] 
+    public string? ProductInstructions { get; set; }
+
 
     /// <summary>
     /// Price including VAT (Tripletex controlled).
