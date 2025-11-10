@@ -43,7 +43,7 @@ else
                             <input id="quantity-@item.ProductId" class="form-control text-center" style="max-width:60px" value="@item.Quantity" onchange="UpdateQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))">
                             <button onclick="AddQuantity(@item.ProductId, @(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT))" class="btn btn-outline-secondary" type="button">+</button>
                         </div>
-                    </div>
+                    </div> 
 
                     <!-- Price -->
                     <div class="col-4 col-sm-3 col-lg-2 text-end">

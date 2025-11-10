@@ -6,8 +6,8 @@ using VitalHelse.Data;
 using VitalHelse.Helpers;
 using VitalHelse.Models;
 
-namespace VitalHelse.Controllers
-{
+namespace VitalHelse.Controllers;
+
     /// <summary>
     /// Handles product- and category-related requests, including SEO-friendly URLs,
     /// category navigation, and product detail rendering.
@@ -24,7 +24,8 @@ namespace VitalHelse.Controllers
         /// <param name="db">The database context used for querying products and categories.</param>
         /// <param name="logger">Logger instance for tracking product and category requests.</param>
         /// <param name="um">UserManager for retrieving the current user and favorite data.</param>
-        public ProductController(ApplicationDbContext db, ILogger<ProductController> logger, UserManager<AspNetUsers> um)
+        public ProductController(ApplicationDbContext db, ILogger<ProductController> logger,
+            UserManager<AspNetUsers> um)
         {
             _db = db;
             _logger = logger;
@@ -45,7 +46,8 @@ namespace VitalHelse.Controllers
             {
                 CurrentProduct = product,
                 ParentCategory = category?.ParentCategory,
-                CategoryPath = fullCategoryPath
+                CategoryPath = fullCategoryPath,
+                IsFavorite = product.IsFavorite,
             };
         }
 
@@ -63,12 +65,22 @@ namespace VitalHelse.Controllers
                 .Include(p => p.ProductPictures)
                 .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
                 .Include(p => p.ProductCategories)
-                    .ThenInclude(pc => pc.Category)
-                        .ThenInclude(c => c.ParentCategory)
+                .ThenInclude(pc => pc.Category)
+                .ThenInclude(c => c.ParentCategory)
                 .FirstOrDefault(p => p.ProductId == id);
 
             if (product == null)
                 return NotFound();
+
+            // If the user is logged in, check the database to see if the product is in their favorites and store the result so the page shows the correct icon.
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                var userId = _um.GetUserId(User);
+                var isFavorite = _db.FavoriteProducts
+                    .Any(f => f.ProductId == product.ProductId && f.AspNetUsersId == userId);
+
+                product.IsFavorite = isFavorite;
+            }
 
             _logger.LogInformation("Product {ProductId} viewed via direct ID link.", id);
             return View("ProductDetails", BuildProductViewModel(product));
@@ -95,14 +107,24 @@ namespace VitalHelse.Controllers
                 .Include(p => p.ProductPictures)
                 .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
                 .Include(p => p.ProductCategories)
-                    .ThenInclude(pc => pc.Category)
-                        .ThenInclude(c => c.ParentCategory)
+                .ThenInclude(pc => pc.Category)
+                .ThenInclude(c => c.ParentCategory)
                 .AsEnumerable() // Slug comparison performed in-memory
                 .FirstOrDefault(p => SlugHelper.ToUrlFriendly(p.ProductName) == lastPart);
 
             if (product != null)
             {
-                _logger.LogInformation("Product '{ProductName}' accessed via SEO route '{Path}'.", product.ProductName, fullPath);
+                // If the user is logged in, check the database to see if the product is in their favorites and store the result so the page shows the correct icon.
+                if (User.Identity.IsAuthenticated)
+                {
+                    var userId = _um.GetUserId(User);
+                    var isFavorite = _db.FavoriteProducts
+                        .Any(f => f.ProductId == product.ProductId && f.AspNetUsersId == userId);
+                    product.IsFavorite = isFavorite;
+                }
+
+                _logger.LogInformation("Product '{ProductName}' accessed via SEO route '{Path}'.", product.ProductName,
+                    fullPath);
                 return View("ProductDetails", BuildProductViewModel(product));
             }
 
@@ -149,7 +171,8 @@ namespace VitalHelse.Controllers
                 Products = products
             };
 
-            _logger.LogInformation("Category '{CategoryName}' accessed with {Count} products.", currentCategory.CategoryName, products.Count);
+            _logger.LogInformation("Category '{CategoryName}' accessed with {Count} products.",
+                currentCategory.CategoryName, products.Count);
             return View("CategoryTemplate", viewModel);
         }
 
@@ -189,6 +212,7 @@ namespace VitalHelse.Controllers
                 if (category == null) break;
                 names.Insert(0, category.CategoryName);
             }
+
             return string.Join('/', names);
         }
 
@@ -235,4 +259,4 @@ namespace VitalHelse.Controllers
             return View(new ErrorViewModel { RequestId = requestId });
         }
     }
-}
+

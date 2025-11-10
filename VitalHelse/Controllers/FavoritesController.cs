@@ -116,5 +116,6 @@ namespace VitalHelse.Controllers
 
             return Ok(new { success = true, isFavorite });
         }
+
     }
 }
