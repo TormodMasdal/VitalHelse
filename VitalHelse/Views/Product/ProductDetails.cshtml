@@ -1,6 +1,5 @@
 ﻿@model VitalHelse.Models.ProductDetailViewModel
 
-
 @{
     ViewBag.Title = "title";
     Layout = "_Layout";
@@ -122,17 +121,14 @@
                 {
                     <a class="editproduct" asp-controller="AdminProduct" asp-action="EditProduct" asp-route-id="@Model.CurrentProduct.ProductId">Rediger produkt</a>
                 }
-
             </div>
         </div>
     </div>
     </div>
 </div>
 
-
-
 @section Scripts {
-    <script> window.isAuthenticated = @( (ViewData["IsAuthenticated"] as bool? ?? false) ? "true" : "false" ); </script>
+    <script>window.isAuthenticated = @(User.Identity.IsAuthenticated.ToString().ToLower());</script>
     <script src="~/js/components/addFavorites.js"></script>
     <script src="~/js/components/shoppingCart.js"></script>
 }
