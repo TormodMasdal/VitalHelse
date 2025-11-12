@@ -1,17 +1,87 @@
 @model VitalHelse.Models.DiscountViewModel
 @{
-    ViewData["Title"] = "Kampanjer";
     Layout = "_AdminLayout";
+    ViewData["Title"] = "Kampanjer";
 }
 
-<div class="discount-page">
-    <form method="get">
-        <button type="submit" name="showCategories" value="@(!Model.ShowCategoryView)" class="btn btn-primary mb-3">
-            @(Model.ShowCategoryView ? "Vis produkter" : "Vis kategorier")
-        </button>
-    </form>
+<section class="discounts-page">
+    <div class="discounts-container">
+        <div class="discounts-header">
+            <form method="get" asp-action="Index" asp-controller="AdminDiscount">
+                <input type="hidden" name="showCategories" value="@(!Model.ShowCategoryView)" />
+                <button type="submit" class="discounts-toggle-btn">
+                    @(Model.ShowCategoryView ? "Vis produkter" : "Vis kategorier")
+                </button>
+            </form>
+        </div>
 
-    <partial name="_ProductList"
-             model="Model"
-             view-data='new ViewDataDictionary(ViewData) { ["IsCategoryMode"] = Model.ShowCategoryView }' />
-</div>
+        @if (Model.ShowCategoryView)
+        {
+            @await Html.PartialAsync(
+                "_ListView",
+                Model.Categories,
+                new ViewDataDictionary(ViewData)
+                {
+                    { "IsAdminView", true },
+                    { "IsDiscountMode", true },
+                    { "ListMode", "category" },
+                    { "Discounts", Model.Discounts }
+                })
+        }
+        else
+        {
+            @await Html.PartialAsync(
+                "_ListView",
+                Model.Products,
+                new ViewDataDictionary(ViewData)
+                {
+                    { "IsAdminView", true },
+                    { "IsDiscountMode", true },
+                    { "ListMode", "product" },
+                    { "Discounts", Model.Discounts }
+                })
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Live-oppdater "Ny pris" når rabattsats endres
+        document.addEventListener('input', (e) => {
+            const input = e.target.closest('.listview__input');
+            if (!input) return;
+
+            const row = input.closest('tr');
+            const priceCell = row.querySelector('.listview__td--num'); // første tallcelle
+            const newCell = row.querySelector('.listview__computed');
+            if (!priceCell || !newCell) return;
+
+            const rawPrice = parseFloat(priceCell.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+            const rate = parseFloat(input.value.replace(',', '.')) || 0;
+            const discounted = Math.max(0, rawPrice * (1 - rate / 100));
+
+            newCell.textContent = discounted.toFixed(2).replace('.', ',') + ' kr';
+        });
+
+        // Lagre rabatt via fetch
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.closest('.listview__btn--save');
+            if (!btn) return;
+
+            const id = btn.dataset.id;
+            const isCategory = btn.dataset.category === 'true';
+            const rate = btn.closest('tr').querySelector('.listview__input').value;
+
+            const res = await fetch('/AdminDiscount/UpdateDiscount', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `id=${encodeURIComponent(id)}&rate=${encodeURIComponent(rate)}&isCategory=${isCategory}`
+            });
+
+            if (res.ok) {
+                alert('Rabattsats lagret!');
+                location.reload();
+            }
+        });
+    </script>
+}

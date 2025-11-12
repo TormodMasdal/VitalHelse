@@ -7,6 +7,7 @@ using VitalHelse.Models;
 namespace VitalHelse.Controllers;
 
 [Authorize(Roles = "Admin")]
+[Route("Admin/Discounts")]
 public class AdminDiscountController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -21,15 +22,26 @@ public class AdminDiscountController : Controller
     {
         var vm = new DiscountViewModel
         {
-            Products = await _context.Products.Include(p => p.ProductPictures).ToListAsync(),
-            Categories = await _context.Categories.ToListAsync(),
-            Discounts = await _context.ProductDiscounts.ToListAsync(),
+            Products = await _context.Products
+                .Include(p => p.ProductPictures)
+                .AsNoTracking()
+                .ToListAsync(),
+
+            Categories = await _context.Categories
+                .AsNoTracking()
+                .ToListAsync(),
+
+            Discounts = await _context.ProductDiscounts
+                .AsNoTracking()
+                .ToListAsync(),
+
             ShowCategoryView = showCategories
         };
 
         ViewData["Title"] = "Kampanjer";
         return View("~/Views/Admin/Discounts.cshtml", vm);
     }
+
 
     // POST: /AdminDiscount/UpdateDiscount
     [HttpPost]
