@@ -1,12 +1,30 @@
 @model VitalHelse.Models.DiscountViewModel
 @{
-    Layout = "_AdminLayout";
-    ViewData["Title"] = "Kampanjer";
+Layout = "_AdminLayout";
+ViewData["Title"] = "Kampanjer";
 }
 
 <section class="discounts-page">
-    <div class="discounts-container">
-        <div class="discounts-header">
+
+    <!-- ========== HEADER ========== -->
+    <header class="discounts-header">
+        <h2 class="discounts-title">Rabatter & Kampanjer</h2>
+        <p class="discounts-subtitle">Administrer rabatter manuelt eller automatiser kampanjer for lavt-selgende produkter.</p>
+    </header>
+
+
+    <!-- ========== NAVIGASJON / TABS ========== -->
+    <nav class="discounts-nav">
+        <button class="discounts-tab active" data-target="section-rates">🎛 Endre rabattsatser</button>
+        <button class="discounts-tab" data-target="section-campaigns">⚙️ Kampanjestyring</button>
+        <button class="discounts-tab" data-target="section-auto">🤖 Automatiske kampanjer</button>
+    </nav>
+
+
+
+    <!-- ========== SEKSJON 1: Endre rabattsatser ========== -->
+    <section id="section-rates" class="discounts-section active">
+        <div class="discounts-toolbar">
             <form method="get" asp-action="Index" asp-controller="AdminDiscount">
                 <input type="hidden" name="showCategories" value="@(!Model.ShowCategoryView)" />
                 <button type="submit" class="discounts-toggle-btn">
@@ -15,73 +33,159 @@
             </form>
         </div>
 
-        @if (Model.ShowCategoryView)
-        {
-            @await Html.PartialAsync(
-                "_ListView",
-                Model.Categories,
-                new ViewDataDictionary(ViewData)
+        <!-- Bruker vårt nye _ListView -->
+        @{
+            var columns = new[]
+            {
+                "Produkt",
+                "Pris",
+                "Kategori-rabatt",
+                "Produkt-rabatt",
+                "Gjeldende rabatt",
+                "Ny pris"
+            };
+
+            var rows = new List<Dictionary<string, string>>();
+
+            foreach (var p in Model.Products)
+            {
+                // Hent kategori fra relasjonen
+                var category = p.ProductCategories.FirstOrDefault()?.Category;
+                var categoryId = category?.CategoryId;
+                var categoryName = category?.CategoryName ?? "—";
+
+                // Finn relevante rabatter
+                var productDiscount = Model.Discounts.FirstOrDefault(d => d.ProductId == p.ProductId);
+                var categoryDiscount = Model.Discounts.FirstOrDefault(d => d.CategoryId == categoryId && d.IsCategoryDiscount);
+
+                // Beregninger
+                var productRate = productDiscount?.DiscountRate ?? 0;
+                var categoryRate = categoryDiscount?.DiscountRate ?? 0;
+                var effectiveRate = productDiscount != null ? productRate : categoryRate;
+                var newPrice = p.ProductPriceInVAT * (1 - effectiveRate / 100.0);
+
+                rows.Add(new Dictionary<string, string>
                 {
-                    { "IsAdminView", true },
-                    { "IsDiscountMode", true },
-                    { "ListMode", "category" },
-                    { "Discounts", Model.Discounts }
-                })
+                    ["Id"] = p.ProductId.ToString(),
+                    ["IsCategory"] = "false",
+                    ["Produkt"] = $"{p.ProductName} <span class='listview__sub'>{categoryName}</span>",
+                    ["Pris"] = $"{p.ProductPriceInVAT:0.00} kr",
+                    ["Kategori-rabatt"] = $"{categoryRate:0.0} %",
+                    ["Produkt-rabatt"] = $"<input type='number' class='listview__input' value='{productRate:0.0}' min='0' max='100' step='0.5' />",
+                    ["Gjeldende rabatt"] = $"{effectiveRate:0.0} %",
+                    ["Ny pris"] = $"{newPrice:0.00} kr"
+                });
+            }
+
+            ViewData["Columns"] = columns;
+            ViewData["Rows"] = rows;
+            ViewData["ShowActions"] = true;
         }
-        else
-        {
-            @await Html.PartialAsync(
-                "_ListView",
-                Model.Products,
-                new ViewDataDictionary(ViewData)
-                {
-                    { "IsAdminView", true },
-                    { "IsDiscountMode", true },
-                    { "ListMode", "product" },
-                    { "Discounts", Model.Discounts }
-                })
-        }
-    </div>
+
+        @await Html.PartialAsync("_ListView", ViewData["Rows"])
+
+    </section>
+    
+
+    <!-- ========== SEKSJON 2: Kampanjestyring ========== -->
+    <section id="section-campaigns" class="discounts-section">
+        <h3 class="discounts-section-title">Kampanjestyring</h3>
+        <p class="discounts-section-desc">
+            Her kan du planlegge, starte eller stoppe kampanjer.
+            Du kan også angi hvor lenge en kampanje varer, og hvilke produkter eller kategorier den skal gjelde for.
+        </p>
+
+        <div class="campaign-form">
+            <label>Startdato:</label>
+            <input type="date" class="discounts-input" />
+            <label>Sluttdato:</label>
+            <input type="date" class="discounts-input" />
+
+            <label>Kampanjenavn:</label>
+            <input type="text" class="discounts-input" placeholder="Høsttilbud 2025" />
+
+            <button class="discounts-action-btn">📢 Start kampanje</button>
+        </div>
+
+        <div class="campaign-list">
+            <h4>Aktive kampanjer</h4>
+            <ul>
+                <li><strong>Sommerboost</strong> — varer til 15. august</li>
+                <li><strong>Hudpleie-uke</strong> — varer til 28. september</li>
+            </ul>
+        </div>
+    </section>
+
+
+
+    <!-- ========== SEKSJON 3: Automatiske kampanjer ========== -->
+    <section id="section-auto" class="discounts-section">
+        <h3 class="discounts-section-title">Automatiske kampanjer</h3>
+        <p class="discounts-section-desc">
+            Aktiver automatisk genererte kampanjer basert på produkter som selger minst.
+            Nye kampanjer opprettes når forrige er ferdig, om ikke funksjonen er slått av.
+        </p>
+
+        <div class="auto-settings">
+            <label>
+                <input type="checkbox" class="discounts-checkbox" checked />
+                Start nye kampanjer automatisk
+            </label>
+
+            <div class="auto-settings-grid">
+                <div>
+                    <label>Varighet (dager)</label>
+                    <input type="number" class="discounts-input" value="7" min="1" />
+                </div>
+                <div>
+                    <label>Antall produkter</label>
+                    <input type="number" class="discounts-input" value="5" min="1" />
+                </div>
+                <div>
+                    <label>Standard rabatt (%)</label>
+                    <input type="number" class="discounts-input" value="20" min="1" max="90" />
+                </div>
+            </div>
+
+            <button class="discounts-action-btn">🔁 Lag ny automatisk kampanje nå</button>
+        </div>
+    </section>
+
 </section>
 
+
 @section Scripts {
-    <script>
-        // Live-oppdater "Ny pris" når rabattsats endres
-        document.addEventListener('input', (e) => {
-            const input = e.target.closest('.listview__input');
-            if (!input) return;
+<script>
+    // Tabbytte mellom seksjonene
+    document.querySelectorAll('.discounts-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.discounts-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.discounts-section').forEach(s => s.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(tab.dataset.target).classList.add('active');
+        });
+    });
 
-            const row = input.closest('tr');
-            const priceCell = row.querySelector('.listview__td--num'); // første tallcelle
-            const newCell = row.querySelector('.listview__computed');
-            if (!priceCell || !newCell) return;
+    // Lagring av rabatt
+    document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.listview__btn--save');
+        if (!btn) return;
+        const row = btn.closest('tr');
+        const input = row.querySelector('.listview__input');
+        const rate = input.value;
+        const id = btn.dataset.id;
+        const isCategory = btn.dataset.category === 'true';
 
-            const rawPrice = parseFloat(priceCell.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
-            const rate = parseFloat(input.value.replace(',', '.')) || 0;
-            const discounted = Math.max(0, rawPrice * (1 - rate / 100));
-
-            newCell.textContent = discounted.toFixed(2).replace('.', ',') + ' kr';
+        const res = await fetch('/Admin/Discounts/UpdateDiscount', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id=${id}&rate=${rate}&isCategory=${isCategory}`
         });
 
-        // Lagre rabatt via fetch
-        document.addEventListener('click', async (e) => {
-            const btn = e.target.closest('.listview__btn--save');
-            if (!btn) return;
-
-            const id = btn.dataset.id;
-            const isCategory = btn.dataset.category === 'true';
-            const rate = btn.closest('tr').querySelector('.listview__input').value;
-
-            const res = await fetch('/AdminDiscount/UpdateDiscount', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `id=${encodeURIComponent(id)}&rate=${encodeURIComponent(rate)}&isCategory=${isCategory}`
-            });
-
-            if (res.ok) {
-                alert('Rabattsats lagret!');
-                location.reload();
-            }
-        });
-    </script>
+        if (res.ok) {
+            alert('Rabattsats lagret!');
+            location.reload();
+        }
+});
+</script>
 }

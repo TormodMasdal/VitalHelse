@@ -1,15 +1,15 @@
 .listview {
     display: flex;
     justify-content: center;
-    margin: 1.5rem 0 3rem;
+    margin: 2rem 0 3rem;
 }
 
 .listview__container {
-    width: min(1100px, 96%);
+    width: min(1100px, 95%);
     background: #fff;
     border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-    padding: 1.25rem 1.25rem 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,.06);
 }
 
 .listview__table {
@@ -19,64 +19,53 @@
 
 .listview__table th,
 .listview__table td {
-    padding: 0.75rem 0.9rem;
+    padding: 0.8rem 1rem;
 }
 
-.listview__table thead th {
-    font-weight: 600;
-    letter-spacing: 0.2px;
+.listview__table th {
+    text-align: left;
     color: #374151;
-    border-bottom: 2px solid #eef2f7;
+    border-bottom: 2px solid #eee;
+    font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
-.listview__table tbody td {
-    border-bottom: 1px solid #f4f6fa;
+.listview__table td {
+    border-bottom: 1px solid #f4f4f4;
     color: #111827;
 }
 
-.listview__row:hover {
-    background: #fafbff;
-}
-
-.listview__th--num,
 .listview__td--num {
     text-align: right;
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.listview__row:hover {
+    background: #fafafa;
 }
 
 .listview__input {
-    width: 82px;
-    padding: 0.35rem 0.45rem;
+    width: 70px;
+    padding: 0.35rem;
+    border-radius: 6px;
     border: 1px solid #d1d5db;
-    border-radius: 8px;
     text-align: right;
-    font: 500 0.95rem/1 Inter, system-ui, -apple-system, Segoe UI, Arial;
-}
-
-.listview__input:focus {
-    outline: none;
-    border-color: #b99470;
-    box-shadow: 0 0 0 3px rgba(185, 148, 112, 0.18);
-}
-
-.listview__btn {
-    border: 0;
-    border-radius: 10px;
-    padding: 0.42rem 0.9rem;
-    cursor: pointer;
-    font-weight: 600;
+    font-size: 0.9rem;
 }
 
 .listview__btn--save {
     background: #b99470;
     color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s ease;
 }
 
 .listview__btn--save:hover {
-    filter: brightness(0.96);
+    filter: brightness(.96);
     transform: translateY(-1px);
-}
-
-.listview__computed {
-    font-variant-numeric: tabular-nums;
 }

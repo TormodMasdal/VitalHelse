@@ -1,128 +1,49 @@
-@using VitalHelse.Models
-@model object
-
+@model IEnumerable<object>
 @{
-    var listMode       = (string?)ViewData["ListMode"] ?? "product"; // "product" | "category"
-    var isDiscountMode = (bool?)ViewData["IsDiscountMode"] ?? false;
-    var isAdminView    = (bool?)ViewData["IsAdminView"] ?? false;
-
-    var products   = listMode == "product"  ? Model as IEnumerable<Product>  : null;
-    var categories = listMode == "category" ? Model as IEnumerable<Category> : null;
-    var discounts  = ViewData["Discounts"] as IEnumerable<ProductDiscount>;
+    var columns = ViewData["Columns"] as string[] ?? new string[0];
+    var rows = ViewData["Rows"] as IEnumerable<IDictionary<string, string>> ?? new List<IDictionary<string, string>>();
+    var showActions = (bool?)ViewData["ShowActions"] ?? false;
 }
 
 <div class="listview">
     <div class="listview__container">
         <table class="listview__table">
             <thead>
-                <tr>
-                    @if (listMode == "product")
-                    {
-                        <th>Produkt</th>
-                        <th class="listview__th--num">Pris</th>
-
-                        @if (isDiscountMode)
-                        {
-                            <th class="listview__th--num">Rabatt (%)</th>
-                            <th class="listview__th--num">Ny pris</th>
-                        }
-
-                        @if (isAdminView && isDiscountMode)
-                        {
-                            <th></th>
-                        }
-                    }
-                    else
-                    {
-                        <th>Kategori</th>
-
-                        @if (isDiscountMode)
-                        {
-                            <th class="listview__th--num">Rabatt (%)</th>
-                        }
-
-                        @if (isAdminView && isDiscountMode)
-                        {
-                            <th></th>
-                        }
-                    }
-                </tr>
+            <tr>
+                @foreach (var col in columns)
+                {
+                    <th>@col</th>
+                }
+                @if (showActions)
+                {
+                    <th></th>
+                }
+            </tr>
             </thead>
 
             <tbody>
-                @if (listMode == "product" && products != null)
-                {
-                    foreach (var p in products)
+            @foreach (var row in rows)
+            {
+                <tr class="listview__row">
+                    @foreach (var kv in row)
                     {
-                        var discount = discounts?.FirstOrDefault(d => d.ProductId == p.ProductId);
-                        var rate = discount?.DiscountRate ?? 0;
-                        var newPrice = p.ProductPriceInVAT * (1 - rate / 100.0);
-
-                        <tr class="listview__row">
-                            <td>@p.ProductName</td>
-                            <td class="listview__td--num">@p.ProductPriceInVAT.ToString("0.00") kr</td>
-
-                            @if (isDiscountMode)
-                            {
-                                <td class="listview__td--num">
-                                    <input type="number"
-                                           class="listview__input"
-                                           value="@rate"
-                                           min="0" max="100" step="0.5"
-                                           aria-label="Rabatt for @p.ProductName" />
-                                </td>
-                                <td class="listview__td--num">
-                                    <span class="listview__computed">@newPrice.ToString("0.00") kr</span>
-                                </td>
-                            }
-
-                            @if (isAdminView && isDiscountMode)
-                            {
-                                <td>
-                                    <button class="listview__btn listview__btn--save"
-                                            data-id="@p.ProductId"
-                                            data-category="false">
-                                        Lagre
-                                    </button>
-                                </td>
-                            }
-                        </tr>
+                        <td class="@(kv.Key.Contains("Pris") || kv.Key.Contains("Rabatt") ? "listview__td--num" : "")">
+                            @kv.Value
+                        </td>
                     }
-                }
-                else if (listMode == "category" && categories != null)
-                {
-                    foreach (var c in categories)
+
+                    @if (showActions)
                     {
-                        var discount = discounts?.FirstOrDefault(d => d.CategoryId == c.CategoryId);
-                        var rate = discount?.DiscountRate ?? 0;
-
-                        <tr class="listview__row">
-                            <td>@c.CategoryName</td>
-
-                            @if (isDiscountMode)
-                            {
-                                <td class="listview__td--num">
-                                    <input type="number"
-                                           class="listview__input"
-                                           value="@rate"
-                                           min="0" max="100" step="0.5"
-                                           aria-label="Rabatt for @c.CategoryName" />
-                                </td>
-                            }
-
-                            @if (isAdminView && isDiscountMode)
-                            {
-                                <td>
-                                    <button class="listview__btn listview__btn--save"
-                                            data-id="@c.CategoryId"
-                                            data-category="true">
-                                        Lagre
-                                    </button>
-                                </td>
-                            }
-                        </tr>
+                        <td>
+                            <button class="listview__btn listview__btn--save"
+                                    data-id="@row["Id"]"
+                                    data-category="@row["IsCategory"]">
+                                Lagre
+                            </button>
+                        </td>
                     }
-                }
+                </tr>
+            }
             </tbody>
         </table>
     </div>

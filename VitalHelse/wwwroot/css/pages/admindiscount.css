@@ -1,0 +1,105 @@
+.discounts-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    border-radius: 16px;
+}
+
+.discounts-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.discounts-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: .5rem;
+    color: #222;
+}
+
+.discounts-subtitle {
+    color: #6b7280;
+}
+
+.discounts-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.discounts-tab {
+    background: #f5f5f5;
+    border: none;
+    padding: .6rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all .2s;
+}
+
+.discounts-tab.active {
+    background: #b99470;
+    color: #fff;
+}
+
+.discounts-section {
+    display: none;
+}
+
+.discounts-section.active {
+    display: block;
+    animation: fadeIn .25s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(5px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.discounts-section-title {
+    font-size: 1.3rem;
+    margin-bottom: .5rem;
+    color: #333;
+}
+
+.discounts-section-desc {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+    font-size: .95rem;
+}
+
+.discounts-input {
+    border: 1px solid #ddd;
+    padding: .4rem .6rem;
+    border-radius: 6px;
+    width: 160px;
+    margin-bottom: .6rem;
+}
+
+.discount-toggle-btn, .discounts-action-btn {
+    background: #b99470;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: .5rem 1.2rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: .2s ease;
+}
+
+.discount-toggle-btn:hover,
+.discounts-action-btn:hover {
+    background: #a38263;
+}
+
+.auto-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.auto-settings label {
+    font-weight: 500;
+}

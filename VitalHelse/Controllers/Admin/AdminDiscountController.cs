@@ -11,30 +11,16 @@ namespace VitalHelse.Controllers;
 public class AdminDiscountController : Controller
 {
     private readonly ApplicationDbContext _context;
+    public AdminDiscountController(ApplicationDbContext context) => _context = context;
 
-    public AdminDiscountController(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    // GET: /AdminDiscount
+    [HttpGet("")]
     public async Task<IActionResult> Index(bool showCategories = false)
     {
         var vm = new DiscountViewModel
         {
-            Products = await _context.Products
-                .Include(p => p.ProductPictures)
-                .AsNoTracking()
-                .ToListAsync(),
-
-            Categories = await _context.Categories
-                .AsNoTracking()
-                .ToListAsync(),
-
-            Discounts = await _context.ProductDiscounts
-                .AsNoTracking()
-                .ToListAsync(),
-
+            Products = await _context.Products.Include(p => p.ProductPictures).ToListAsync(),
+            Categories = await _context.Categories.ToListAsync(),
+            Discounts = await _context.ProductDiscounts.ToListAsync(),
             ShowCategoryView = showCategories
         };
 
@@ -42,17 +28,12 @@ public class AdminDiscountController : Controller
         return View("~/Views/Admin/Discounts.cshtml", vm);
     }
 
-
-    // POST: /AdminDiscount/UpdateDiscount
-    [HttpPost]
+    [HttpPost("UpdateDiscount")]
     public async Task<IActionResult> UpdateDiscount(int id, double rate, bool isCategory)
     {
-        ProductDiscount? discount;
-
-        if (isCategory)
-            discount = await _context.ProductDiscounts.FirstOrDefaultAsync(d => d.CategoryId == id);
-        else
-            discount = await _context.ProductDiscounts.FirstOrDefaultAsync(d => d.ProductId == id);
+        ProductDiscount? discount = isCategory
+            ? await _context.ProductDiscounts.FirstOrDefaultAsync(d => d.CategoryId == id)
+            : await _context.ProductDiscounts.FirstOrDefaultAsync(d => d.ProductId == id);
 
         if (discount == null)
         {
