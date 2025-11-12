@@ -1,0 +1,17 @@
+@model VitalHelse.Models.DiscountViewModel
+@{
+    ViewData["Title"] = "Kampanjer";
+    Layout = "_AdminLayout";
+}
+
+<div class="discount-page">
+    <form method="get">
+        <button type="submit" name="showCategories" value="@(!Model.ShowCategoryView)" class="btn btn-primary mb-3">
+            @(Model.ShowCategoryView ? "Vis produkter" : "Vis kategorier")
+        </button>
+    </form>
+
+    <partial name="_ProductList"
+             model="Model"
+             view-data='new ViewDataDictionary(ViewData) { ["IsCategoryMode"] = Model.ShowCategoryView }' />
+</div>

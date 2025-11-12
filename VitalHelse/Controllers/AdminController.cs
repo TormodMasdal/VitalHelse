@@ -58,6 +58,19 @@ public class AdminController : Controller
     }
     
     // ============================================
+    // DISCOUNTS
+    // ============================================
+// ============================================
+// DISCOUNTS (redirect to AdminDiscountController)
+// ============================================
+    public IActionResult Discounts()
+    {
+        ViewData["Title"] = "Kampanjer";
+        return RedirectToAction("Index", "AdminDiscount");
+    }
+
+    
+    // ============================================
     // EMPLOYEES (manage employees)
     // ============================================
     public IActionResult Employees()

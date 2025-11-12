@@ -31,6 +31,7 @@
             <a asp-controller="Admin" asp-action="Products" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Products" ? "active" : "")">Produkter</a>
             <a asp-controller="Admin" asp-action="Categories" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Categories" ? "active" : "")">Kategorier</a>
             <a asp-controller="Admin" asp-action="Banners" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Banners" ? "active" : "")">Bannere</a>
+            <a asp-controller="Admin" asp-action="Discounts" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Discounts" ? "active" : "")">Kampanjer</a>
         </nav>
     </aside>
 
