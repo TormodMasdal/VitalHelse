@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Stripe;
-using VitalHelse.Controllers;
+using VitalHelse.Configuration;
 using VitalHelse.Data;
 using VitalHelse.Models;
 using VitalHelse.Services;
@@ -13,11 +15,14 @@ namespace VitalHelse.Controllers;
 public class StripeWebHook : Controller
 {
     private readonly ApplicationDbContext _db;
-    private const string EndpointSecret = "whsec_LlSZSSIpI4uXFAZFFKFgSR3vOTNbzJOl";
+    private readonly UserManager<AspNetUsers> _userManager;
+    private readonly StripeOptions _stripeOptions;
 
-    public StripeWebHook(ApplicationDbContext db)
+    public StripeWebHook(ApplicationDbContext db, UserManager<AspNetUsers> userManager, IOptions<StripeOptions> stripeOptions)
     {
         _db = db;
+        _userManager = userManager;
+        _stripeOptions = stripeOptions.Value;
     }
         
     /// <summary>
@@ -39,7 +44,7 @@ public class StripeWebHook : Controller
             stripeEvent = EventUtility.ConstructEvent(
                 json,
                 Request.Headers["Stripe-Signature"],
-                EndpointSecret,
+                _stripeOptions.WebhookSecret,
                 throwOnApiVersionMismatch: false);
         }
         catch (StripeException e)
@@ -86,6 +91,7 @@ public class StripeWebHook : Controller
                 OrderDate = DateTime.UtcNow,
                 StripePaymentIntentId = paymentIntentId
             };
+            
             // Fetch shopping cart from the database
             var cartItems = await _db.CartProducts
                 .Include(cp => cp.Product)
@@ -123,10 +129,17 @@ public class StripeWebHook : Controller
                 productListHtml += $"<li>{product.Product.ProductName} – {product.Quantity} stk – {product.Product.ProductPriceInVAT} kr</li>";
                 productListText += $"{product.Product.ProductName} - {product.Quantity} stk - {product.Product.ProductPriceInVAT} kr\n";
             }
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            string firstName = user.FirstName;
+            string lastName = user.LastName;
+            string email = user.Email;
             
             // Sends email
             await emailService.SendEmailAsync(
-                to: "tormod@masdal.com",
+                to: email,
+                firstAndLastName: $"{lastName} {firstName}",
                 subject: "Kvittering for kjøp hos Vital Helse",
                 body: 
                 "Takk for at du handlet hos Vital Helse!"+

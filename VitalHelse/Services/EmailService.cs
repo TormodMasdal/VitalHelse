@@ -13,11 +13,11 @@ public class EmailService
     /// <param name="subject">Subject of email</param>
     /// <param name="body">Main info of email</param>
     /// <param name="htmlBody">The body nested in HTML format</param>
-    public async Task SendEmailAsync(string to, string subject, string body, string htmlBody)
+    public async Task SendEmailAsync(string to, string firstAndLastName, string subject, string body, string htmlBody)
     {
         var message = new MimeMessage(); // Creates a new message
         message.From.Add(new MailboxAddress("VitalHelse", "tormodmasdal@gmail.com")); // Info about the sender
-        message.To.Add(new MailboxAddress("Fetch First and last from db", to)); // Info about the receiver
+        message.To.Add(new MailboxAddress(firstAndLastName, to)); // Info about the receiver
         message.Subject = subject;
 
         // Bodybuilder gives an opportunity to write HTML format
@@ -33,6 +33,7 @@ public class EmailService
         using var client = new SmtpClient();
         try
         {
+            // MIGHT CHANGE BASED ON VITALHELSES GMAIL
             await client.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
             await client.AuthenticateAsync("tormodmasdal@gmail.com", "mdru hgju qaxc ymso");
 
@@ -41,7 +42,7 @@ public class EmailService
         catch (Exception ex)
         {
             Console.WriteLine($"Error sending email: {ex.Message}");
-            throw; // rethrow så du ser det i terminalen
+            throw; // rethrow to the terminal
         }
         finally
         {

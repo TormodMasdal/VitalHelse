@@ -19,7 +19,7 @@ public class Order
     public DiscountCode? DiscountCode { get; set; }
     [StringLength(500)] public string? DiscountCodeId { get; set; }
 
-    [Required] public AspNetUsers? AspNetUsers { get; set; }
+    [Required] public AspNetUsers AspNetUsers { get; set; }
     [StringLength(450)] public string? AspNetUsersId { get; set; }
     
     public UserAddress? UserAddress { get; set; }

@@ -54,7 +54,7 @@ builder.Services.Configure<StripeOptions>(options =>
     options.PublishableKey = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY");
     options.SecretKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
     options.WebhookSecret = Environment.GetEnvironmentVariable("STRIPE_WEBHOOK_SECRET");
-    options.Price = Environment.GetEnvironmentVariable("PRICE");
+    //options.Price = Environment.GetEnvironmentVariable("PRICE");
     options.Domain = Environment.GetEnvironmentVariable("DOMAIN");
 });
 
