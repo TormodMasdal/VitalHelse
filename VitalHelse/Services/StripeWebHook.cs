@@ -17,12 +17,14 @@ public class StripeWebHook : Controller
     private readonly ApplicationDbContext _db;
     private readonly UserManager<AspNetUsers> _userManager;
     private readonly StripeOptions _stripeOptions;
+    private readonly EmailService _emailService;
 
-    public StripeWebHook(ApplicationDbContext db, UserManager<AspNetUsers> userManager, IOptions<StripeOptions> stripeOptions)
+    public StripeWebHook(ApplicationDbContext db, UserManager<AspNetUsers> userManager, IOptions<StripeOptions> stripeOptions, EmailService emailService)
     {
         _db = db;
         _userManager = userManager;
         _stripeOptions = stripeOptions.Value;
+        _emailService = emailService;
     }
         
     /// <summary>
@@ -115,10 +117,7 @@ public class StripeWebHook : Controller
 
             Console.WriteLine($"Created order {order.OrderId} for user {userId}");
             
-            
-            // Start confirmation email sending
-            var emailService = new EmailService();
-
+           
             // Lists for the product of the customer
             var productListHtml = "";
             var productListText = "";
@@ -137,7 +136,7 @@ public class StripeWebHook : Controller
             string email = user.Email;
             
             // Sends email
-            await emailService.SendEmailAsync(
+            await _emailService.SendEmailAsync(
                 to: email,
                 firstAndLastName: $"{lastName} {firstName}",
                 subject: "Kvittering for kjøp hos Vital Helse",

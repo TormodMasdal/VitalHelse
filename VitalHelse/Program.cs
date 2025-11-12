@@ -54,10 +54,17 @@ builder.Services.Configure<StripeOptions>(options =>
     options.PublishableKey = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY");
     options.SecretKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
     options.WebhookSecret = Environment.GetEnvironmentVariable("STRIPE_WEBHOOK_SECRET");
-    //options.Price = Environment.GetEnvironmentVariable("PRICE");
     options.Domain = Environment.GetEnvironmentVariable("DOMAIN");
 });
 
+builder.Services.Configure<EmailConfig>(options =>
+{
+    options.Host = Environment.GetEnvironmentVariable("EMAIL__HOST");
+    options.UserName = Environment.GetEnvironmentVariable("EMAIL__USERNAME");
+    options.Password = Environment.GetEnvironmentVariable("EMAIL__PASSWORD");
+});
+
+builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<IEmailSender, RegisterAndForgottenPassService>();
 builder.Services.Configure<AuthMessageSenderOptions>(options =>
 {

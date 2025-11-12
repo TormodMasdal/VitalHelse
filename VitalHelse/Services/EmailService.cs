@@ -1,4 +1,6 @@
+using Microsoft.Extensions.Options;
 using MimeKit;
+using VitalHelse.Configuration;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 
@@ -6,6 +8,13 @@ namespace VitalHelse.Services;
 
 public class EmailService 
 {
+    private readonly EmailConfig _emailConfig;
+
+    public EmailService(IOptions<EmailConfig> emailConfig)
+    {
+        _emailConfig = emailConfig.Value;
+    }
+    
     /// <summary>
     /// Sends email from the website domain
     /// </summary>
@@ -15,8 +24,9 @@ public class EmailService
     /// <param name="htmlBody">The body nested in HTML format</param>
     public async Task SendEmailAsync(string to, string firstAndLastName, string subject, string body, string htmlBody)
     {
+        
         var message = new MimeMessage(); // Creates a new message
-        message.From.Add(new MailboxAddress("VitalHelse", "tormodmasdal@gmail.com")); // Info about the sender
+        message.From.Add(new MailboxAddress("VitalHelse", _emailConfig.UserName)); // Info about the sender
         message.To.Add(new MailboxAddress(firstAndLastName, to)); // Info about the receiver
         message.Subject = subject;
 
@@ -34,8 +44,8 @@ public class EmailService
         try
         {
             // MIGHT CHANGE BASED ON VITALHELSES GMAIL
-            await client.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync("tormodmasdal@gmail.com", "mdru hgju qaxc ymso");
+            await client.ConnectAsync(_emailConfig.Host, 587, MailKit.Security.SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(_emailConfig.UserName, _emailConfig.Password);
 
             await client.SendAsync(message);
         }
