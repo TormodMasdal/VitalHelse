@@ -14,11 +14,7 @@
 <partial name="_ManageNav"/>
 
 <div class="container-fluid">
-    <div class="row mt-2">
-        <div class="col-md-8">
-            @RenderBody()
-        </div>
-    </div>
+    @RenderBody()
 </div>
 
 <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
