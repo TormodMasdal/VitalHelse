@@ -5,6 +5,14 @@
     ViewData["Title"] = Model?.CurrentCategory?.CategoryName ?? "Kategori";
     Layout = "_Layout";
 }
+@* 🔹 Popup when product is added to cart *@
+<div id="cart-popup">
+    <h4 style="padding:2rem ">Produktet er lagt til i handlekurven!</h4>
+    <div style="margin-bottom: 1rem">
+        <button id="continue-shopping" class="btn-submit" style="margin: 1rem">Fortsett å handle</button>
+        <button id="go-to-cart" class="btn-submit" style="margin: 1rem">Gå til handlekurv</button>
+    </div>
+</div>
 
 <div class="category-page">
     <section class="category-header text-center">
