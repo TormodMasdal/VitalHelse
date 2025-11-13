@@ -1,105 +1,124 @@
+/* =============================== */
+/* PAGE CONTAINER                  */
+/* =============================== */
+
 .discounts-page {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
-    border-radius: 16px;
+    padding: 1rem 1rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
+/* HEADER */
 .discounts-header {
-    margin-bottom: 2rem;
     text-align: center;
 }
-
 .discounts-title {
-    font-size: 2rem;
+    font-size: 1.9rem;
     font-weight: 600;
-    margin-bottom: .5rem;
-    color: #222;
+    color: #333;
 }
-
 .discounts-subtitle {
-    color: #6b7280;
+    color: #666;
+    margin-top: .3rem;
 }
 
+/* TABS */
 .discounts-nav {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: .5rem;
 }
-
 .discounts-tab {
-    background: #f5f5f5;
-    border: none;
-    padding: .6rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all .2s;
-}
-
-.discounts-tab.active {
-    background: #b99470;
-    color: #fff;
-}
-
-.discounts-section {
-    display: none;
-}
-
-.discounts-section.active {
-    display: block;
-    animation: fadeIn .25s ease;
-}
-
-@keyframes fadeIn {
-    from {opacity: 0; transform: translateY(5px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-
-.discounts-section-title {
-    font-size: 1.3rem;
-    margin-bottom: .5rem;
-    color: #333;
-}
-
-.discounts-section-desc {
-    color: #6b7280;
-    margin-bottom: 1.5rem;
-    font-size: .95rem;
-}
-
-.discounts-input {
-    border: 1px solid #ddd;
-    padding: .4rem .6rem;
-    border-radius: 6px;
-    width: 160px;
-    margin-bottom: .6rem;
-}
-
-.discount-toggle-btn, .discounts-action-btn {
-    background: #b99470;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
     padding: .5rem 1.2rem;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
     cursor: pointer;
-    font-weight: 500;
-    transition: .2s ease;
+}
+.discounts-tab.active {
+    background: #fbeaf1;
+    color: #9d4f70;
 }
 
-.discount-toggle-btn:hover,
-.discounts-action-btn:hover {
-    background: #a38263;
+/* SAVE BAR */
+.discounts-topheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.discount-savebtn {
+    background: #efc6d9;
+    border: none;
+    padding: .7rem 1.4rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.discount-hint {
+    color: #777;
+    font-size: .85rem;
 }
 
-.auto-settings-grid {
+/* LAYOUT */
+.discounts-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1rem;
-    margin: 1rem 0;
+    grid-template-columns: 260px 1fr;
+    gap: 2rem;
 }
 
-.auto-settings label {
-    font-weight: 500;
+/* SIDEBAR */
+.discounts-sidebar {
+    background: #fff;
+    padding: 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.03);
+    border: 1px solid #eee;
+}
+.discount-filter-title {
+    margin-bottom: .5rem;
+    font-weight: 600;
+}
+.discount-filter-group {
+    margin-bottom: 1rem;
+}
+.discount-filter-categories {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+}
+.discount-filter-check {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+}
+.discount-filter-submit {
+    margin-top: .5rem;
+    width: 100%;
+    padding: .5rem;
+    border: none;
+    border-radius: 6px;
+    background: #efc6d9;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* PRODUCT AREA */
+.discounts-listarea {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.discount-infoline {
+    text-align: right;
+    color: #555;
+}
+.discount-input {
+    width: 60px;
+    padding: .3rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    text-align: right;
 }

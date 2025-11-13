@@ -1,0 +1,45 @@
+@{
+    var columns = ViewData["Columns"] as string[] ?? Array.Empty<string>();
+    var rows = ViewData["Rows"] as IEnumerable<IDictionary<string, string>>
+               ?? new List<IDictionary<string, string>>();
+}
+
+<div class="listview">
+    <div class="listview__container">
+        <table class="listview__table">
+            <thead>
+            <tr>
+                @foreach (var col in columns)
+                {
+                    <th>@col</th>
+                }
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var row in rows)
+            {
+                var productId = row.ContainsKey("Id") ? row["Id"] : "";
+                var isCategory = row.ContainsKey("IsCategory") && row["IsCategory"] == "true";
+                var categoryId = row.ContainsKey("CategoryId") ? row["CategoryId"] : "";
+                var basePrice = row.ContainsKey("BasePrice") ? row["BasePrice"] : "";
+                var categoryRateRaw = row.ContainsKey("CategoryRateRaw") ? row["CategoryRateRaw"] : "0";
+
+                <tr class="listview__row"
+                    data-product-id="@(isCategory ? "" : productId)"
+                    data-category-id="@categoryId"
+                    data-base-price="@basePrice"
+                    data-category-rate="@categoryRateRaw">
+                    @foreach (var col in columns)
+                    {
+                        var value = row.ContainsKey(col) ? row[col] : "";
+                        <td class="@(col.Contains("Pris") || col.Contains("Rabatt") ? "listview__td--num" : "")">
+                            @Html.Raw(value)
+                        </td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

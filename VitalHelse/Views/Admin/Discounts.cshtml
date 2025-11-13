@@ -1,191 +1,133 @@
+@using System.Globalization
 @model VitalHelse.Models.DiscountViewModel
+
 @{
-Layout = "_AdminLayout";
-ViewData["Title"] = "Kampanjer";
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Kampanjer";
 }
 
 <section class="discounts-page">
 
-    <!-- ========== HEADER ========== -->
+    <!-- HEADER -->
     <header class="discounts-header">
         <h2 class="discounts-title">Rabatter & Kampanjer</h2>
-        <p class="discounts-subtitle">Administrer rabatter manuelt eller automatiser kampanjer for lavt-selgende produkter.</p>
+        <p class="discounts-subtitle">
+            Administrer rabatter i sanntid, filtrer etter kategori og lagre samlet.
+        </p>
     </header>
 
-
-    <!-- ========== NAVIGASJON / TABS ========== -->
+    <!-- NAV -->
     <nav class="discounts-nav">
         <button class="discounts-tab active" data-target="section-rates">🎛 Endre rabattsatser</button>
         <button class="discounts-tab" data-target="section-campaigns">⚙️ Kampanjestyring</button>
         <button class="discounts-tab" data-target="section-auto">🤖 Automatiske kampanjer</button>
     </nav>
 
-
-
-    <!-- ========== SEKSJON 1: Endre rabattsatser ========== -->
+    <!-- ============================= -->
+    <!-- SECTION: RABATTSTYRING       -->
+    <!-- ============================= -->
     <section id="section-rates" class="discounts-section active">
-        <div class="discounts-toolbar">
-            <form method="get" asp-action="Index" asp-controller="AdminDiscount">
-                <input type="hidden" name="showCategories" value="@(!Model.ShowCategoryView)" />
-                <button type="submit" class="discounts-toggle-btn">
-                    @(Model.ShowCategoryView ? "Vis produkter" : "Vis kategorier")
-                </button>
-            </form>
+
+        <!-- SAVE BAR -->
+        <div class="discounts-topheader">
+            <button id="saveAllDiscountsBtn" class="discount-savebtn">💾 Lagre endringer</button>
+            <span class="discount-hint">Endringer lagres for kategori- og produktrabatter.</span>
         </div>
 
-        <!-- Bruker vårt nye _ListView -->
-        @{
-            var columns = new[]
-            {
-                "Produkt",
-                "Pris",
-                "Kategori-rabatt",
-                "Produkt-rabatt",
-                "Gjeldende rabatt",
-                "Ny pris"
-            };
+        <!-- 2-COLUMN LAYOUT -->
+        <div class="discounts-layout">
 
-            var rows = new List<Dictionary<string, string>>();
+            <!-- SIDEBAR -->
+            <aside class="discounts-sidebar">
+                @await Html.PartialAsync("_DiscountFilterSidebar",
+                    new DiscountFilterViewModel {
+                        Categories = Model.Categories,
+                        SelectedCategoryIds = Model.SelectedCategoryIds
+                    })
+            </aside>
 
-            foreach (var p in Model.Products)
-            {
-                // Hent kategori fra relasjonen
-                var category = p.ProductCategories.FirstOrDefault()?.Category;
-                var categoryId = category?.CategoryId;
-                var categoryName = category?.CategoryName ?? "—";
+            <!-- PRODUCT LIST -->
+            <div class="discounts-listarea">
 
-                // Finn relevante rabatter
-                var productDiscount = Model.Discounts.FirstOrDefault(d => d.ProductId == p.ProductId);
-                var categoryDiscount = Model.Discounts.FirstOrDefault(d => d.CategoryId == categoryId && d.IsCategoryDiscount);
-
-                // Beregninger
-                var productRate = productDiscount?.DiscountRate ?? 0;
-                var categoryRate = categoryDiscount?.DiscountRate ?? 0;
-                var effectiveRate = productDiscount != null ? productRate : categoryRate;
-                var newPrice = p.ProductPriceInVAT * (1 - effectiveRate / 100.0);
-
-                rows.Add(new Dictionary<string, string>
-                {
-                    ["Id"] = p.ProductId.ToString(),
-                    ["IsCategory"] = "false",
-                    ["Produkt"] = $"{p.ProductName} <span class='listview__sub'>{categoryName}</span>",
-                    ["Pris"] = $"{p.ProductPriceInVAT:0.00} kr",
-                    ["Kategori-rabatt"] = $"{categoryRate:0.0} %",
-                    ["Produkt-rabatt"] = $"<input type='number' class='listview__input' value='{productRate:0.0}' min='0' max='100' step='0.5' />",
-                    ["Gjeldende rabatt"] = $"{effectiveRate:0.0} %",
-                    ["Ny pris"] = $"{newPrice:0.00} kr"
-                });
-            }
-
-            ViewData["Columns"] = columns;
-            ViewData["Rows"] = rows;
-            ViewData["ShowActions"] = true;
-        }
-
-        @await Html.PartialAsync("_ListView", ViewData["Rows"])
-
-    </section>
-    
-
-    <!-- ========== SEKSJON 2: Kampanjestyring ========== -->
-    <section id="section-campaigns" class="discounts-section">
-        <h3 class="discounts-section-title">Kampanjestyring</h3>
-        <p class="discounts-section-desc">
-            Her kan du planlegge, starte eller stoppe kampanjer.
-            Du kan også angi hvor lenge en kampanje varer, og hvilke produkter eller kategorier den skal gjelde for.
-        </p>
-
-        <div class="campaign-form">
-            <label>Startdato:</label>
-            <input type="date" class="discounts-input" />
-            <label>Sluttdato:</label>
-            <input type="date" class="discounts-input" />
-
-            <label>Kampanjenavn:</label>
-            <input type="text" class="discounts-input" placeholder="Høsttilbud 2025" />
-
-            <button class="discounts-action-btn">📢 Start kampanje</button>
-        </div>
-
-        <div class="campaign-list">
-            <h4>Aktive kampanjer</h4>
-            <ul>
-                <li><strong>Sommerboost</strong> — varer til 15. august</li>
-                <li><strong>Hudpleie-uke</strong> — varer til 28. september</li>
-            </ul>
-        </div>
-    </section>
-
-
-
-    <!-- ========== SEKSJON 3: Automatiske kampanjer ========== -->
-    <section id="section-auto" class="discounts-section">
-        <h3 class="discounts-section-title">Automatiske kampanjer</h3>
-        <p class="discounts-section-desc">
-            Aktiver automatisk genererte kampanjer basert på produkter som selger minst.
-            Nye kampanjer opprettes når forrige er ferdig, om ikke funksjonen er slått av.
-        </p>
-
-        <div class="auto-settings">
-            <label>
-                <input type="checkbox" class="discounts-checkbox" checked />
-                Start nye kampanjer automatisk
-            </label>
-
-            <div class="auto-settings-grid">
-                <div>
-                    <label>Varighet (dager)</label>
-                    <input type="number" class="discounts-input" value="7" min="1" />
+                <div class="discount-infoline">
+                    Viser @Model.Products.Count() av @Model.TotalProducts produkter
                 </div>
-                <div>
-                    <label>Antall produkter</label>
-                    <input type="number" class="discounts-input" value="5" min="1" />
-                </div>
-                <div>
-                    <label>Standard rabatt (%)</label>
-                    <input type="number" class="discounts-input" value="20" min="1" max="90" />
-                </div>
+
+                <table class="listview__table">
+                    <thead>
+                    <tr>
+                        <th>Produkt</th>
+                        <th>Kategori</th>
+                        <th>Nåv. kat. rabatt</th>
+                        <th>Ny kat. rabatt</th>
+                        <th>Nåv. prod. rabatt</th>
+                        <th>Ny prod. rabatt</th>
+                        <th>Originalpris</th>
+                        <th>Ny pris</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    @foreach (var p in Model.Products)
+                    {
+                        var cat = p.ProductCategories.FirstOrDefault()?.Category;
+                        var catId = cat?.CategoryId;
+                        var catName = cat?.CategoryName ?? "—";
+
+                        var catDisc = Model.Discounts.FirstOrDefault(d => d.IsCategoryDiscount && d.CategoryId == catId);
+                        var prodDisc = Model.Discounts.FirstOrDefault(d => !d.IsCategoryDiscount && d.ProductId == p.ProductId);
+
+                        var catRate = catDisc?.DiscountRate ?? 0;
+                        var prodRate = prodDisc?.DiscountRate ?? 0;
+                        var effRate = prodRate > 0 ? prodRate : catRate;
+                        var newPrice = p.ProductPriceInVAT * (1 - effRate / 100.0);
+
+                        <tr class="listview__row"
+                            data-product-id="@p.ProductId"
+                            data-category-id="@(catId?.ToString() ?? "")"
+                            data-base-price="@p.ProductPriceInVAT.ToString("0.00", CultureInfo.InvariantCulture)"
+                            data-category-rate="@catRate"
+                            data-product-rate="@prodRate">
+
+                            <td>@p.ProductName</td>
+                            <td>@catName</td>
+
+                            <td>@catRate.ToString("0.0") %</td>
+
+                            <td>
+                                @if (catId.HasValue)
+                                {
+                                    <input type="number"
+                                           class="discount-input js-category-rate"
+                                           data-category-id="@catId"
+                                           value="@catRate"
+                                           min="0" max="100" step="0.5" />
+                                }
+                                else { <span>—</span> }
+                            </td>
+
+                            <td>@prodRate.ToString("0.0") %</td>
+
+                            <td>
+                                <input type="number"
+                                       class="discount-input js-product-rate"
+                                       value="@prodRate"
+                                       min="0" max="100" step="0.5" />
+                            </td>
+
+                            <td>@p.ProductPriceInVAT.ToString("0.00") kr</td>
+                            <td><span class="js-new-price">@newPrice.ToString("0.00") kr</span></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+
             </div>
-
-            <button class="discounts-action-btn">🔁 Lag ny automatisk kampanje nå</button>
         </div>
     </section>
 
 </section>
 
-
 @section Scripts {
-<script>
-    // Tabbytte mellom seksjonene
-    document.querySelectorAll('.discounts-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.discounts-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.discounts-section').forEach(s => s.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById(tab.dataset.target).classList.add('active');
-        });
-    });
-
-    // Lagring av rabatt
-    document.addEventListener('click', async (e) => {
-        const btn = e.target.closest('.listview__btn--save');
-        if (!btn) return;
-        const row = btn.closest('tr');
-        const input = row.querySelector('.listview__input');
-        const rate = input.value;
-        const id = btn.dataset.id;
-        const isCategory = btn.dataset.category === 'true';
-
-        const res = await fetch('/Admin/Discounts/UpdateDiscount', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `id=${id}&rate=${rate}&isCategory=${isCategory}`
-        });
-
-        if (res.ok) {
-            alert('Rabattsats lagret!');
-            location.reload();
-        }
-});
-</script>
+    <script src="~/js/Admin/discount.js"></script>
 }

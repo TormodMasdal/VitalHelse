@@ -1,0 +1,24 @@
+@model VitalHelse.Models.DiscountFilterViewModel
+
+<form method="get" class="discount-filter-form">
+
+    <h4 class="discount-filter-title">Filtrer</h4>
+
+    <div class="discount-filter-group">
+        <label>Kategorier</label>
+
+        <div class="discount-filter-categories">
+            @foreach (var c in Model.Categories.OrderBy(c => c.CategoryName))
+            {
+                var isChecked = Model.SelectedCategoryIds.Contains(c.CategoryId);
+
+                <label class="discount-filter-check">
+                    <input type="checkbox" name="categoryIds" value="@c.CategoryId" @(isChecked ? "checked" : "") />
+                    @c.CategoryName
+                </label>
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="discount-filter-submit">Filtrer</button>
+</form>

@@ -9,7 +9,6 @@
     background: #fff;
     border-radius: 16px;
     padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,.06);
 }
 
 .listview__table {
@@ -68,4 +67,10 @@
 .listview__btn--save:hover {
     filter: brightness(.96);
     transform: translateY(-1px);
+}
+.listview__container {
+    padding: 1.5rem 2rem;
+}
+.listview__row:hover {
+    background: #f8f5f6;
 }

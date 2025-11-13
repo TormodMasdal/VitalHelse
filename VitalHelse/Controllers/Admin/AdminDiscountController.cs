@@ -4,54 +4,109 @@ using Microsoft.EntityFrameworkCore;
 using VitalHelse.Data;
 using VitalHelse.Models;
 
-namespace VitalHelse.Controllers;
-
-[Authorize(Roles = "Admin")]
-[Route("Admin/Discounts")]
-public class AdminDiscountController : Controller
+namespace VitalHelse.Controllers
 {
-    private readonly ApplicationDbContext _context;
-    public AdminDiscountController(ApplicationDbContext context) => _context = context;
-
-    [HttpGet("")]
-    public async Task<IActionResult> Index(bool showCategories = false)
+    [Authorize(Roles = "Admin")]
+    [Route("Admin/Discounts")]
+    public class AdminDiscountController : Controller
     {
-        var vm = new DiscountViewModel
+        private readonly ApplicationDbContext _context;
+        public AdminDiscountController(ApplicationDbContext context) => _context = context;
+
+        [HttpGet("")]
+        public async Task<IActionResult> Index(List<int>? categoryIds, int page = 1, int pageSize = 25)
         {
-            Products = await _context.Products.Include(p => p.ProductPictures).ToListAsync(),
-            Categories = await _context.Categories.ToListAsync(),
-            Discounts = await _context.ProductDiscounts.ToListAsync(),
-            ShowCategoryView = showCategories
-        };
+            var query = _context.Products
+                .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
+                .AsQueryable();
 
-        ViewData["Title"] = "Kampanjer";
-        return View("~/Views/Admin/Discounts.cshtml", vm);
-    }
-
-    [HttpPost("UpdateDiscount")]
-    public async Task<IActionResult> UpdateDiscount(int id, double rate, bool isCategory)
-    {
-        ProductDiscount? discount = isCategory
-            ? await _context.ProductDiscounts.FirstOrDefaultAsync(d => d.CategoryId == id)
-            : await _context.ProductDiscounts.FirstOrDefaultAsync(d => d.ProductId == id);
-
-        if (discount == null)
-        {
-            discount = new ProductDiscount
+            if (categoryIds != null && categoryIds.Any())
             {
-                DiscountRate = rate,
-                IsCategoryDiscount = isCategory,
-                ProductId = isCategory ? null : id,
-                CategoryId = isCategory ? id : null
+                query = query.Where(p => p.ProductCategories
+                    .Any(pc => categoryIds.Contains(pc.CategoryId)));
+            }
+
+            var totalProducts = await query.CountAsync();
+
+            var products = await query
+                .OrderBy(p => p.ProductName)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var vm = new DiscountViewModel
+            {
+                Products = products,
+                Categories = await _context.Categories.ToListAsync(),
+                Discounts = await _context.ProductDiscounts.ToListAsync(),
+                SelectedCategoryIds = categoryIds ?? new(),
+                TotalProducts = totalProducts,
+                Page = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling(totalProducts / (double)pageSize)
             };
-            _context.ProductDiscounts.Add(discount);
-        }
-        else
-        {
-            discount.DiscountRate = rate;
+
+            return View("~/Views/Admin/Discounts.cshtml", vm);
         }
 
-        await _context.SaveChangesAsync();
-        return Ok(new { success = true });
+
+
+        // ===== SAVE MANY =====
+        public record DiscountUpdateDto(int Id, double Rate, bool IsCategory);
+
+        [HttpPost("UpdateMany")]
+        public async Task<IActionResult> UpdateMany([FromBody] List<DiscountUpdateDto> updates)
+        {
+            foreach (var u in updates)
+            {
+                if (u.IsCategory)
+                {
+                    var cat = await _context.ProductDiscounts
+                        .FirstOrDefaultAsync(d => d.CategoryId == u.Id && d.IsCategoryDiscount);
+
+                    if (cat == null)
+                    {
+                        _context.ProductDiscounts.Add(new ProductDiscount
+                        {
+                            CategoryId = u.Id,
+                            IsCategoryDiscount = true,
+                            DiscountRate = u.Rate,
+                            IsActive = u.Rate > 0
+                        });
+                    }
+                    else
+                    {
+                        cat.DiscountRate = u.Rate;
+                        cat.IsActive = u.Rate > 0;
+                    }
+
+                    continue;
+                }
+
+                var prod = await _context.ProductDiscounts
+                    .FirstOrDefaultAsync(d => d.ProductId == u.Id && !d.IsCategoryDiscount);
+
+                if (prod == null)
+                {
+                    _context.ProductDiscounts.Add(new ProductDiscount
+                    {
+                        ProductId = u.Id,
+                        IsCategoryDiscount = false,
+                        DiscountRate = u.Rate,
+                        IsActive = u.Rate > 0
+                    });
+                }
+                else
+                {
+                    prod.DiscountRate = u.Rate;
+                    prod.IsActive = u.Rate > 0;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 }
