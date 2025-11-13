@@ -15,7 +15,7 @@ public class CampaignController : Controller
         _context = context;
     }
 
-    [HttpGet("Admin/Campaigns")]
+    [HttpGet("Admin/Kampanjer")]
     public IActionResult Index()
     {
         var campaigns = _context.Campaigns
@@ -41,7 +41,7 @@ public class CampaignController : Controller
         return View("Campaign", campaigns);
     }
     
-    [HttpPost("Admin/Campaigns/Create")]
+    [HttpPost("Admin/Campaign/Create")]
     public IActionResult Create(string Name, DateTime Start, DateTime End, List<int> CategoryIds)
     {
         var camp = new Campaign
@@ -59,7 +59,7 @@ public class CampaignController : Controller
         return RedirectToAction("Index");
     }
     
-    [HttpPost("Admin/Campaigns/Toggle")]
+    [HttpPost("Admin/Campaign/Toggle")]
     public IActionResult Toggle(int id)
     {
         var c = _context.Campaigns.Find(id);
@@ -71,7 +71,7 @@ public class CampaignController : Controller
         return RedirectToAction("Index");
     }
     
-    [HttpPost("Admin/Campaigns/Delete")]
+    [HttpPost("Admin/Campaign/Delete")]
     public IActionResult Delete(int id)
     {
         var camp = _context.Campaigns.Find(id);

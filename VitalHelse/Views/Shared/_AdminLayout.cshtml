@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="~/css/components/listview.css" asp-append-version="true"/>
 
     <!-- 4. Page-level -->
-    <link rel="stylesheet" href="~/css/pages/adminDiscount.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin/discount.css" />
     <link rel="stylesheet" href="~/css/pages/adduser.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/pages/adminStaffPage.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/pages/editroles.css" asp-append-version="true" />
@@ -47,8 +47,21 @@
                class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Categories" ? "active" : "")">Kategorier</a>
             <a asp-controller="Admin" asp-action="Banners"
                class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Banners" ? "active" : "")">Bannere</a>
-            <a asp-controller="Admin" asp-action="Discounts"
-               class="@(ViewContext.RouteData.Values["action"]?.ToString() == "DiscountCode" ? "active" : "")">Kampanjer</a>
+            <a asp-controller="DiscountCode"
+               asp-action="Index"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Rabbatkoder" ? "active" : "")">
+                Rabattkoder
+            </a>
+            <a asp-controller="CategoryDiscount"
+               asp-action="Index"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Rabattsatser" ? "active" : "")">
+                Rabattsatser
+            </a>
+            <a asp-controller="Campaign"
+               asp-action="Index"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Kampanjer" ? "active" : "")">
+                Kampanjer
+            </a>
         </nav>
 
     </aside>

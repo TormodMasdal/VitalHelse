@@ -1,93 +1,120 @@
 @model List<VitalHelse.Models.Discount.DiscountCode>
 
 @{
-    ViewData["Title"] = "Discount Codes";
+    ViewData["Title"] = "Rabattkoder";
     Layout = "_AdminLayout";
 }
 
 <div class="discountcodes-container">
 
-    <h2 class="section-title">Create New Discount Code</h2>
+    <h2 class="section-title">Opprett rabattkode</h2>
 
-    <form method="post" asp-action="Create" asp-controller="DiscountCode" class="discountcode-form">
+    <form method="post" asp-action="Create" asp-controller="DiscountCode" class="discountcode-form-inline">
 
-        <div class="form-row">
-            <label>Code</label>
-            <input type="text" name="Code" required />
+        <div class="form-group-inline">
+
+            <div class="form-row">
+                <label>Kode</label>
+                <input type="text" name="Code" required />
+            </div>
+
+            <div class="form-row">
+                <label>Rabatt (%)</label>
+                <input type="number" name="DiscountPercent" min="1" max="100" required />
+            </div>
+
+            <div class="form-row">
+                <label>Utløper (valgfritt)</label>
+                <input type="datetime-local" name="ExpiresAt" />
+            </div>
+
         </div>
 
-        <div class="form-row">
-            <label>Discount Percentage</label>
-            <input type="number" name="DiscountPercent" min="1" max="100" required />
-        </div>
-
-        <div class="form-row">
-            <label>Expires At (optional)</label>
-            <input type="datetime-local" name="ExpiresAt" />
-        </div>
-
-        <button type="submit" class="btn-create">Create Discount Code</button>
+        <button type="submit" class="btn-create">Opprett rabattkode</button>
     </form>
 
     <div class="divider"></div>
 
-    <h3 class="section-title">Existing Discount Codes</h3>
+    <h3 class="section-title">Aktive og tidligere rabattkoder</h3>
 
     <table class="discountcode-table">
-        <thead>
+    <thead>
+        <tr>
+            <th>Kode</th>
+            <th>Rabatt</th>
+            <th>Brukt</th>
+            <th>Opprettet</th>
+            <th>Utløper</th>
+            <th>Status</th>
+            <th>Handlinger</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var code in Model)
+        {
+            var toggleText = code.IsActive ? "Deaktiver" : "Aktiver";
+            bool expired = code.ExpiresAt.HasValue && code.ExpiresAt.Value < DateTime.Now;
+
             <tr>
-                <th>Code</th>
-                <th>Discount</th>
-                <th>Created</th>
-                <th>Expires</th>
-                <th>Times Used</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+                <!-- Kode -->
+                <td>@code.Code</td>
 
-        <tbody>
-            @foreach (var code in Model)
-            {
-                <tr>
-                    <td>@code.Code</td>
-                    <td>@code.DiscountPercent %</td>
-                    <td>@code.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <!-- Rabatt (%) -->
+                <td>@code.DiscountPercent %</td>
 
-                    <td>
-                        @(code.ExpiresAt.HasValue
-                            ? code.ExpiresAt.Value.ToString("yyyy-MM-dd")
-                            : "Never")
-                    </td>
+                <!-- Brukt antall ganger -->
+                <td>@code.TimesUsed</td>
 
-                    <td>@code.TimesUsed</td>
+                <!-- Opprettet dato -->
+                <td>@code.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
 
-                    <td>
-                        @if (code.IsActive)
-                        {
-                            <span class="status-active">Active</span>
-                        }
-                        else
-                        {
-                            <span class="status-inactive">Inactive</span>
-                        }
-                    </td>
+                <!-- Utløper -->
+                <td>
+                    @(code.ExpiresAt.HasValue
+                        ? code.ExpiresAt.Value.ToString("yyyy-MM-dd HH:mm")
+                        : "Aldri")
+                </td>
 
-                    <td class="action-buttons">
+                <!-- Status -->
+                <td>
+                    @if (expired)
+                    {
+                        <span class="status-expired">Utløpt</span>
+                    }
+                    else if (code.IsActive)
+                    {
+                        <span class="status-active">Aktiv</span>
+                    }
+                    else
+                    {
+                        <span class="status-inactive">Inaktiv</span>
+                    }
+                </td>
+
+                <!-- Handlinger -->
+                <td class="action-buttons">
+
+                    @if (!expired)
+                    {
                         <form method="post" asp-action="Toggle" asp-controller="DiscountCode">
-                            <input type="hidden" name="id" value="@code.Id" />
-                            <button type="submit" class="btn-toggle">Toggle</button>
+                            <input type="hidden" name="id" value="@code.Id"/>
+                            <button type="submit" class="btn-toggle">@toggleText</button>
                         </form>
+                    }
 
-                        <form method="post" asp-action="Delete" asp-controller="DiscountCode">
-                            <input type="hidden" name="id" value="@code.Id" />
-                            <button type="submit" class="btn-delete">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
+                    <form method="post" asp-action="Delete" asp-controller="DiscountCode">
+                        <input type="hidden" name="id" value="@code.Id"/>
+                        <button type="submit" class="btn-delete-icon">
+                            <img src="~/images/icons/trash.svg" alt="Slett"/>
+                        </button>
+                    </form>
 
-    </table>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 
 </div>

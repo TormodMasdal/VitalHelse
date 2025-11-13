@@ -1,31 +1,37 @@
 @model List<VitalHelse.Models.Discount.Campaign>
 
 @{
-    ViewData["Title"] = "Campaigns";
+    ViewData["Title"] = "Kampanjer";
     Layout = "_AdminLayout";
 }
 
 <div class="campaign-container">
 
-    <h2 class="section-title">Create New Campaign</h2>
+    <h2 class="section-title">Opprett kampanje</h2>
 
     <form method="post" asp-action="Create" asp-controller="Campaign" class="campaign-form">
 
         <div class="form-row">
-            <label>Campaign Name</label>
+            <label>Kampanjenavn</label>
             <input type="text" name="Name" required />
         </div>
 
         <div class="form-row">
-            <label>Categories</label>
-            <select name="CategoryIds" multiple size="6">
+            <label>Kategorier</label>
+
+            <div class="category-multiselect">
                 @foreach (var category in ViewBag.AllCategories)
                 {
-                    <option value="@category.CategoryId">@category.CategoryName</option>
+                    <label class="category-chip">
+                        <input type="checkbox" name="CategoryIds" value="@category.CategoryId" />
+                        <span>@category.CategoryName</span>
+                    </label>
                 }
-            </select>
-            <small>Select one or more categories.</small>
+            </div>
+
+            <small>Velg én eller flere kategorier.</small>
         </div>
+
 
         <div class="form-row">
             <label>Start</label>
@@ -33,38 +39,43 @@
         </div>
 
         <div class="form-row">
-            <label>End</label>
+            <label>Slutt</label>
             <input type="datetime-local" name="End" required />
         </div>
 
-        <button type="submit" class="btn-create">Start Campaign</button>
+        <button type="submit" class="btn-create">Start kampanje</button>
     </form>
 
     <div class="divider"></div>
 
-    <h3 class="section-title">Existing Campaigns</h3>
+    <h3 class="section-title">Aktive og tidligere kampanjer</h3>
 
     <table class="campaign-table">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Categories</th>
-                <th>Period</th>
+                <th>Navn</th>
+                <th>Kategorier</th>
+                <th>Periode</th>
                 <th>Status</th>
-                <th>Actions</th>
+                <th>Handlinger</th>
             </tr>
         </thead>
 
         <tbody>
         @foreach (var camp in Model)
         {
+            bool expired = camp.End < DateTime.Now;
+            var toggleText = camp.IsActive ? "Deaktiver" : "Aktiver";
+
             <tr>
+                <!-- Kampanjenavn -->
                 <td>@camp.Name</td>
 
+                <!-- Kategorier -->
                 <td>
                     @if (camp.CategoryIds.Count == 0)
                     {
-                        <span>No categories</span>
+                        <span>Ingen kategorier</span>
                     }
                     else
                     {
@@ -72,29 +83,43 @@
                     }
                 </td>
 
-                <td>@camp.Start.ToString("yyyy-MM-dd") – @camp.End.ToString("yyyy-MM-dd")</td>
+                <!-- Periode -->
+                <td>@camp.Start.ToString("yyyy-MM-dd HH:mm") – @camp.End.ToString("yyyy-MM-dd HH:mm")</td>
 
+                <!-- Status -->
                 <td>
-                    @if (camp.IsActive)
+                    @if (expired)
                     {
-                        <span class="status-active">Active</span>
+                        <span class="status-expired">Utløpt</span>
+                    }
+                    else if (camp.IsActive)
+                    {
+                        <span class="status-active">Aktiv</span>
                     }
                     else
                     {
-                        <span class="status-inactive">Inactive</span>
+                        <span class="status-inactive">Inaktiv</span>
                     }
                 </td>
 
+                <!-- Handlinger -->
                 <td class="action-buttons">
-                    <form method="post" asp-action="Toggle" asp-controller="Campaign">
-                        <input type="hidden" name="id" value="@camp.Id" />
-                        <button class="btn-toggle">Toggle</button>
-                    </form>
+
+                    @if (!expired)
+                    {
+                        <form method="post" asp-action="Toggle" asp-controller="Campaign">
+                            <input type="hidden" name="id" value="@camp.Id" />
+                            <button class="btn-toggle">@toggleText</button>
+                        </form>
+                    }
 
                     <form method="post" asp-action="Delete" asp-controller="Campaign">
                         <input type="hidden" name="id" value="@camp.Id" />
-                        <button class="btn-delete">Delete</button>
+                        <button class="btn-delete-icon">
+                            <img src="~/images/icons/trash.svg" alt="Slett" />
+                        </button>
                     </form>
+
                 </td>
             </tr>
         }

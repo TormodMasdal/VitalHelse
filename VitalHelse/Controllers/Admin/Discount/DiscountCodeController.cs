@@ -15,7 +15,7 @@ public class DiscountCodeController : Controller
         _context = context;
     }
 
-    [HttpGet("Admin/DiscountCode")]
+    [HttpGet("Admin/Rabbatkoder")]
     public IActionResult Index()
     {
         var codes = _context.DiscountCodes

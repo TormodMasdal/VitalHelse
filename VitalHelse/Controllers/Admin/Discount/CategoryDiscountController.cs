@@ -22,7 +22,7 @@ public class CategoryDiscountController : Controller
         public int DiscountPercent { get; set; }
     }
 
-    [HttpGet("Admin/CategoryDiscounts")]
+    [HttpGet("Admin/Rabattsatser")]
     public IActionResult Index()
     {
         var topCategories = _context.Categories
