@@ -3,9 +3,9 @@ using System.Runtime.InteropServices.JavaScript;
 
 namespace VitalHelse.Models;
 
-public class DiscountCode
+public class OLDDiscountCode
 {
-    public DiscountCode(){}
+    public OLDDiscountCode(){}
 
     [StringLength(500)]
     public string DiscountCodeId { get; set; }
@@ -15,5 +15,5 @@ public class DiscountCode
     public DateOnly EndDate { get; set; }
 
     public ICollection<Order> Orders { get; } = new List<Order>();
-    public ICollection<DiscountUsage> DiscountUsages { get; } = new List<DiscountUsage>();
+    public ICollection<OLDDiscountUsage> DiscountUsages { get; } = new List<OLDDiscountUsage>();
 }

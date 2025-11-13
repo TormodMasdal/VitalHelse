@@ -2,13 +2,13 @@
 
 namespace VitalHelse.Models;
 
-public class DiscountUsage
+public class OLDDiscountUsage
 {
-    public DiscountUsage(){}
+    public OLDDiscountUsage(){}
     
     public int DiscountUsageId { get; set; }
 
-    [Required] public DiscountCode DiscountCode { get; set; } = null!;
+    [Required] public OLDDiscountCode OldDiscountCode { get; set; } = null!;
     [StringLength(500)] public string DiscountCodeId { get; set; } = null!;
 
     [Required] public AspNetUsers AspNetUsers { get; set; } = null!;

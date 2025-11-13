@@ -33,7 +33,7 @@ public class AspNetUsers : IdentityUser
     public ICollection<FavoriteProduct> FavoriteProducts { get; } = new List<FavoriteProduct>();
     public ICollection<Order> Orders { get; } = new List<Order>();
     public ICollection<CartProduct> ShoppingCarts { get; } = new List<CartProduct>();
-    public ICollection<DiscountUsage> DiscountUsages { get; } = new List<DiscountUsage>();
+    public ICollection<OLDDiscountUsage> DiscountUsages { get; } = new List<OLDDiscountUsage>();
     
     // Fjerne addresses etterpå!
     public ICollection<Address> Addresses { get; } = new List<Address>();

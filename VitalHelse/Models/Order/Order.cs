@@ -16,7 +16,7 @@ public class Order
     [StringLength(100)] public string? TrackingNumber { get; set; }
     [StringLength(50)] public string? ShippingProvider { get; set; }
 
-    public DiscountCode? DiscountCode { get; set; }
+    public OLDDiscountCode? DiscountCode { get; set; }
     [StringLength(500)] public string? DiscountCodeId { get; set; }
 
     [Required] public AspNetUsers AspNetUsers { get; set; }
