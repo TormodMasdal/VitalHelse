@@ -63,12 +63,8 @@ builder.Services.Configure<AuthMessageSenderOptions>(options =>
 {
     options.SenderGridKey = Environment.GetEnvironmentVariable("AUTHMESSAGESENDEROPTIONS__SENDERGRIDKEY");
 });
-<<<<<<< HEAD
+
 /*
-=======
-
-
->>>>>>> d556278ca845d74e37c11c96ccc852e8cac22690
 builder.Services
     .AddAuthentication()
     .AddGoogle(googleOptions =>
