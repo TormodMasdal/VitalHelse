@@ -4,8 +4,8 @@
     ViewBag.Title = "title";
     Layout = "_Layout";
 }
-
 <div style="margin-top: 1rem">
+    
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">HJEM</a></li>
@@ -88,6 +88,27 @@
 
             <!-- Add to shopping cart -->
             <div class="text-center col">
+                <button type="button" class="btn btn-submit w-100" onclick="AddToCart(@Model.CurrentProduct.ProductId)"> Legg i handlekurv </button>
+                <div id="error-box" style="color:red; font-weight:bold; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <div class="accordion accordion-flush mt-4" id="productAccordion">
+            <div class="accordion-item border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseThree">
+                        BRUK
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <p> @Model.CurrentProduct.ProductInstructions</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add to shopping cart -->
+            <div class="text-center col">
                 <button type="button" class="btn-submit w-100" onclick="AddToCart(@Model.CurrentProduct.ProductId)"> Legg i handlekurv </button>
                 <div id="error-box" style="color:red; font-weight:bold; margin-top:10px;"></div>
             </div>
@@ -126,6 +147,8 @@
     </div>
     </div>
 </div>
+
+
 
 <div id="cart-popup">
     <h4 style="padding:2rem ">Produktet er lagt til i handlekurven!</h4>
