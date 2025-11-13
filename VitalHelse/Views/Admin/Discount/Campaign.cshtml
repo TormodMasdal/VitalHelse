@@ -1,0 +1,105 @@
+@model List<VitalHelse.Models.Discount.Campaign>
+
+@{
+    ViewData["Title"] = "Campaigns";
+    Layout = "_AdminLayout";
+}
+
+<div class="campaign-container">
+
+    <h2 class="section-title">Create New Campaign</h2>
+
+    <form method="post" asp-action="Create" asp-controller="Campaign" class="campaign-form">
+
+        <div class="form-row">
+            <label>Campaign Name</label>
+            <input type="text" name="Name" required />
+        </div>
+
+        <div class="form-row">
+            <label>Categories</label>
+            <select name="CategoryIds" multiple size="6">
+                @foreach (var category in ViewBag.AllCategories)
+                {
+                    <option value="@category.CategoryId">@category.CategoryName</option>
+                }
+            </select>
+            <small>Select one or more categories.</small>
+        </div>
+
+        <div class="form-row">
+            <label>Start</label>
+            <input type="datetime-local" name="Start" required />
+        </div>
+
+        <div class="form-row">
+            <label>End</label>
+            <input type="datetime-local" name="End" required />
+        </div>
+
+        <button type="submit" class="btn-create">Start Campaign</button>
+    </form>
+
+    <div class="divider"></div>
+
+    <h3 class="section-title">Existing Campaigns</h3>
+
+    <table class="campaign-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Categories</th>
+                <th>Period</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @foreach (var camp in Model)
+        {
+            <tr>
+                <td>@camp.Name</td>
+
+                <td>
+                    @if (camp.CategoryIds.Count == 0)
+                    {
+                        <span>No categories</span>
+                    }
+                    else
+                    {
+                        <span>@string.Join(", ", ViewBag.CategoryLookup[camp.Id])</span>
+                    }
+                </td>
+
+                <td>@camp.Start.ToString("yyyy-MM-dd") – @camp.End.ToString("yyyy-MM-dd")</td>
+
+                <td>
+                    @if (camp.IsActive)
+                    {
+                        <span class="status-active">Active</span>
+                    }
+                    else
+                    {
+                        <span class="status-inactive">Inactive</span>
+                    }
+                </td>
+
+                <td class="action-buttons">
+                    <form method="post" asp-action="Toggle" asp-controller="Campaign">
+                        <input type="hidden" name="id" value="@camp.Id" />
+                        <button class="btn-toggle">Toggle</button>
+                    </form>
+
+                    <form method="post" asp-action="Delete" asp-controller="Campaign">
+                        <input type="hidden" name="id" value="@camp.Id" />
+                        <button class="btn-delete">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+
+    </table>
+
+</div>

@@ -50,6 +50,9 @@
       <_ContentIncludedByDefault Remove="Views\Discount\Create.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Discount\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Admin\CategoryDiscount\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Discount\Campaign.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Discount\CategoryDiscount.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Discount\DiscountCodes.cshtml" />
     </ItemGroup>
 
     <ItemGroup>

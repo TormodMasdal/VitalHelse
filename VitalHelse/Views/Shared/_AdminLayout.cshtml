@@ -48,7 +48,7 @@
             <a asp-controller="Admin" asp-action="Banners"
                class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Banners" ? "active" : "")">Bannere</a>
             <a asp-controller="Admin" asp-action="Discounts"
-               class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Discounts" ? "active" : "")">Kampanjer</a>
+               class="@(ViewContext.RouteData.Values["action"]?.ToString() == "DiscountCode" ? "active" : "")">Kampanjer</a>
         </nav>
 
     </aside>

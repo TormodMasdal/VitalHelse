@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices.JavaScript;
 
 namespace VitalHelse.Models;
@@ -16,4 +16,4 @@ public class OLDDiscountCode
 
     public ICollection<Order> Orders { get; } = new List<Order>();
     public ICollection<OLDDiscountUsage> DiscountUsages { get; } = new List<OLDDiscountUsage>();
-}
+}*/

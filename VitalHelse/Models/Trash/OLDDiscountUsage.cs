@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*using System.ComponentModel.DataAnnotations;
 
 namespace VitalHelse.Models;
 
@@ -15,4 +15,4 @@ public class OLDDiscountUsage
     [Required][StringLength(450)] public string AspNetUsersId { get; set; } = null!;
 
     public DateOnly UsedAt { get; set; }
-}
+}*/

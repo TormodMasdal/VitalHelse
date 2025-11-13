@@ -66,7 +66,7 @@ public class AdminController : Controller
     public IActionResult Discounts()
     {
         ViewData["Title"] = "Kampanjer";
-        return RedirectToAction("Index", "AdminDiscount");
+        return RedirectToAction("Index", "DiscountCode");
     }
 
     

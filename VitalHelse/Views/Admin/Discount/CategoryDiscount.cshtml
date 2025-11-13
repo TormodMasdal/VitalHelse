@@ -1,0 +1,43 @@
+@model List<VitalHelse.Controllers.Admin.Discount.CategoryDiscountController.CategoryDiscountViewModel>
+
+@{
+    ViewData["Title"] = "Category Discounts";
+    Layout = "_AdminLayout"; // hvis du har denne
+}
+
+<div class="categorydiscount-container">
+
+    <h2 class="section-title">Category Discount Rates</h2>
+
+    <form method="post" asp-action="SaveAll" asp-controller="CategoryDiscount" class="categorydiscount-form">
+
+        <table class="categorydiscount-table">
+            <thead>
+            <tr>
+                <th>Category</th>
+                <th>Discount %</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>@Model[i].CategoryName</td>
+
+                    <td>
+                        <input type="hidden" name="model[@i].CategoryId" value="@Model[i].CategoryId" />
+                        <input type="number" 
+                               name="model[@i].DiscountPercent" 
+                               value="@Model[i].DiscountPercent" 
+                               min="0" 
+                               max="100" />
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn-save">Save Changes</button>
+    </form>
+</div>

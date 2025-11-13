@@ -1,0 +1,93 @@
+@model List<VitalHelse.Models.Discount.DiscountCode>
+
+@{
+    ViewData["Title"] = "Discount Codes";
+    Layout = "_AdminLayout";
+}
+
+<div class="discountcodes-container">
+
+    <h2 class="section-title">Create New Discount Code</h2>
+
+    <form method="post" asp-action="Create" asp-controller="DiscountCode" class="discountcode-form">
+
+        <div class="form-row">
+            <label>Code</label>
+            <input type="text" name="Code" required />
+        </div>
+
+        <div class="form-row">
+            <label>Discount Percentage</label>
+            <input type="number" name="DiscountPercent" min="1" max="100" required />
+        </div>
+
+        <div class="form-row">
+            <label>Expires At (optional)</label>
+            <input type="datetime-local" name="ExpiresAt" />
+        </div>
+
+        <button type="submit" class="btn-create">Create Discount Code</button>
+    </form>
+
+    <div class="divider"></div>
+
+    <h3 class="section-title">Existing Discount Codes</h3>
+
+    <table class="discountcode-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Discount</th>
+                <th>Created</th>
+                <th>Expires</th>
+                <th>Times Used</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var code in Model)
+            {
+                <tr>
+                    <td>@code.Code</td>
+                    <td>@code.DiscountPercent %</td>
+                    <td>@code.CreatedAt.ToString("yyyy-MM-dd")</td>
+
+                    <td>
+                        @(code.ExpiresAt.HasValue
+                            ? code.ExpiresAt.Value.ToString("yyyy-MM-dd")
+                            : "Never")
+                    </td>
+
+                    <td>@code.TimesUsed</td>
+
+                    <td>
+                        @if (code.IsActive)
+                        {
+                            <span class="status-active">Active</span>
+                        }
+                        else
+                        {
+                            <span class="status-inactive">Inactive</span>
+                        }
+                    </td>
+
+                    <td class="action-buttons">
+                        <form method="post" asp-action="Toggle" asp-controller="DiscountCode">
+                            <input type="hidden" name="id" value="@code.Id" />
+                            <button type="submit" class="btn-toggle">Toggle</button>
+                        </form>
+
+                        <form method="post" asp-action="Delete" asp-controller="DiscountCode">
+                            <input type="hidden" name="id" value="@code.Id" />
+                            <button type="submit" class="btn-delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+</div>
