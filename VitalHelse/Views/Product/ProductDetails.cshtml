@@ -93,37 +93,19 @@
             </div>
         </div>
 
-        <div class="accordion accordion-flush mt-4" id="productAccordion">
-            <div class="accordion-item border-bottom">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseThree">
-                        BRUK
-                    </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        <p> @Model.CurrentProduct.ProductInstructions</p>
-                    </div>
-                </div>
-<<<<<<< HEAD
-=======
+            <div class="accordion accordion-flush mt-4" id="productAccordion">
                 <div class="accordion-item border-bottom">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseThree">
-                            INGREDIENSER
+                        <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseThree">
+                            BRUK
                         </button>
                     </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse">
+                    <div id="collapseOne" class="accordion-collapse collapse">
                         <div class="accordion-body">
-                            <p> @Model.CurrentProduct.ProductIngredients</p>
+                            <p> @Model.CurrentProduct.ProductInstructions</p>
                         </div>
                     </div>
                 </div>
-                @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
-                {
-                    <a class="editproduct" asp-controller="AdminProduct" asp-action="EditProduct" asp-route-id="@Model.CurrentProduct.ProductId">Rediger produkt</a>
-                }
->>>>>>> c01eaa2 (noe opprydding)
             </div>
             <div class="accordion-item border-bottom">
                 <h2 class="accordion-header">
@@ -144,7 +126,6 @@
 
         </div>
     </div>
-</div>
 </div>
 
 
