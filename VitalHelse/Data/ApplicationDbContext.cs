@@ -18,7 +18,6 @@ public class ApplicationDbContext : IdentityDbContext<AspNetUsers>
     public DbSet<ProductTag> ProductTags => Set<ProductTag>();
     public DbSet<ProductPicture> ProductPictures => Set<ProductPicture>();
     public DbSet<Tag> Tags => Set<Tag>();
-    public DbSet<ProductDiscount> ProductDiscounts { get; set; } = null!;
     #endregion
 
     #region Commerce

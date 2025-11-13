@@ -44,4 +44,17 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Admin\Discount\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Admin\Discount\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Discount\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Discount\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Admin\CategoryDiscount\Index.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\Admin\Discount\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Admin\Discount\Index.cshtml" />
+    </ItemGroup>
+
 </Project>
