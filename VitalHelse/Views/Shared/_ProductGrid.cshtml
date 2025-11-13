@@ -12,12 +12,13 @@
 
 @if (Model != null && Model.Any())
 {
+    @Html.AntiForgeryToken()
     <div class="product-grid">
         @foreach (var product in Model)
         {
             var isHidden = product.LabelDescription?.ToLower().Contains("hidden") ?? false;
 
-            <div class="product-card @(isHidden ? "hidden-product" : "")">
+            <div class="product-card @(isHidden ? "hidden-product" : "")" data-url="@SlugHelper.BuildProductPath(product)">
                 @if (isAdminView)
                 {
                     <div class="admin-product-actions">
@@ -56,7 +57,9 @@
                     <span class="hidden-tag">Hidden</span>
                 }
 
-                <a class="learn-more" href="@SlugHelper.BuildProductPath(product)">Se produkt</a>
+                <!-- <a class="learn-more" href="@SlugHelper.BuildProductPath(product)">Se produkt</a> -->
+                <button type="button" class="learn-more" onclick="AddToCart(@product.ProductId)"> Kjøp </button>
+                 
             </div>
         }
 
@@ -66,6 +69,7 @@ else
 {
     <p class="text-muted text-center mt-4">Ingen produkter funnet.</p>
 }
+
 
 
 <script>
@@ -119,5 +123,67 @@ else
     }
   });
 })();
+
+
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if(!e.target.closest("button")){
+                    const url = this.dataset.url;
+                    if(url){
+                        window.location.href = url;
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    async function AddToCart(productId){
+        const quantityElement = document.getElementById(`quantity-${productId}`);
+        const quantity = quantityElement ? parseInt(quantityElement.value, 10) || 1:1;
+
+        // Saves antiforgerytoken to protect against CSRF-attacks
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        const formData = new FormData();
+        formData.append("id", productId);
+        formData.append("quantity", "1");
+
+        // Fetch the delete function from the controller
+        //const response = await fetch(`/ShoppingCart/AddToCart/?id=${productId}&quantity=${quantity}`, {
+        const response = await fetch("/ShoppingCart/AddToCart", {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            body: formData
+        });
+
+        // Prints the error message if bad request is returned, and keeps it there for 3 seconds
+        if (!response.ok) {
+            const msg = await response.text();
+            document.getElementById("error-box").innerText = msg;
+            setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
+        } else {
+            const popup = document.getElementById("cart-popup");
+            popup.style.display = "block";
+            document.getElementById("go-to-cart").onclick = () => {
+                window.location.href = "/checkout";
+            };
+            document.getElementById("continue-shopping").onclick = () => {
+                popup.style.display = "none";
+            };
+        }
+    }
+
+    // Helper that formats numers as norwegian currency (1000 as 1000,00 kr)
+    const nok = new Intl.NumberFormat('no-NO', { style: 'currency', currency: 'NOK' });
 
 </script>

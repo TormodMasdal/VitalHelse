@@ -19,7 +19,6 @@ async function removItemShoppingCart(productId) {
         // If there is no items left, reload the entire page
         window.location.reload();
     }
-    
     Summary();
 }
 
@@ -50,7 +49,14 @@ async function AddToCart(productId){
         document.getElementById("error-box").innerText = msg;
         setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
     } else {
-        window.location.reload();
+        const popup = document.getElementById("cart-popup");
+        popup.style.display = "block";
+        document.getElementById("go-to-cart").onclick = () => {
+            window.location.href = "/checkout";
+        };
+        document.getElementById("continue-shopping").onclick = () => {
+            popup.style.display = "none";
+        };
     }
 }
 
