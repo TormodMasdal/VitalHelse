@@ -1,3 +1,13 @@
+
+document.addEventListener("click", (e) => {
+    const btn = e.target.closest('#AddAllToCart');
+    if (!btn) return;
+    fetch("/Favorites/QuickAddFavorites/", {
+        method: 'POST',
+    });
+});
+
+
 document.addEventListener("DOMContentLoaded", () => {
     // Sjekk om brukeren er logget inn – sett via Razor i HTML
     const isAuthenticated = window.isAuthenticated || false;

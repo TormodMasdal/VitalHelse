@@ -8,10 +8,10 @@
 <section class="category-page">
     <h1 class="category-title">Mine Favoritter </h1>
 
-    <!-- 🔹 Toppknapper -->
+    <!-- Toppknapper -->
     <div class="favorites-actions mb-5 d-flex justify-content-center gap-3 flex-wrap">
 
-        <button type="button" class="fav-btn cart">
+        <button type="button" class="fav-btn cart" id="AddAllToCart">
             🛒 Legg alle i handlevogn
         </button>
     </div>
@@ -31,8 +31,11 @@
     }
 </section>
 
+@section Scripts{
+    <script src="~/js/components/addFavorites.js?v=1"></script>
 
-<script>
+<!--<script>
+        
     document.querySelectorAll(".heart-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
             const id = btn.dataset.id;
@@ -53,3 +56,5 @@
         });
     });
 </script>
+-->
+}

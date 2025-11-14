@@ -118,5 +118,49 @@ namespace VitalHelse.Controllers
             return Ok(new { success = true, isFavorite });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> QuickAddFavorites()
+        {
+            var user = await _um.GetUserAsync(User);
+            if (user == null)
+            {
+                _logger.LogWarning("Unauthorized access attempt to Favorites page.");
+                return Challenge();
+            }
+            
+            var products = await _db.FavoriteProducts
+                .Include(fp => fp.Product)
+                .Where(fp => fp.AspNetUsersId == user.Id)
+                .Select(fp => fp.Product)
+                .ToListAsync();
+
+            foreach (var p in products)
+            {
+                // For every product, check if it exists in the shopping cart
+                var shoppingCart = await _db.CartProducts
+                    .FirstOrDefaultAsync(c => c.AspNetUsersId == user.Id && c.ProductId == p.ProductId);
+                
+                // If it exists in the shopping cart, increment quantity by one
+                if (shoppingCart != null)
+                {
+                    shoppingCart.Quantity += 1;
+                    continue;
+                }
+                
+                CartProduct cartProduct = new CartProduct
+                {
+                    Quantity = 1,
+                    AspNetUsersId = user.Id,
+                    ProductId = p.ProductId
+                };
+                _db.Add(cartProduct);
+            }
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        
+        
     }
 }
