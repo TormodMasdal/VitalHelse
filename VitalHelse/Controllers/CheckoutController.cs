@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using VitalHelse.Data;
 using VitalHelse.Models;
 using VitalHelse.Models.Enums;
+using VitalHelse.Services;
 
 namespace VitalHelse.Controllers;
 
@@ -13,12 +14,18 @@ public class CheckoutController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly UserManager<AspNetUsers> _userManager;
+    private readonly DiscountService _discountService;
 
-    public CheckoutController(ApplicationDbContext db, UserManager<AspNetUsers> userManager)
+    public CheckoutController(
+        ApplicationDbContext db,
+        UserManager<AspNetUsers> userManager,
+        DiscountService discountService)
     {
         _db = db;
         _userManager = userManager;
+        _discountService = discountService;
     }
+
     
     [HttpGet]
     public async Task<IActionResult> Summary()
@@ -263,6 +270,7 @@ public class CheckoutController : Controller
     }
     
     public async Task<IActionResult> Complete(){
+        _discountService.RegisterUsage();
         ViewBag.Step = CheckoutStep.Complete;
         return View();
     }

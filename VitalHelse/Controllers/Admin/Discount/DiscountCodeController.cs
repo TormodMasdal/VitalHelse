@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VitalHelse.Data;
 using VitalHelse.Models.Discount;
+using VitalHelse.Services;
 
 namespace VitalHelse.Controllers.Admin.Discount;
 
@@ -9,11 +10,14 @@ namespace VitalHelse.Controllers.Admin.Discount;
 public class DiscountCodeController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly DiscountService _discountService;
 
-    public DiscountCodeController(ApplicationDbContext context)
+    public DiscountCodeController(ApplicationDbContext context, DiscountService discountService)
     {
         _context = context;
+        _discountService = discountService;
     }
+
 
     [HttpGet("Admin/Rabbatkoder")]
     public IActionResult Index()
@@ -66,4 +70,33 @@ public class DiscountCodeController : Controller
 
         return RedirectToAction("Index");
     }
+
+    [HttpPost]
+    public IActionResult ValidateDiscountCode(string code)
+    {
+        if (string.IsNullOrWhiteSpace(code))
+            return Json(new { success = false, message = "Ugyldig kode." });
+
+        var now = DateTime.UtcNow;
+
+        var discount = _context.DiscountCodes
+            .FirstOrDefault(d =>
+                d.Code.ToLower() == code.ToLower() &&
+                d.IsActive &&
+                (d.ExpiresAt == null || d.ExpiresAt > now));
+
+        if (discount == null)
+            return Json(new { success = false, message = "Rabattkoden finnes ikke eller er utløpt." });
+
+        // ⭐ BRUK DiscountService — dette er hele poenget
+        _discountService.SetDiscountCode(discount.Code, discount.DiscountPercent);
+
+        return Json(new
+        {
+            success = true,
+            percent = discount.DiscountPercent,
+            message = $"Rabattkode brukt! -{discount.DiscountPercent}%"
+        });
+    }
+
 }

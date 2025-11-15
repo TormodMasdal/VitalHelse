@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 using VitalHelse.Data;
 using VitalHelse.Models;
+using VitalHelse.Services;
 
 namespace VitalHelse.Controllers;
 
@@ -14,11 +15,13 @@ public class ShoppingCartController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly UserManager<AspNetUsers> _userManager;
+    private readonly DiscountService _discountService;
 
-    public ShoppingCartController(ApplicationDbContext db, UserManager<AspNetUsers> userManager)
+    public ShoppingCartController(ApplicationDbContext db, UserManager<AspNetUsers> userManager, DiscountService discountService)
     {
         _db = db;
         _userManager = userManager;
+        _discountService = discountService;
     }
     
 

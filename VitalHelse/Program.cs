@@ -6,6 +6,7 @@ using VitalHelse.Services;
 using VitalHelse.Configuration;
 using VitalHelse.Data;
 using VitalHelse.Models;
+using DiscountService = VitalHelse.Services.DiscountService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,8 @@ builder.Services.AddControllersWithViews()
     .AddRazorOptions(options => { options.ViewLocationExpanders.Add(new AdminViewLocationExpander()); });
 
 //required for session storage
-builder.Services.AddDistributedMemoryCache(); 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
     //session expires in 30 min
@@ -50,6 +52,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddScoped<TripletexService>();
 builder.Services.AddScoped<TripletexSyncService>();
 builder.Services.AddScoped<CampaignService>();
+builder.Services.AddScoped<DiscountService>();
 
 builder.Services.Configure<StripeOptions>(options =>
 {
