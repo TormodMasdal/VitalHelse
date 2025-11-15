@@ -49,6 +49,29 @@ public class CampaignService
             .Where(cd => relevantCategories.Contains(cd.CategoryId))
             .ToDictionary(cd => cd.CategoryId, cd => cd.DiscountPercent);
 
+        // ARV rabatt ned til children
+        foreach (var parentId in c.CategoryIds)
+        {
+            if (categoryDiscounts.TryGetValue(parentId, out var parentDiscount))
+            {
+                // Finn children til denne parenten
+                var children = _context.Categories
+                    .Where(cat => cat.ParentCategoryId == parentId)
+                    .Select(cat => cat.CategoryId)
+                    .ToList();
+
+                // Arv discount til alle barn
+                foreach (var childId in children)
+                {
+                    if (!categoryDiscounts.ContainsKey(childId))
+                    {
+                        categoryDiscounts[childId] = parentDiscount;
+                    }
+                }
+            }
+        }
+
+
         foreach (var p in products)
         {
             // Finn alle kategorier produktet ligger i
