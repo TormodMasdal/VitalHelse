@@ -9,12 +9,17 @@ namespace VitalHelse.Controllers.Admin.Discount;
 public class CampaignController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly CampaignService _campaignService;
 
-    public CampaignController(ApplicationDbContext context)
+    public CampaignController(ApplicationDbContext context, CampaignService campaignService)
     {
         _context = context;
+        _campaignService = campaignService;
     }
 
+    /* ============================================
+       INDEX
+    ============================================ */
     [HttpGet("Admin/Kampanjer")]
     public IActionResult Index()
     {
@@ -22,14 +27,12 @@ public class CampaignController : Controller
             .OrderByDescending(c => c.Start)
             .ToList();
 
-        // All categories for the multiselect
         var categories = _context.Categories
             .Where(c => c.ParentCategoryId == null)
             .ToList();
 
         ViewBag.AllCategories = categories;
 
-        // Create lookup so we can show category names in the table
         ViewBag.CategoryLookup = campaigns.ToDictionary(
             camp => camp.Id,
             camp => _context.Categories
@@ -40,7 +43,11 @@ public class CampaignController : Controller
 
         return View("Campaign", campaigns);
     }
-    
+
+
+    /* ============================================
+       CREATE CAMPAIGN
+    ============================================ */
     [HttpPost("Admin/Campaign/Create")]
     public IActionResult Create(string Name, DateTime Start, DateTime End, List<int> CategoryIds)
     {
@@ -56,9 +63,16 @@ public class CampaignController : Controller
         _context.Campaigns.Add(camp);
         _context.SaveChanges();
 
+        // Apply pricing via service
+        _campaignService.ApplyPricing(camp);
+
         return RedirectToAction("Index");
     }
-    
+
+
+    /* ============================================
+       TOGGLE CAMPAIGN (ACTIVATE/DEACTIVATE)
+    ============================================ */
     [HttpPost("Admin/Campaign/Toggle")]
     public IActionResult Toggle(int id)
     {
@@ -68,19 +82,29 @@ public class CampaignController : Controller
         c.IsActive = !c.IsActive;
         _context.SaveChanges();
 
+        if (c.IsActive)
+            _campaignService.ApplyPricing(c);
+        else
+            _campaignService.RemovePricing(c);
+
         return RedirectToAction("Index");
     }
-    
+
+
+    /* ============================================
+       DELETE CAMPAIGN
+    ============================================ */
     [HttpPost("Admin/Campaign/Delete")]
     public IActionResult Delete(int id)
     {
         var camp = _context.Campaigns.Find(id);
         if (camp == null) return NotFound();
 
+        _campaignService.RemovePricing(camp);
+
         _context.Campaigns.Remove(camp);
         _context.SaveChanges();
 
         return RedirectToAction("Index");
     }
-
 }

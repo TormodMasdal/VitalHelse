@@ -9,15 +9,30 @@
 
     <h2 class="section-title">Opprett kampanje</h2>
 
-    <form method="post" asp-action="Create" asp-controller="Campaign" class="campaign-form">
+    <form method="post" asp-action="Create" asp-controller="Campaign" class="discountcode-form-inline">
 
-        <div class="form-row">
-            <label>Kampanjenavn</label>
-            <input type="text" name="Name" required />
+        <div class="form-group-inline">
+
+            <div class="form-row">
+                <label>Navn</label>
+                <input type="text" name="Name" required/>
+            </div>
+
+            <div class="form-row">
+                <label>Startdato</label>
+                <input type="datetime-local" name="Start" required/>
+            </div>
+
+            <div class="form-row">
+                <label>Sluttdato</label>
+                <input type="datetime-local" name="End" required/>
+            </div>
+
         </div>
 
+
         <div class="form-row">
-            <label>Kategorier</label>
+            <label>Velg kategorier</label>
 
             <div class="category-multiselect">
                 @foreach (var category in ViewBag.AllCategories)
@@ -29,26 +44,14 @@
                 }
             </div>
 
-            <small>Velg én eller flere kategorier.</small>
         </div>
 
-
-        <div class="form-row">
-            <label>Start</label>
-            <input type="datetime-local" name="Start" required />
-        </div>
-
-        <div class="form-row">
-            <label>Slutt</label>
-            <input type="datetime-local" name="End" required />
-        </div>
-
-        <button type="submit" class="btn-create">Start kampanje</button>
+        <button type="submit" class="btn-create">Opprett kampanje</button>
     </form>
 
     <div class="divider"></div>
 
-    <h3 class="section-title">Aktive og tidligere kampanjer</h3>
+    <h3 class="section-title">Alle kampanjer</h3>
 
     <table class="campaign-table">
         <thead>
@@ -57,7 +60,7 @@
                 <th>Kategorier</th>
                 <th>Periode</th>
                 <th>Status</th>
-                <th>Handlinger</th>
+                <th></th>
             </tr>
         </thead>
 

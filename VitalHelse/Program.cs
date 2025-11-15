@@ -49,6 +49,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddScoped<TripletexService>();
 builder.Services.AddScoped<TripletexSyncService>();
+builder.Services.AddScoped<CampaignService>();
 
 builder.Services.Configure<StripeOptions>(options =>
 {

@@ -10,10 +10,14 @@ public class CategoryDiscountController : Controller
 {
     private readonly ApplicationDbContext _context;
 
-    public CategoryDiscountController(ApplicationDbContext context)
+    private readonly CampaignService _campaignService;
+
+    public CategoryDiscountController(ApplicationDbContext context, CampaignService campaignService)
     {
         _context = context;
+        _campaignService = campaignService;
     }
+
 
     public class CategoryDiscountViewModel
     {
@@ -51,7 +55,6 @@ public class CategoryDiscountController : Controller
 
             if (existing == null)
             {
-                // Create new discount entry
                 _context.CategoryDiscounts.Add(new Models.Discount.CategoryDiscount
                 {
                     CategoryId = item.CategoryId,
@@ -60,13 +63,23 @@ public class CategoryDiscountController : Controller
             }
             else
             {
-                // Update existing
                 existing.DiscountPercent = item.DiscountPercent;
             }
+        }
+
+        // Oppdater ALLE aktive kampanjer sine produktpriser
+        var activeCampaigns = _context.Campaigns
+            .Where(c => c.IsActive && c.Start <= DateTime.Now && c.End >= DateTime.Now)
+            .ToList();
+
+        foreach (var camp in activeCampaigns)
+        {
+            _campaignService.ApplyPricing(camp);
         }
 
         _context.SaveChanges();
         return RedirectToAction("Index");
     }
+
 
 }

@@ -1,98 +1,92 @@
-/* =============================
-   PRODUCT GRID (shared across Category, Favorites, Search)
-   ============================= */
+/* ============================================================
+   PRODUCT GRID – Premium VitalHelse Design
+   ============================================================ */
 
-/* Grid layout */
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.8rem;
-    justify-items: center;
-    margin-bottom: 3rem;
-    padding: 0 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 28px;
     width: 100%;
-    max-width: none;
-    margin: 0 auto 3rem auto;
+    margin: 0 auto;
+    padding: 0 10px 60px 10px;
 }
 
 /* Produktkort */
 .product-card {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    padding: 1.4rem;
-    text-align: center;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
     position: relative;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.6s ease;
-    opacity: 0;
-    animation: fadeInUp 0.7s ease forwards;
+    display: flex;
+    flex-direction: column;
+    transition: .22s ease;
+    height: 100%;
 }
 
-/* Apple-style fade-in animasjon */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Hovereffekt */
 .product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
 }
 
-/* Produktbilde */
+/* Klikkbart bilde wrapper */
+.product-img-wrapper {
+    display: block;
+    width: 100%;
+    height: 240px;
+    margin-bottom: 14px;
+}
+
 .product-img {
     width: 100%;
-    max-height: 220px;
+    height: 100%;
     object-fit: contain;
-    border-radius: 10px;
-    margin-bottom: 0.9rem;
 }
 
-/* Produktinfo */
-.product-card h5 {
-    font-weight: 700;
-    color: #111827;
-    font-size: 1.05rem;
-    margin-bottom: 0.3rem;
+/* Produktnavn */
+.product-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    min-height: 40px;
 }
 
-.product-card .desc {
-    font-size: 0.9rem;
-    color: #6b7280;
-    margin-bottom: 0.8rem;
+/* Beskrivelse */
+.product-desc {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.35;
+    margin-bottom: 10px;
     min-height: 36px;
 }
 
-.product-card .price {
+/* Prislinjen */
+.price {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: 16px;
+}
+
+.price-new {
+    color: #d44141;
+    font-size: 20px;
     font-weight: 700;
-    color: #B89163;
-    font-size: 1rem;
-    margin-bottom: 1rem;
 }
 
-/* Se produkt-knapp */
-.learn-more {
-    display: inline-block;
-    font-weight: 600;
-    color: #B89163;
-    border: 2px solid #B89163;
-    border-radius: 10px;
-    padding: 0.5rem 1.2rem;
-    text-decoration: none;
-    transition: all 0.25s ease;
+.price-regular {
+    color: black;
+    font-size: 20px;
+    font-weight: 700;
 }
 
-.learn-more:hover {
-    background-color: #B89163;
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(184,145,99,0.25);
+.price-old {
+    text-decoration: line-through;
+    font-size: 14px;
+    color: #999;
 }
 
 /* Added to cart popup */
@@ -110,91 +104,44 @@
     border-radius: 8px; 
 }
 
-/* Hjerteknapp */
-.favorite-toggle,
+/* Rabatt i sirkel */
+.discount-circle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #ffe2e2;
+    color: #d44141;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 40px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* Favorittknapp */
 .heart-btn {
     position: absolute;
     top: 12px;
     left: 12px;
-}
-
-.heart-btn {
     background: none;
     border: none;
+    font-size: 22px;
     cursor: pointer;
-    font-size: 1.5rem;
-    color: #d1d5db;
-    transition: color 0.2s ease, transform 0.15s ease;
-    z-index: 2;
+    color: #aaa;
+    transition: .2s;
 }
 
 .heart-btn:hover {
-    color: #ef4444;
-    transform: scale(1.15);
+    color: #e63939;
 }
 
 .heart-btn.active {
-    color: #ef4444;
+    color: #e63939;
 }
 
-.heart-btn.active i {
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-}
-
-/* Favorittsiden – container og knapp */
-.favorites-page {
-    min-height: 80vh;
-    background-color: #fafafa;
-    text-align: center;
-    padding: 4rem 1rem;
-}
-
-.favorites-page .category-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 4rem;
-    letter-spacing: 2px;
-    color: #111827;
-    margin-bottom: 3rem;
-}
-
-.favorites-actions .fav-btn.cart {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 1rem;
-    border: 1px solid #d1d5db;
-    color: #B89163;
-    background: #ffffff;
-    padding: 0.7rem 1.4rem;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: all 0.25s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.favorites-actions .fav-btn.cart:hover {
-    background-color: #B89163;
-    color: #fff;
-    box-shadow: 0 6px 12px rgba(184,145,99,0.25);
-}
-
-/* Responsivt */
-@media (max-width: 768px) {
-    .product-card {
-        max-width: 100%;
-    }
-
-    .favorites-page .category-title {
-        font-size: 2.5rem;
-    }
-}
-
-.product-card {
-    animation-delay: calc(var(--index, 0) * 0.05s);
-}
-
-.product-grid .product-card:nth-child(n) {
-    --index: calc(n);
+/* Skjult produkt */
+.hidden-product {
+    opacity: 0.5;
 }
