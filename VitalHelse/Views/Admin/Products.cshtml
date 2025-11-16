@@ -7,6 +7,11 @@
 
 <section class="category-page">
     <h1 class="category-title">All Products</h1>
+    <div class="admin-product-stock-count">
+        <a asp-controller="Stock" asp-action="StockCount" class="View-Stock-Count">
+            <i class="fas"></i> Lager Beholdning
+        </a>>
+    </div>
 
     @if (Model == null || !Model.Any())
     {
