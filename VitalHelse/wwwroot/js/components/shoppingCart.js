@@ -52,7 +52,7 @@ async function AddToCart(productId){
         if (!isAuthenticated) {
             window.location.href = "/identity/account/login";
             return;
-        }
+        }/*
         const popup = document.getElementById("cart-popup");
         popup.style.display = "block";
         document.getElementById("go-to-cart").onclick = () => {
@@ -60,7 +60,8 @@ async function AddToCart(productId){
         };
         document.getElementById("continue-shopping").onclick = () => {
             popup.style.display = "none";
-        };
+        }; */
+        window.location.reload();
     }
 }
 
