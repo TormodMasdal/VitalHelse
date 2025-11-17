@@ -15,7 +15,7 @@
         var currentPath = Context.Request.Path.Value?.Replace("/produkt/", "").Trim('/') ?? "";
     }
 
-    @* 🔹 Underkategorier *@
+    @*  Underkategorier *@
     @if (Model.SubCategories != null && Model.SubCategories.Any())
     {
         <div class="subcategory-bar text-center mb-4">
