@@ -12,10 +12,9 @@ document.getElementById("apply-discount").addEventListener("click", async () => 
         return;
     }
 
-    msg.textContent = "Sjekker kode...";
     msg.style.color = "black";
 
-    const res = await fetch("/Checkout/ValidateDiscountCode", {
+    const res = await fetch("/DiscountCode/ValidateDiscountCode", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `code=${encodeURIComponent(code)}`

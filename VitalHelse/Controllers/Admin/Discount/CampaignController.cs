@@ -1,9 +1,11 @@
+namespace VitalHelse.Controllers.Admin.Discount;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VitalHelse.Data;
 using VitalHelse.Models.Discount;
+using Data;
+using Services;
 
-namespace VitalHelse.Controllers.Admin.Discount;
 
 [Authorize(Roles = "Admin,Staff")]
 public class CampaignController : Controller
@@ -34,7 +36,7 @@ public class CampaignController : Controller
         ViewBag.AllCategories = categories;
 
         ViewBag.CategoryLookup = campaigns.ToDictionary(
-            camp => camp.Id,
+            camp => camp.CampaignId,
             camp => _context.Categories
                 .Where(cat => camp.CategoryIds.Contains(cat.CategoryId))
                 .Select(cat => cat.CategoryName)

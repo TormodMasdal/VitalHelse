@@ -32,9 +32,9 @@ public class ApplicationDbContext : IdentityDbContext<AspNetUsers>
 
     #region Discount
 
-    public DbSet<VitalHelse.Models.Discount.DiscountCode> DiscountCodes { get; set; }
-    public DbSet<VitalHelse.Models.Discount.CategoryDiscount> CategoryDiscounts { get; set; }
-    public DbSet<VitalHelse.Models.Discount.Campaign> Campaigns { get; set; }
+    public DbSet<Models.Discount.DiscountCode> DiscountCodes { get; set; }
+    public DbSet<Models.Discount.CategoryDiscount> CategoryDiscounts { get; set; }
+    public DbSet<Models.Discount.Campaign> Campaigns { get; set; }
 
     #endregion
 

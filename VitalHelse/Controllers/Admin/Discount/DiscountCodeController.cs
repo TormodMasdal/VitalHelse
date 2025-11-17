@@ -88,7 +88,6 @@ public class DiscountCodeController : Controller
         if (discount == null)
             return Json(new { success = false, message = "Rabattkoden finnes ikke eller er utløpt." });
 
-        // ⭐ BRUK DiscountService — dette er hele poenget
         _discountService.SetDiscountCode(discount.Code, discount.DiscountPercent);
 
         return Json(new

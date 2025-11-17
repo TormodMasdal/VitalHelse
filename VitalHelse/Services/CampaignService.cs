@@ -1,7 +1,7 @@
-using VitalHelse.Data;
-using VitalHelse.Models;
-using VitalHelse.Models.Discount;
-using Microsoft.EntityFrameworkCore;
+namespace VitalHelse.Services;
+
+using Data;
+using Models.Discount;
 
 public class CampaignService
 {

@@ -262,6 +262,11 @@ async function Summary() {
         document.getElementById('sum-discount').textContent = (s.discount > 0 ? '-' : '') + nok.format(Math.abs(s.discount));
         document.getElementById('sum-shipping').textContent = nok.format(s.shipping);
         document.getElementById('sum-total').textContent = nok.format(s.total);
+        // Vis rabattkode-prosent i sammendraget
+        if (document.getElementById("sum-code-discount")) {
+            document.getElementById("sum-code-discount").textContent =
+                s.codeDiscountPercent > 0 ? `-${s.codeDiscountPercent}%` : "0%";
+        }
 
     } catch {// If we get an error show 0,00 kr
         ['sum-products','sum-before','sum-discount','sum-shipping','sum-total']

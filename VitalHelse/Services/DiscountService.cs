@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Http;
 using VitalHelse.Data;
-
 namespace VitalHelse.Services;
 
 public class DiscountService

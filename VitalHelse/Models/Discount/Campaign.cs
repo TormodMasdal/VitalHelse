@@ -4,7 +4,7 @@ namespace VitalHelse.Models.Discount;
 
 public class Campaign
 {
-    public int Id { get; set; }
+    public int CampaignId { get; set; }
 
     // Name of the campaign (e.g., "Summer Sale")
     [Required]

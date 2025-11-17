@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -115,13 +116,29 @@ else
     app.UseHsts();
 }
 
-
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
+
+// Auto-logout middleware: hvis cookie er gyldig men brukeren ikke finnes i DB
+app.Use(async (context, next) =>
+{
+    var userManager = context.RequestServices.GetRequiredService<UserManager<AspNetUsers>>();
+    var user = await userManager.GetUserAsync(context.User);
+
+    // Hvis cookien sier at du er logget inn, men brukeren ikke finnes → logg ut
+    if (context.User.Identity?.IsAuthenticated == true && user == null)
+    {
+        await context.SignOutAsync(IdentityConstants.ApplicationScheme);
+        context.Response.Redirect("/");
+        return;
+    }
+
+    await next();
+});
+
 app.UseAuthorization();
 
 app.MapStaticAssets();

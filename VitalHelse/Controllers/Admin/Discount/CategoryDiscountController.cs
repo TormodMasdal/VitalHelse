@@ -1,9 +1,10 @@
+namespace VitalHelse.Controllers.Admin.Discount;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VitalHelse.Data;
-using VitalHelse.Models.Discount;
+using Data;
+using Services;
 
-namespace VitalHelse.Controllers.Admin.Discount;
 
 [Authorize(Roles = "Admin,Staff")]
 public class CategoryDiscountController : Controller

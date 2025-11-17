@@ -30,33 +30,47 @@ public class CheckoutController : Controller
     [HttpGet]
     public async Task<IActionResult> Summary()
     {
-        // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
-        // Get all the items in the shopping cart
+
         var items = await _db.CartProducts
             .Include(cp => cp.Product)
-            .Include(cp => cp.AspNetUsers)
             .Where(cp => cp.AspNetUsersId == userId)
             .ToListAsync();
-        
-        // If shopping cart is empty then return 0 values
+
         if (!items.Any())
         {
-            return Json(new { sumProducts = 0, sumBefore = 0, discount = 0, shipping = 0, total = 0 });
+            return Json(new { sumProducts = 0, sumBefore = 0, discount = 0, shipping = 0, total = 0, codeDiscountPercent = 0 });
         }
-        
-        // midlertidig bruk av decimal pga mulige endringer i modellen 
-        
-        decimal sumBefore = items.Sum(i => (decimal)i.Product.ProductPriceInVAT * i.Quantity);
-        decimal sumProducts = items.Sum(i => (decimal)(i.Product.ProductCampaignPrice ?? i.Product.ProductPriceInVAT) * i.Quantity);
-        decimal discount = sumBefore - sumProducts;
-        decimal shipping = 0; 
-        decimal total= sumProducts + shipping;
 
-        // Return all the values as JSON
-        return Json(new { sumProducts, sumBefore, discount, shipping, total });
-    }    
+        decimal sumBefore = items.Sum(i => (decimal)i.Product.ProductPriceInVAT * i.Quantity);
+        decimal sumProducts = items.Sum(i =>
+            (decimal)(i.Product.ProductCampaignPrice ?? i.Product.ProductPriceInVAT) * i.Quantity);
+
+        decimal productDiscount = sumBefore - sumProducts;
+        decimal shipping = 0;
+
+        // 🔥 NYTT: hent rabattkode prosent
+        int codePercent = HttpContext.Session.GetInt32("DiscountPercent") ?? 0;
+
+        // 🔥 NYTT: regn ut rabattkode-beløp
+        decimal codeDiscount = sumProducts * (codePercent / 100m);
+
+        // 🔥 NYTT: totalsum med rabattkode
+        decimal total = sumProducts - codeDiscount + shipping;
+
+        // Return all values as JSON
+        return Json(new
+        {
+            sumProducts,
+            sumBefore,
+            discount = productDiscount,   // kun produktkampanjer
+            codeDiscountAmount = codeDiscount, // NYTT
+            codeDiscountPercent = codePercent, // NYTT
+            shipping,
+            total
+        });
+    }
+
     
     public async Task<IActionResult> Index()
     {

@@ -4,7 +4,7 @@ namespace VitalHelse.Models.Discount;
 
 public class DiscountCode
 {
-    public int Id { get; set; }
+    public int DiscountCodeId { get; set; }
 
     // The code the customer enters at checkout (e.g., "VITAL10")
     [Required]

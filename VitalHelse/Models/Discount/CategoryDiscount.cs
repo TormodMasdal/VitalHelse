@@ -5,7 +5,7 @@ namespace VitalHelse.Models.Discount;
 
 public class CategoryDiscount
 {
-    public int Id { get; set; }
+    public int CategoryDiscountId { get; set; }
 
     // The category this discount applies to (only top-level categories)
     public int CategoryId { get; set; }
