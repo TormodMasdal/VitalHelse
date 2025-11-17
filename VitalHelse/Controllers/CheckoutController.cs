@@ -30,6 +30,7 @@ public class CheckoutController : Controller
     [HttpGet]
     public async Task<IActionResult> Summary()
     {
+        // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
         var items = await _db.CartProducts
@@ -224,6 +225,7 @@ public class CheckoutController : Controller
     }
     
     
+    
     public async Task<IActionResult> Shipping(){
         ViewBag.Step = CheckoutStep.Shipping;
         
@@ -247,6 +249,7 @@ public class CheckoutController : Controller
             .ThenInclude(op => op.Product)
             .Include(o => o.OrderProducts)
             .ThenInclude(op => op.Product.ProductPictures)
+            .Where(o => o.AspNetUsersId == userId && o.Status == "Draft")
             .OrderByDescending(o => o.OrderDate)
             .FirstOrDefaultAsync();
         

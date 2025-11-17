@@ -5,10 +5,17 @@ initialize();
 
 // Create a Checkout Session
 async function initialize() {
+    const selectedAddressId = sessionStorage.getItem("selectedAddressId");
     const fetchClientSecret = async () => {
         const response = await fetch("/create-checkout-session", {
             method: "POST",
-            credentials: "include"
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                selectedAddressId: selectedAddressId ? parseInt(selectedAddressId, 10) : null
+            })
         });
         const { clientSecret } = await response.json();
         return clientSecret;
