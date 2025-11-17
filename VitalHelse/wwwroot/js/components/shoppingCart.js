@@ -133,21 +133,21 @@ async function DecreaseQuantity(productId, unitPrice) {
     const oldTotal = totalElement ? totalElement.innerText : '';
     
     // Decrease quantity
-    const newQuantity = oldQuantity - 1;
+    let newQuantity = oldQuantity - 1;
     
-    // If quatity is 0 or less remove the item
+    // If quatity is 0 or less set to 1
     if (newQuantity <= 0) {
-        document.getElementById(`row-${productId}`).remove();
+        newQuantity = 1;
     }
-    else {
-        // Display new value
-        quantityElement.value = String(newQuantity);
-        
-        // If in shopping cart view, update price
-        if (totalElement) {
-            totalElement.innerText = nok.format(newQuantity * unitPrice);
-        }
+   
+    // Display new value
+    quantityElement.value = String(newQuantity);
+    
+    // If in shopping cart view, update price
+    if (totalElement) {
+        totalElement.innerText = nok.format(newQuantity * unitPrice);
     }
+    
 
     // If on product page, stop here
     const productPage = document.getElementById(`product-page`);

@@ -13,7 +13,7 @@
     {
         case CheckoutStep.Cart:
             btnText = "Gå videre til leveringsinfo";
-            nextAction = "BeginCheckout";
+            nextAction = "Address";
             break;
         case CheckoutStep.Address:
             btnText = "Gå videre til leveringmetode";
@@ -22,6 +22,7 @@
         case CheckoutStep.Shipping:
             btnText = "Gå videre til betaling";
             nextAction = "ReviewOrder";
+            //nextAction = "/checkout.html";
             break;
         case CheckoutStep.ReviewOrder:
             btnText = "Fullfør bestilling";
@@ -121,11 +122,13 @@
                                 }
                                 else
                                 {
-                                    <form method="post" asp-controller="Checkout" asp-action="@nextAction">
-                                        <button type="submit" class="btn-next w-100 mb-2">@btnText</button>
+                                    // Testing
+                                    var method = step == CheckoutStep.Cart && nextAction == "Address" ? "get" : "post";
+                                    
+                                    <form method="@method" asp-controller="Checkout" asp-action="@nextAction">
+                                        <a type="submit" class="btn-next w-100 mb-2">@btnText</a>
                                     </form>
                                 }
-                                
                             }
                         }
                     </div>

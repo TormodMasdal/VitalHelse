@@ -3,8 +3,8 @@
 
 @{
     ViewBag.Title = "title";
+    ViewBag.Step = CheckoutStep.Cart;
     Layout = "_CheckoutLayout";
-    ViewData["CheckoutStep"] = CheckoutStep.Cart;
 }
 
 
@@ -63,13 +63,6 @@ else
                             </svg>
                         </button>
                     </div>
-                    
-                    <form action="/checkout.html" method="GET">
-                        <input type="hidden" name="product" value="serum" />
-                        <input type="number" name="quantity" value="2" min="1" />
-                        <button type="submit">Kjøp nå</button>
-                    </form>
-                    
                 </div>
             </li>
         }

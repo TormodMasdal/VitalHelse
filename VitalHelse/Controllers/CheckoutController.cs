@@ -90,63 +90,6 @@ public class CheckoutController : Controller
         // Returns the items to the view
         return View(items);
     }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> BeginCheckout()
-    {
-        // Fetch the user id
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
-        // Fetch all the items from the cart
-        var cart = await _db.CartProducts
-            .Include(cp => cp.Product)
-            .Where(cp => cp.AspNetUsersId == userId)
-            .ToListAsync();
-        
-        // If cart is empty
-        if (!cart.Any())
-        {
-            // HUSK: fiks error melding
-            return RedirectToAction(nameof(Index));
-        }
-
-        // Remove old draft (fikser senere at carten blir bare oppdatert)
-        var oldDrafts = await _db.Orders
-            .Where(o => o.AspNetUsersId == userId && o.Status == "Draft")
-            .ToListAsync();
-        _db.Orders.RemoveRange(oldDrafts);
-
-        // Create a new order
-        var order = new Order
-        {
-            AspNetUsersId = userId,
-            OrderDate = DateTime.UtcNow,
-            Status = "Draft",
-        };
-
-        // Add all cart products in order
-        foreach (var item in cart)
-        {
-            order.OrderProducts.Add(new OrderProduct
-            {
-                ProductId = item.ProductId,
-                Quantity = item.Quantity,
-                UnitPrice = (decimal)(item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT)
-            });
-        }
-        
-        // Save total cost
-        order.TotalCost = order.OrderProducts.Sum(op => op.UnitPrice * op.Quantity);
-
-        // Save and add to database
-        _db.Orders.Add(order);
-        await _db.SaveChangesAsync();
-        
-        return RedirectToAction(nameof(Address));
-    }
-    
-    
     
     [HttpGet]
     public async Task<IActionResult> Address()
@@ -163,8 +106,7 @@ public class CheckoutController : Controller
                 .OrderByDescending(a => a.Id)
                 .ToListAsync()
         };
-
-        ViewBag.Step = CheckoutStep.Address;
+        
         return View(vm);
     }
 
@@ -192,47 +134,68 @@ public class CheckoutController : Controller
         return RedirectToAction(nameof(Address));
     }
     
+    [HttpGet]
+    public async Task<IActionResult> GetAddress(int id)
+    {
+        // Fetch the user id
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        var address = await _db.UserAddresses.FirstOrDefaultAsync(a => a.Id == id && a.AspNetUserId == userId);
+
+        if (address == null) return NotFound();
+
+        return Json(new
+        {
+            id = address.Id,
+            firstName = address.FirstName,
+            lastName = address.LastName,
+            phoneNumber = address.PhoneNumber,
+            street = address.Street,
+            postalCode = address.PostalCode,
+            city = address.City
+        });
+    }
+    
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SelectAddress(UserAddressViewModel vm)
+    public async Task<IActionResult> EditAddress(int id, UserAddressViewModel model)
     {
         // Fetch the user id
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         
-        // If none addresses are selected
-        if (vm.SelectedAddressId == null)
-        {
-            var userIdForError = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            vm.Existing = await _db.UserAddresses
-                .Include(a => a.AspNetUsers)
-                .Where(a => a.AspNetUserId == userIdForError)
-                .OrderByDescending(a => a.Id)
-                .ToListAsync();
+        if (!ModelState.IsValid) return View("Address", model);
 
-            ViewBag.Step = CheckoutStep.Address;
-            return RedirectToAction(nameof(Address));
-        }
-        
-        // Find the users order
-        var order = await _db.Orders
-            .Where(o => o.AspNetUsersId == userId && o.Status == "Draft")
-            .OrderByDescending(o => o.OrderDate)
-            .FirstOrDefaultAsync();
+        var address = await _db.UserAddresses.FirstOrDefaultAsync(a => a.Id == id && a.AspNetUserId == userId);
 
-        if (order == null)
-        {
-            return RedirectToAction(nameof(Index));
-        }
-        // Save the selected id
-        var selectedId = vm.SelectedAddressId.Value;
-        
-        order.UserAddress = await _db.UserAddresses.FindAsync(selectedId);
+        if (address == null) return NotFound();
+
+        address.FirstName = model.NewAddress.FirstName;
+        address.LastName = model.NewAddress.LastName;
+        address.PhoneNumber = model.NewAddress.PhoneNumber;
+        address.Street = model.NewAddress.Street;
+        address.PostalCode = model.NewAddress.PostalCode;
+        address.City = model.NewAddress.City;
 
         await _db.SaveChangesAsync();
-        
-        return RedirectToAction(nameof(Shipping));
+
+        return RedirectToAction("Address");
     }
     
+    [HttpDelete]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteAddress(int id)
+    {
+        // Fetch the user id
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        var address = await _db.UserAddresses.FirstOrDefaultAsync(a => a.Id == id && a.AspNetUserId == userId);
+
+        if (address == null) return NotFound();
+
+        _db.UserAddresses.Remove(address);
+        await _db.SaveChangesAsync();
+
+        return Ok(); 
+    }
     
     
     public async Task<IActionResult> Shipping(){
@@ -242,7 +205,6 @@ public class CheckoutController : Controller
     }
     
     public async Task<IActionResult> ReviewOrder(){
-        ViewBag.Step = CheckoutStep.ReviewOrder;
         
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         
@@ -258,7 +220,6 @@ public class CheckoutController : Controller
             .ThenInclude(op => op.Product)
             .Include(o => o.OrderProducts)
             .ThenInclude(op => op.Product.ProductPictures)
-            .Where(o => o.AspNetUsersId == userId && o.Status == "Draft")
             .OrderByDescending(o => o.OrderDate)
             .FirstOrDefaultAsync();
 
