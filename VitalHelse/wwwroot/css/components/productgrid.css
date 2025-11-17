@@ -88,6 +88,10 @@
     font-size: 14px;
     color: #999;
 }
+.price-product-page{
+    justify-content: flex-end;
+    font-weight:700;
+}
 
 /* Added to cart popup */
 #cart-popup{
@@ -131,6 +135,7 @@
     cursor: pointer;
     color: #aaa;
     transition: .2s;
+    z-index: 9999; !important;
 }
 
 .heart-btn:hover {
@@ -144,4 +149,8 @@
 /* Skjult produkt */
 .hidden-product {
     opacity: 0.5;
+}
+
+#product-page {
+    margin-top: 3rem;
 }
