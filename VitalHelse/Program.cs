@@ -77,8 +77,6 @@ builder.Services.Configure<AuthMessageSenderOptions>(options =>
     options.SenderGridKey = Environment.GetEnvironmentVariable("AUTHMESSAGESENDEROPTIONS__SENDERGRIDKEY");
 });
 
-
-
 builder.Services
     .AddAuthentication();
 

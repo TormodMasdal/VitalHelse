@@ -70,8 +70,6 @@ public class ShoppingCartController : Controller
             shoppingCart.Quantity += 1;
             await _db.SaveChangesAsync();
         }
-
-        //return RedirectToAction("Index");
         return NoContent();
     }
 
@@ -96,8 +94,7 @@ public class ShoppingCartController : Controller
         // Decrease the quantity by one
         shoppingCart.Quantity -= 1;
         await _db.SaveChangesAsync();
-
-        //return RedirectToAction("Index");
+        
         return NoContent();
     }
     

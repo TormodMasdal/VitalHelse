@@ -7,6 +7,7 @@
 <div id="auth-state" data-logged-in="@(ViewData["IsAuthenticated"]?.ToString().ToLower() ?? "false")"></div>
 
 <div style="margin-top: 1rem">
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">HJEM</a></li>
@@ -86,13 +87,13 @@
                     <button onclick="AddQuantity(@Model.CurrentProduct.ProductId, @(Model.CurrentProduct.ProductCampaignPrice ?? Model.CurrentProduct.ProductPriceInVAT))" class="btn btn-outline-secondary" type="button">+</button>
                 </div>
             </div>
+            
 
             <!-- Add to shopping cart -->
             <div class="text-center col">
                 <button type="button" class="btn-submit w-100" onclick="AddToCart(@Model.CurrentProduct.ProductId)"> Legg i handlekurv </button>
                 <div id="error-box" style="color:red; font-weight:bold; margin-top:10px;"></div>
             </div>
-        </div>
 
             <div class="accordion accordion-flush mt-4" id="productAccordion">
                 <div class="accordion-item border-bottom">
@@ -107,29 +108,33 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="accordion-item border-bottom">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseThree">
-                        INGREDIENSER
-                    </button>
-                </h2>
-                <div id="collapseTwo" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        <p> @Model.CurrentProduct.ProductIngredients</p>
+                <div class="accordion-item border-bottom">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseThree">
+                            INGREDIENSER
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p> @Model.CurrentProduct.ProductIngredients</p>
+                        </div>
                     </div>
                 </div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                {
+                    <a class="editproduct" asp-controller="AdminProduct" asp-action="EditProduct" asp-route-id="@Model.CurrentProduct.ProductId">Rediger produkt</a>
+                }
             </div>
-            @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
-            {
-                <a class="editproduct" asp-controller="AdminProduct" asp-action="EditProduct" asp-route-id="@Model.CurrentProduct.ProductId">Rediger produkt</a>
-            }
-
         </div>
+    </div>
     </div>
 </div>
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> productpage
 <div id="cart-popup">
     <h4 style="padding:2rem ">Produktet er lagt til i handlekurven!</h4>
 

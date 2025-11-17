@@ -55,14 +55,16 @@ bool isAdminView = ViewData["IsAdminView"] as bool? ?? false;
         <div class="price">
             @if (campaign.HasValue)
             {
-            <span class="price-new">@campaign.Value.ToString("0.00") kr</span>
-            <span class="price-old">@original.Value.ToString("0.00") kr</span>
+                <span class="price-new">@campaign.Value.ToString("0.00") kr</span>
+                <span class="price-old">@original.Value.ToString("0.00") kr</span>
             }
             else
             {
-            <span class="price-regular">@original.Value.ToString("0.00") kr</span>
+                <span class="price-regular">@original.Value.ToString("0.00") kr</span>
             }
         </div>
+        <!-- Kjøp knapp -->
+        <button type="button" class="learn-more" onclick="AddToCart(@product.ProductId)"> Kjøp </button>
     </div>
     }
 </div>
