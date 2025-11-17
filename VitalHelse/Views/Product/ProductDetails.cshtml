@@ -4,6 +4,8 @@
     ViewBag.Title = "title";
     Layout = "_Layout";
 }
+<div id="auth-state" data-logged-in="@(ViewData["IsAuthenticated"]?.ToString().ToLower() ?? "false")"></div>
+
 <div style="margin-top: 1rem">
     
 <nav aria-label="breadcrumb">

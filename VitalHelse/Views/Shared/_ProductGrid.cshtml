@@ -143,6 +143,7 @@ else
 
 <script>
     async function AddToCart(productId){
+        const isAuthenticated = @( (ViewData["IsAuthenticated"] as bool? ?? false).ToString().ToLower() );
         const quantityElement = document.getElementById(`quantity-${productId}`);
         const quantity = quantityElement ? parseInt(quantityElement.value, 10) || 1:1;
 
@@ -169,6 +170,10 @@ else
             document.getElementById("error-box").innerText = msg;
             setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
         } else {
+            if (!isAuthenticated) {
+                window.location.href = "/identity/account/login";
+                return;
+            }
             const popup = document.getElementById("cart-popup");
             popup.style.display = "block";
             document.getElementById("go-to-cart").onclick = () => {

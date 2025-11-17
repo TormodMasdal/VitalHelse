@@ -136,6 +136,7 @@ public class ShoppingCartController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize]
     public async Task<IActionResult> AddToCart(int id, int quantity)
     {
         // Fetch the user id

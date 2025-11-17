@@ -49,6 +49,10 @@ async function AddToCart(productId){
         document.getElementById("error-box").innerText = msg;
         setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
     } else {
+        if (!isAuthenticated) {
+            window.location.href = "/identity/account/login";
+            return;
+        }
         const popup = document.getElementById("cart-popup");
         popup.style.display = "block";
         document.getElementById("go-to-cart").onclick = () => {
