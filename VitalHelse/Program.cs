@@ -80,12 +80,7 @@ builder.Services.Configure<AuthMessageSenderOptions>(options =>
 
 
 builder.Services
-    .AddAuthentication()
-    .AddGoogle(googleOptions =>
-    {
-        googleOptions.ClientId = Environment.GetEnvironmentVariable("AUTHENTICATION__GOOGLE__CLIENTID");
-        googleOptions.ClientSecret = Environment.GetEnvironmentVariable("AUTHENTICATION__GOOGLE__CLIENTSECRET");
-    });
+    .AddAuthentication();
 
 
 var app = builder.Build();
