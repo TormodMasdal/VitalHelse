@@ -94,27 +94,53 @@ public class CheckoutController : Controller
     [HttpGet]
     public async Task<IActionResult> Address()
     {
-        // Fetch the user id
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
+        // Fetch the user logged in
+        var user = await _userManager.GetUserAsync(User);
+        
         // Create a viewmodel and add user addresses
         var vm = new UserAddressViewModel
         {
             Existing = await _db.UserAddresses
-                .Include(a => a.AspNetUsers )
-                .Where(a => a.AspNetUserId == userId)
+                .Where(a => a.AspNetUserId == user.Id)
                 .OrderByDescending(a => a.Id)
-                .ToListAsync()
+                .ToListAsync(),
+
+            SelectedAddressId = user.DefaultUserAddressId 
         };
         
         return View(vm);
     }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Address(UserAddressViewModel vm)
+    {
+        // Fetch the user
+        var user = await _userManager.GetUserAsync(User);
+
+        // If user selected an address
+        if (vm.SelectedAddressId.HasValue)
+        {
+            user.DefaultUserAddressId = vm.SelectedAddressId.Value;
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction("Shipping");
+        }
+
+        // If nothing none were selected
+        vm.Existing = await _db.UserAddresses
+            .Where(a => a.AspNetUserId == user.Id)
+            .ToListAsync();
+        
+        return View("Address", vm);
+    }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddAddress(UserAddressViewModel vm)
     {
-        // Fetch the user id
+        // Fetch the user
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
         // If model is invalid (missing input)
@@ -206,6 +232,7 @@ public class CheckoutController : Controller
     
     public async Task<IActionResult> ReviewOrder(){
         
+        var user = await _userManager.GetUserAsync(User);
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         
         if (userId == null)
@@ -222,6 +249,8 @@ public class CheckoutController : Controller
             .ThenInclude(op => op.Product.ProductPictures)
             .OrderByDescending(o => o.OrderDate)
             .FirstOrDefaultAsync();
+        
+        // Legge til where i querien
 
         if (order == null)
         {

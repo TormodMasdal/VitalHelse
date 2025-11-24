@@ -34,9 +34,7 @@ public class AspNetUsers : IdentityUser
     public ICollection<Order> Orders { get; } = new List<Order>();
     public ICollection<CartProduct> ShoppingCarts { get; } = new List<CartProduct>();
     
-    // Fjerne addresses etterpå!
-    public ICollection<Address> Addresses { get; } = new List<Address>();
-    
     
     public ICollection<UserAddress> UserAddresses { get; } = new List<UserAddress>();
+    public int? DefaultUserAddressId { get; set; }
 }

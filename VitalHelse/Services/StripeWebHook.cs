@@ -91,7 +91,8 @@ public class StripeWebHook : Controller
             { 
                 AspNetUsersId = userId, 
                 OrderDate = DateTime.UtcNow,
-                StripePaymentIntentId = paymentIntentId
+                StripePaymentIntentId = paymentIntentId,
+                // Husk: Legge til adresse
             };
             
             // Fetch shopping cart from the database
