@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 using VitalHelse.Configuration;
 using VitalHelse.Data;
-using VitalHelse.Models;
 namespace VitalHelse.Controllers;
 
 [Route("create-checkout-session")]
@@ -31,52 +30,19 @@ public class PaymentController : Controller
 
     /// <returns> A checkout page</returns>
     [HttpPost]
-    public async Task<IActionResult> CreateCheckoutSession([FromBody] UserAddressViewModel vm)
+    public async Task<IActionResult> CreateCheckoutSession()
     {
         // Finds the user id of the user creating the checkout session
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
 
         // Fetch all the items from the cart
         var cartItems = await _db.CartProducts
             .Include(cp => cp.Product)
             .Where(cp => cp.AspNetUsersId == userId)
             .ToListAsync();
-        
-        // If cart is empty
-        if (!cartItems.Any()) return BadRequest("Handlekurven er tom.");
-        
-        // Get the user address 
-        if (vm.SelectedAddressId == null) return BadRequest("Ingen adresse valgt.");
-        var address = await _db.UserAddresses.FirstOrDefaultAsync(a => a.Id == vm.SelectedAddressId && a.AspNetUserId == userId);
-        if (address == null) return BadRequest("Fant ikke valgt adresse.");
-        
-        var order = new Order
-        {
-            AspNetUsersId = userId,
-            OrderDate = DateTime.UtcNow,
-            Status = "Unpaid",
-            UserAddress = address
-        };
 
-        foreach (var item in cartItems)
-        {
-            var product = item.Product;
-            var effectivePrice = product.ProductCampaignPrice ?? product.ProductPriceInVAT;
-
-            order.OrderProducts.Add(new OrderProduct
-            {
-                ProductId = item.ProductId,
-                Quantity = item.Quantity,
-                UnitPrice = (decimal)effectivePrice
-            });
-        }
-
-        order.TotalCost = order.OrderProducts.Sum(op => op.UnitPrice * op.Quantity);
-
-        _db.Orders.Add(order);
-        await _db.SaveChangesAsync();
-        
         var productService = new ProductService();
         var priceService = new PriceService();
         var lineItems = new List<SessionLineItemOptions>();
