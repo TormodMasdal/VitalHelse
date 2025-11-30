@@ -183,6 +183,8 @@
     </div>
 </div>
 
+<div id="recommendations-container"></div>
+
 @*
 <div id="cart-popup">
     <h4 style="padding:2rem ">Produktet er lagt til i handlekurven!</h4>
@@ -198,4 +200,60 @@
     <script>window.isAuthenticated = @(User.Identity.IsAuthenticated.ToString().ToLower());</script>
     <script src="~/js/components/addFavorites.js"></script>
     <script src="~/js/components/shoppingCart.js"></script>
+    
+    <script>
+        fetch('/Reccomendations/GetRecommendations?productId=@Model.CurrentProduct.ProductId')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('recommendations-container').innerHTML = html;
+                
+                initializeRecommendationsScroll();
+            })
+            .catch(error => console.error('Error:', error));
+
+        function initializeRecommendationsScroll() {
+            const grid = document.getElementById('recommendationsGrid');
+            const leftBtn = document.getElementById('scrollLeft');
+            const rightBtn = document.getElementById('scrollRight');
+
+            if (!grid || !leftBtn || !rightBtn) {
+                console.log('Elements not found');
+                return;
+            }
+
+            const getScrollAmount = () => {
+                return 4 * 290; 
+            };
+
+            const updateButtons = () => {
+                const scrollLeft = grid.scrollLeft;
+                const maxScroll = grid.scrollWidth - grid.clientWidth;
+
+                leftBtn.disabled = scrollLeft <= 5;
+                rightBtn.disabled = scrollLeft >= maxScroll - 5;
+
+                leftBtn.style.opacity = leftBtn.disabled ? '0.3' : '1';
+                rightBtn.style.opacity = rightBtn.disabled ? '0.3' : '1';
+            };
+
+            leftBtn.addEventListener('click', () => {
+                grid.scrollBy({
+                    left: -getScrollAmount(),
+                    behavior: 'smooth'
+                });
+            });
+
+            rightBtn.addEventListener('click', () => {
+                grid.scrollBy({
+                    left: getScrollAmount(),
+                    behavior: 'smooth'
+                });
+            });
+
+            grid.addEventListener('scroll', updateButtons);
+
+            updateButtons();
+            window.addEventListener('resize', updateButtons);
+        }
+    </script>
 }
