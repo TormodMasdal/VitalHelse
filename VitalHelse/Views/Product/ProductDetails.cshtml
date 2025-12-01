@@ -79,8 +79,8 @@
             <!-- Pris -->
             <div class="price price-product-page">
                 @{
-                    double? original = @Model.CurrentProduct.ProductPriceInVAT;
-                    double? campaign = @Model.CurrentProduct.ProductCampaignPrice;
+                    decimal? original = @Model.CurrentProduct.ProductPriceInVAT;
+                    decimal? campaign = @Model.CurrentProduct.ProductCampaignPrice;
                     int discountPercent = 0;
 
                     if (campaign.HasValue && original.HasValue && original.Value > 0)
