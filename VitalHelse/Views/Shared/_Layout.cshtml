@@ -1,4 +1,8 @@
-﻿@inject VitalHelse.Data.ApplicationDbContext _db;
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+
+@inject VitalHelse.Data.ApplicationDbContext _db;
 
 
 @{
@@ -6,6 +10,10 @@
         .Where(c => c.ParentCategoryId == null)
         .OrderBy(c => c.CategoryName)
         .ToList();
+}
+
+@{
+    var authorized = (await AuthorizationService.AuthorizeAsync(User, "Privileged")).Succeeded;
 }
 
 
@@ -125,7 +133,7 @@
                             0
                         </span>
                     </a>
-                    @if (User.IsInRole("BusinessCustomer"))
+                    @if (User.IsInRole("BusinessCustomer") || authorized)
                     {
                         <div class="vat-toggle">
                             <span class="vat-label vat-label-inc">MVA</span>

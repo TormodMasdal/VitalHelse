@@ -1,9 +1,15 @@
 @using VitalHelse.Helpers
 @model IEnumerable<VitalHelse.Models.Product>
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 @{
 bool isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? false;
 bool isAdminView = ViewData["IsAdminView"] as bool? ?? false;
+}
+
+@{
+    var authorized = (await AuthorizationService.AuthorizeAsync(User, "Privileged")).Succeeded;
 }
 
 @if (Model != null && Model.Any())
@@ -63,14 +69,14 @@ bool isAdminView = ViewData["IsAdminView"] as bool? ?? false;
 
         <!-- Pris -->
         <div class="price">
-            @if (User.IsInRole("BusinessCustomer") && businessCampaign != 0 && businessPrice.HasValue)
+            @if ((User.IsInRole("BusinessCustomer") || authorized) && businessCampaign != 0 && businessPrice.HasValue)
             {
                 <span class="price-new price-incvat">@campaign.Value.ToString("0.00") kr</span>
                 <span class="price-old price-incvat">@original.Value.ToString("0.00") kr</span>
                 <span class="price-new price-exvat">@businessCampaign.ToString("0.00") kr</span>
                 <span class="price-old price-exvat">@businessPrice.Value.ToString("0.00") kr</span>
             }
-            else if (User.IsInRole("BusinessCustomer") && businessPrice.HasValue)
+            else if ((User.IsInRole("BusinessCustomer") || authorized) && businessPrice.HasValue)
             {
                 <span class="price-regular price-exvat">@businessPrice.Value.ToString("0.00") kr</span>
                 <span class="price-regular price-incvat">@original.Value.ToString("0.00") kr</span>

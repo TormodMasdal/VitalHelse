@@ -1,4 +1,6 @@
 ﻿@model VitalHelse.Models.ProductDetailViewModel
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 @{ bool isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? false; }
 
@@ -7,6 +9,10 @@
     Layout = "_Layout";
 }
 @*<div id="auth-state" data-logged-in="@(ViewData["IsAuthenticated"]?.ToString().ToLower() ?? "false")"></div>*@
+
+@{
+    var authorized = (await AuthorizationService.AuthorizeAsync(User, "Privileged")).Succeeded;
+}
 
 <div style="margin-top: 1rem">
     
@@ -98,14 +104,14 @@
                     }
                 }
                 
-                @if (User.IsInRole("BusinessCustomer") && businessCampaign != 0 && businessPrice.HasValue)
+                @if ((User.IsInRole("BusinessCustomer") || authorized) && businessCampaign != 0 && businessPrice.HasValue)
                 {
                     <h4 class="price-new price-exvat">@businessCampaign.ToString("0.00") kr</h4>
                     <span class="price-old price-exvat">@businessPrice.Value.ToString("0.00") kr</span>
                     <h4 class="price-new price-incvat">@campaign.Value.ToString("0.00") kr</h4>
                     <span class="price-old price-incvat">@original.Value.ToString("0.00") kr</span>
                 }
-                else if (User.IsInRole("BusinessCustomer") && businessPrice.HasValue)
+                else if ((User.IsInRole("BusinessCustomer") || authorized) && businessPrice.HasValue)
                 {
                     <h4 class="price-regular price-exvat">@businessPrice.Value.ToString("0.00") kr</h4>
                     <h4 class="price-regular price-incvat">@original.Value.ToString("0.00") kr</h4>
