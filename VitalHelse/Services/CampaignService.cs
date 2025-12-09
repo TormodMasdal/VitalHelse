@@ -92,7 +92,7 @@ public class CampaignService
             // Sett kampanjepris
             if (discountPercent > 0 && p.ProductPriceInVAT > 0)
             {
-                decimal rate = (100 - discountPercent) / 100;
+                decimal rate = (100m - discountPercent) / 100m;
                 p.ProductCampaignPrice = p.ProductPriceInVAT * rate;
             }
             else

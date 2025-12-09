@@ -89,7 +89,7 @@
                     decimal? campaign = @Model.CurrentProduct.ProductCampaignPrice;
                     decimal? businessPrice = @Model.CurrentProduct.ProductPriceExVAT;
                     decimal businessCampaign = 0;
-                    
+
                     int discountPercent = 0;
 
                     if (User.IsInRole("BusinessCustomer") && campaign.HasValue && businessPrice.HasValue)

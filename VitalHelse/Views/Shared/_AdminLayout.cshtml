@@ -8,7 +8,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - VitalHelse Admin</title>
-
+    <link rel="icon" type="image/png" href="~/leaf_logo.svg" />
+    
     <!-- 1. Core styles -->
     <link rel="stylesheet" href="~/css/pages/site.css" asp-append-version="true" />
 
@@ -47,21 +48,17 @@
                class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Categories" ? "active" : "")">Kategorier</a>
             <a asp-controller="Admin" asp-action="Banners"
                class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Banners" ? "active" : "")">Bannere</a>
-            <a asp-controller="DiscountCode"
-               asp-action="Index"
-               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Rabbatkoder" ? "active" : "")">
-                Rabattkoder
-            </a>
-            <a asp-controller="CategoryDiscount"
-               asp-action="Index"
-               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Rabattsatser" ? "active" : "")">
-                Rabattsatser
-            </a>
-            <a asp-controller="Campaign"
-               asp-action="Index"
-               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Kampanjer" ? "active" : "")">
-                Kampanjer
-            </a>
+            <a asp-controller="DiscountCode" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Rabattkoder" ? "active" : "")">Rabattkoder</a>
+            <a asp-controller="CategoryDiscount" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Rabattsatser" ? "active" : "")">Rabattsatser</a>
+            <a asp-controller="Campaign" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Kampanjer" ? "active" : "")">Kampanjer</a>
+            <a asp-controller="ShippingManagement" asp-action="Shipping"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "ShippingManagement" ? "active" : "")">Frakt</a>
+            <a asp-controller="OrderManagement" asp-action="Orders"
+               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "OrderManagement" ? "active" : "")">Ordre</a>
+            
         </nav>
 
     </aside>

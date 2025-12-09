@@ -23,7 +23,6 @@ bool isAdminView = ViewData["IsAdminView"] as bool? ?? false;
     decimal? campaign = product.ProductCampaignPrice;
     decimal? businessPrice = product.ProductPriceExVAT;
     decimal businessCampaign = 0;
-    
     int discountPercent = 0;
 
     if (User.IsInRole("BusinessCustomer") && campaign.HasValue && businessPrice.HasValue)
