@@ -35,10 +35,6 @@ public class StripeWebHook : Controller
     [HttpPost]
     public async Task<IActionResult> Index()
     {
-        var user = await _userManager.GetUserAsync(User);
-
-        if (user == null) return Unauthorized();   
-        
         // Reads the webhook
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
@@ -76,6 +72,8 @@ public class StripeWebHook : Controller
                 return Ok();
             }
             
+            var user = await _userManager.FindByIdAsync(userId);
+            
             var paymentIntentId = paymentIntent.Id;
 
             // Test to avoid duplicate order in case of network error
@@ -102,6 +100,8 @@ public class StripeWebHook : Controller
             decimal productTotal = cartItems.Sum(i => (i.Product.ProductCampaignPrice ?? i.Product.ProductPriceInVAT) * i.Quantity);
             decimal productDiscount = beforeDiscount - productTotal;
 
+            
+            
             // Get user address
             var address = await _db.UserAddresses.FirstOrDefaultAsync(a => a.Id == user.DefaultUserAddressId);
             // Get user shipping method
@@ -185,7 +185,13 @@ public class StripeWebHook : Controller
             {
                 productListHtml += $"<li>{product.Product.ProductName} – {product.Quantity} stk – {product.Product.ProductPriceInVAT} kr</li>";
                 productListText += $"{product.Product.ProductName} - {product.Quantity} stk - {product.Product.ProductPriceInVAT} kr\n";
+                
+                // Reduce stock
+                product.Product.StockCount -= product.Quantity;
+                _db.Products.Update(product.Product);
             }
+            await _db.SaveChangesAsync();
+
 
             string firstName = user.FirstName;
             string lastName = user.LastName;
