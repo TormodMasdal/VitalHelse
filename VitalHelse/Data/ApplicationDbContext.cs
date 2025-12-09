@@ -48,4 +48,12 @@ public class ApplicationDbContext : IdentityDbContext<AspNetUsers>
     public DbSet<PhysicalProductAttribute> PhysicalProductAttributes => Set<PhysicalProductAttribute>();
     public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
     #endregion
+    
+    
+    #region HomePage
+
+    public DbSet<BannerImage> BannerImages => Set<BannerImage>();
+    public DbSet<HomePageSettings> HomePageSettings => Set<HomePageSettings>();
+
+    #endregion
 }
