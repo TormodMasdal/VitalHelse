@@ -208,9 +208,8 @@ public class StripeWebHook : Controller
                 "Dato: "+ order.OrderDate +
                 "Produkter:\n" + productListText + "\n" +
                 $"Pris: {paymentIntent.Amount / 100m} {paymentIntent.Currency}"+ 
-                "Frakt: "+
-                "Totalt: "+
-                "Spor pakken din her: "+
+                $"Frakt: {shippingPrice}"+
+                $"Totalt: {(paymentIntent.Amount / 100m)+shippingPrice} {paymentIntent.Currency}"+
                 "Har du spørsmål? Kontakt oss på VitalHelse@butikk.no eller besøk VitalHelse.no",
                 htmlBody: 
                 "<h1>Takk for at du handlet hos Vital Helse!</h1>\n\n" +
@@ -219,10 +218,9 @@ public class StripeWebHook : Controller
                 "<h2>Bestilling</h2>\n" +
                 $"<ul>{productListHtml}</ul>\n" +
                 $"<p><strong>Pris:</strong> {paymentIntent.Amount / 100m} {paymentIntent.Currency.ToUpper()}</p>\n" +
-                "<p><strong>Frakt:</strong></p>\n" +
-                "<p><strong>Totalt:</strong></p>\n\n" +
+                $"<p><strong>Frakt:</strong></p> {shippingPrice}\n" +
+                $"<p><strong>Totalt:</strong></p> {(paymentIntent.Amount / 100m)+shippingPrice} {paymentIntent.Currency}\n\n" +
                 "<p><strong>Spor pakken din her:</strong> \n" +
-                "<a href=\"https://vitalhelse.no/sporing\">Klikk for å spore pakken</a>\n" +
                 "</p>\n\n<p>\n" +
                 "Har du spørsmål? Kontakt oss på \n" +
                 "<a href=\"mailto:VitalHelse@butikk.no\">VitalHelse@butikk.no</a> \n" +
