@@ -35,6 +35,10 @@ public class StripeWebHook : Controller
     [HttpPost]
     public async Task<IActionResult> Index()
     {
+        var user = await _userManager.GetUserAsync(User);
+
+        if (user == null) return Unauthorized();   
+        
         // Reads the webhook
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
@@ -86,35 +90,88 @@ public class StripeWebHook : Controller
 
             Console.WriteLine($"Payment succeeded for user {userId}");
 
-            // Create order
-            var order = new Order
-            { 
-                AspNetUsersId = userId, 
-                OrderDate = DateTime.UtcNow,
-                StripePaymentIntentId = paymentIntentId,
-                // Husk: Legge til adresse
-            };
-            
-            // Fetch shopping cart from the database
+            // Get cart
             var cartItems = await _db.CartProducts
                 .Include(cp => cp.Product)
                 .Where(cp => cp.AspNetUsersId == userId)
                 .ToListAsync();
+
+            //if (!cartItems.Any()) return RedirectToAction("Index");
+
+            decimal beforeDiscount = cartItems.Sum(i => i.Product.ProductPriceInVAT * i.Quantity);
+            decimal productTotal = cartItems.Sum(i => (i.Product.ProductCampaignPrice ?? i.Product.ProductPriceInVAT) * i.Quantity);
+            decimal productDiscount = beforeDiscount - productTotal;
+
+            // Get user address
+            var address = await _db.UserAddresses.FirstOrDefaultAsync(a => a.Id == user.DefaultUserAddressId);
+            // Get user shipping method
+            var method = await _db.ShippingMethods.FirstOrDefaultAsync(s => s.Id == user.DefaultShippingMethodId);
+
+            // Get the thresholds
+            var thresholds = _db.ShippingPriceThresholds
+                .AsEnumerable()
+                .OrderBy(t => t.MinOrderAmount)
+                .ToList();
+
+            // Get correct shipping price based on cart total
+            decimal basePrice = thresholds
+                .Where(t => productTotal >= t.MinOrderAmount)
+                .Select(t => t.ShippingPrice)
+                .DefaultIfEmpty(0)
+                .Last();
+
+            // Calculate the shipping price based on thresholds and method
+            decimal shippingPrice = basePrice * method.RateMultiplier;
             
-            // Move items in shoppingcart into order table
+            int percent = HttpContext.Session.GetInt32("DiscountPercent") ?? 0;
+            decimal discountAmount = productTotal * (percent / 100m);
+            decimal total = productTotal - discountAmount + shippingPrice;
+
+            // Create order
+            var order = new Order
+            {
+                OrderDate = DateTime.UtcNow,
+                Status = "Paid",
+                TotalCost = total,
+                AspNetUsersId = userId,
+
+                DiscountCodeId = percent > 0 ? $"{percent}%" : null,
+                ShippingProvider = method.MethodName,
+                
+                ShippingFirstName = address.FirstName,
+                ShippingLastName = address.LastName,
+                ShippingStreet = address.Street,
+                ShippingPostalCode = address.PostalCode,
+                ShippingCity = address.City,
+                ShippingPhoneNumber = address.PhoneNumber,
+                
+                ShippingMethodName = method.MethodName,
+                ShippingMethodRateMultiplier = method.RateMultiplier,
+                ShippingPrice = shippingPrice
+            };
+
+            _db.Orders.Add(order);
+            await _db.SaveChangesAsync(); 
+            
+            // Add products
             foreach (var item in cartItems)
-            { 
-                order.OrderProducts.Add(new OrderProduct {
-                    ProductId = item.Product.ProductId,
+            {
+                _db.OrderProducts.Add(new OrderProduct
+                {
+                    OrderId = order.OrderId,
+                    ProductId = item.ProductId,
                     Quantity = item.Quantity
                 });
-                
-                item.Product.StockCount -= item.Quantity;
             }
-            // Adds order, and removes the shopping cart
-            _db.Orders.Add(order);
+
+            await _db.SaveChangesAsync();
+
+            // Clear cart
             _db.CartProducts.RemoveRange(cartItems);
             await _db.SaveChangesAsync();
+
+            // Remove discount code after use
+            HttpContext.Session.Remove("DiscountPercent");
 
             Console.WriteLine($"Created order {order.OrderId} for user {userId}");
             
@@ -129,8 +186,6 @@ public class StripeWebHook : Controller
                 productListHtml += $"<li>{product.Product.ProductName} – {product.Quantity} stk – {product.Product.ProductPriceInVAT} kr</li>";
                 productListText += $"{product.Product.ProductName} - {product.Quantity} stk - {product.Product.ProductPriceInVAT} kr\n";
             }
-
-            var user = await _userManager.FindByIdAsync(userId);
 
             string firstName = user.FirstName;
             string lastName = user.LastName;
