@@ -49,7 +49,6 @@ public class ApplicationDbContext : IdentityDbContext<AspNetUsers>
     public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
     #endregion
     
-    
     #region HomePage
 
     public DbSet<BannerImage> BannerImages => Set<BannerImage>();

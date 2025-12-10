@@ -1,4 +1,5 @@
 ﻿using VitalHelse.Models;
+using VitalHelse.Models.Shipping;
 
 namespace VitalHelse.Data;
 
@@ -25,6 +26,7 @@ public static class TestData
         {
             SeedCategories(db);
             SeedProducts(db);
+            SeedShipping(db);
         }
     }
 
@@ -141,7 +143,7 @@ public static class TestData
                 ProductName = "Hyaluronic Acid Day Cream 50 ml",
                 ProductPriceInVAT = 299,
                 ProductPriceExVAT = 200,
-                StockCount = 40,
+                StockCount = -40,
                 ProductCampaignPrice = 200,
                 ProductDescription = "Lett og fuktighetsgivende dagkrem som gir huden glød og mykhet.",
                 LabelDescription = "Fuktighetskrem – Ansikt",
@@ -308,4 +310,49 @@ public static class TestData
         db.Products.AddRange(produkter);
         db.SaveChanges();
     }
+
+    private static void SeedShipping(ApplicationDbContext db)
+    {
+        var shippingPriceThresholds = new List<ShippingPriceThreshold>
+        {
+            new()
+            {
+                MinOrderAmount = 0,
+                ShippingPrice = 200
+            },
+            new()
+            {
+                MinOrderAmount = 400,
+                ShippingPrice = 100
+            },
+            new()
+            {
+                MinOrderAmount = 100,
+                ShippingPrice = 100
+            }
+        };
+        
+        var shippingMethods = new List<ShippingMethod>
+        {
+            new()
+            {
+                MethodName = "Henting i butikk",
+                RateMultiplier = 1.5m
+            },
+            new()
+            {
+                MethodName = "Henting på lager",
+                RateMultiplier = 0
+            },
+            new()
+            {
+                MethodName = "Levering hjem",
+                RateMultiplier = 2
+            }
+        };
+        db.ShippingPriceThresholds.AddRange(shippingPriceThresholds);
+        db.ShippingMethods.AddRange(shippingMethods);
+        db.SaveChanges();
+    }
+
 }

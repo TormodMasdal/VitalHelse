@@ -340,7 +340,7 @@ public class CheckoutController : Controller
         {
             CartTotal = cartTotal,
             Thresholds = thresholds,
-            Methods = await _db.ShippingMethods.ToListAsync(),
+            Methods = _db.ShippingMethods.AsEnumerable().OrderByDescending(m => m.RateMultiplier).ToList(),
             SelectedMethodId = user.DefaultShippingMethodId,
             ShippingPrice = basePrice // før metode-rate
         };
