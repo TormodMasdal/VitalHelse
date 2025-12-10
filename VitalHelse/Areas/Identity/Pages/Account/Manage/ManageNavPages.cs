@@ -13,7 +13,6 @@ namespace VitalHelse.Areas.Identity.Pages.Account.Manage;
 public static class ManageNavPages
 {
     public static string BusinessProfile => "BusinessProfile";
-    public static string Address => "Address";
     public static string Order => "Order";
     
     /// <summary>
@@ -113,8 +112,6 @@ public static class ManageNavPages
     public static string? TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
 
     public static string? BusinessNavClass(ViewContext viewContext) => PageNavClass(viewContext, BusinessProfile);
-    
-    public static string? AddressNavClass(ViewContext viewContext) => PageNavClass(viewContext, Address);
     
     public static string? OrdersNavClass(ViewContext viewContext) => PageNavClass(viewContext, Order);
     
