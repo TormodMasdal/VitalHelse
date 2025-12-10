@@ -12,7 +12,7 @@ public class Order
     public DateTime? OrderDate { get; set; }
     [StringLength(50)] public string? Status { get; set; }
     public decimal TotalCost { get; set; }
-    [StringLength(100)] public string? TrackingNumber { get; set; }
+    [StringLength(100)] public string? TrackingNumber { get; set; } = "Sporingsnummer sendes ved utsending.";
     [StringLength(50)] public string? ShippingProvider { get; set; }
 
     [StringLength(500)] public string? DiscountCodeId { get; set; }
