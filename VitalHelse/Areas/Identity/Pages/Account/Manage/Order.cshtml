@@ -1,0 +1,64 @@
+@page
+@model OrdersModel
+@{
+    ViewData["Title"] = "Mine ordre";
+    ViewData["ActivePage"] = ManageNavPages.Order;
+}
+
+@if (!Model.Orders.Any())
+{
+    <div class="alert alert-secondary">Du har ingen ordre enda.</div>
+}
+else
+{
+    foreach (var order in Model.Orders)
+    {
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between">
+                <strong>Ordre #@order.OrderId</strong>
+                <span>@order.OrderDate?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+            </div>
+
+            <div class="card-body">
+
+                <h5 class="mb-2">Produkter</h5>
+                <ul class="list-group mb-3">
+                    @foreach (var item in order.OrderProducts)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            <div>
+                                <strong>@item.Product.ProductName</strong><br />
+                                Antall: @item.Quantity
+                            </div>
+                            <span>@((item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT).ToString("N2")) kr</span>
+                        </li>
+                    }
+                </ul>
+
+                <h5 class="mb-2">Leveringsinformasjon</h5>
+                <p>
+                    @order.ShippingFirstName @order.ShippingLastName <br />
+                    @order.ShippingStreet <br />
+                    @order.ShippingPostalCode @order.ShippingCity <br />
+                    Tlf: @order.ShippingPhoneNumber
+                </p>
+
+                <h5 class="mb-2">Frakt</h5>
+                <p>
+                    Metode: @order.ShippingMethodName <br />
+                    Pris: @order.ShippingPrice.ToString("N2") kr
+                </p>
+
+                <h4 class="mt-3">Totalsum: @order.TotalCost.ToString("N2") kr</h4>
+            </div>
+
+            <div class="card-footer text-muted">
+                Status: <strong>@order.Status</strong>
+                @if (!string.IsNullOrEmpty(order.TrackingNumber))
+                {
+                    <span> | Sporingsnummer: @order.TrackingNumber</span>
+                }
+            </div>
+        </div>
+    }
+}

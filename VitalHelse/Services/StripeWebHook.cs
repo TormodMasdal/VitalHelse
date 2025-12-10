@@ -130,7 +130,7 @@ public class StripeWebHook : Controller
             // Create order
             var order = new Order
             {
-                OrderDate = DateTime.UtcNow,
+                OrderDate = DateTime.UtcNow.Date.AddHours(+1),
                 Status = "Paid",
                 TotalCost = total,
                 AspNetUsersId = userId,

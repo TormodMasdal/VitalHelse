@@ -39,16 +39,13 @@
 
                 </li>
                 <li class="nav-item subcategory-bar text-center mb-4">
-                    <a class="nav-item subcategory-link @ManageNavPages.AddressNavClass(ViewContext)" id="change-address" asp-page="./Address">ENDRE ADRESSE</a>
-                </li>
-                <li class="nav-item subcategory-bar text-center mb-4">
                     <a class="nav-item subcategory-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">ENDRE PASSORD</a>
                 </li>
                 <li class="nav-item subcategory-bar text-center mb-4">
                     <a class="nav-item subcategory-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">ENDRE E-POST</a>
                 </li>
                 <li class="nav-item subcategory-bar text-center mb-4">
-                    <a class="nav-item subcategory-link" href="#">MINE BESTILLINGER</a>
+                    <a class="nav-item subcategory-link @ManageNavPages.OrdersNavClass(ViewContext)" asp-page="./Order">MINE BESTILLINGER</a>
                 </li>
             </ul>
         </div>

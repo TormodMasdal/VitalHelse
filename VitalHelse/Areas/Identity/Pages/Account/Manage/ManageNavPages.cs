@@ -14,6 +14,7 @@ public static class ManageNavPages
 {
     public static string BusinessProfile => "BusinessProfile";
     public static string Address => "Address";
+    public static string Order => "Order";
     
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -114,6 +115,8 @@ public static class ManageNavPages
     public static string? BusinessNavClass(ViewContext viewContext) => PageNavClass(viewContext, BusinessProfile);
     
     public static string? AddressNavClass(ViewContext viewContext) => PageNavClass(viewContext, Address);
+    
+    public static string? OrdersNavClass(ViewContext viewContext) => PageNavClass(viewContext, Order);
     
     
     /// <summary>

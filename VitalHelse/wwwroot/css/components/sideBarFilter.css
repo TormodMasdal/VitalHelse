@@ -17,6 +17,7 @@
     height: fit-content;
     max-height: calc(100vh - 220px);
     overflow-y: auto;
+    margin-top: 17rem;
 }
 
 .filter-form h4 {

@@ -11,7 +11,7 @@
  
  
     <!-- Categories Dropdown -->
-    <div class="filter-group ">
+    <div class="filter-group">
         <label>Kategorier</label>
         <div class="category-dropdowns nav-item">
             @foreach (var parent in ((IEnumerable<Category>)ViewData["Categories"]).Where(c => c.ParentCategoryId == null))
