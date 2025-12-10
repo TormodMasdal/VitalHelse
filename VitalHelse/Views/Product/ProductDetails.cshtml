@@ -2,17 +2,20 @@
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 
-@{ bool isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? false; }
-
 @{
-    ViewBag.Title = "title";
+    bool isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? false; 
+    
+    ViewBag.Title = ViewBag.Title = $"{Model.CurrentProduct.ProductName} | {Model.CategoryPath?.Replace("/", " / ")}";
     Layout = "_Layout";
-}
-@*<div id="auth-state" data-logged-in="@(ViewData["IsAuthenticated"]?.ToString().ToLower() ?? "false")"></div>*@
+    ViewBag.MetaDescription = Model.CurrentProduct.ProductDescription?.Substring(0, Math.Min(150, Model.CurrentProduct.ProductDescription.Length));
 
-@{
     var authorized = (await AuthorizationService.AuthorizeAsync(User, "Privileged")).Succeeded;
+    
+    ViewBag.OgTitle = Model.CurrentProduct.ProductName;
+    ViewBag.OgDescription = ViewBag.MetaDescription;
+    ViewBag.OgImage = Model.CurrentProduct.ProductPictures.FirstOrDefault()?.PicturePath;
 }
+
 
 <div style="margin-top: 1rem">
     
