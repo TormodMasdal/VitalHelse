@@ -43,6 +43,7 @@ public class StockController : Controller
                     .Select(pc => pc.Category.CategoryName)
                     .ToList()
             })
+            .OrderBy(p => p.StockCount)
             .ToList();
     
         //gets all categories with parent/child structure
@@ -110,7 +111,7 @@ public class StockController : Controller
                 // Status
                 string status;
                 XLColor statusColor;
-                if (item.StockCount == 0)
+                if (item.StockCount <= 0)
                 {
                     status = "Utsolgt";
                     statusColor = XLColor.FromHtml("#f8d7da");

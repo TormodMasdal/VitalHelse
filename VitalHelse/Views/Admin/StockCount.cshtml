@@ -89,12 +89,12 @@
             @foreach (var item in Model)
             {
                 var stockCount = item.StockCount ?? 0;
-                var statusValue = stockCount == 0 ? "out" : (stockCount < 10 ? "low" : "ok");
+                var statusValue = stockCount <= 0 ? "out" : (stockCount < 10 ? "low" : "ok");
                 var rowClass = "";
                 var statusText = "";
                 var statusClass = "";
 
-                if (stockCount == 0)
+                if (stockCount <= 0)
                 {
                     rowClass = "out-of-stock-row";
                     statusText = "Utsolgt";
