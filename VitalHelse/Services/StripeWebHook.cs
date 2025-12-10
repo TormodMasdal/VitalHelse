@@ -128,7 +128,7 @@ public class StripeWebHook : Controller
             decimal total = productTotal - discountAmount + shippingPrice;
 
             var norwegianTime = TimeZoneInfo.ConvertTimeFromUtc(
-                DateTime.UtcNow,
+                DateTime.Now,
                 TimeZoneInfo.FindSystemTimeZoneById("Europe/Oslo")
             );
             
