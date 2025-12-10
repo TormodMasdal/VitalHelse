@@ -4,6 +4,15 @@ using Stripe;
 using Stripe.Checkout;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Stripe;
+using VitalHelse.Configuration;
+using VitalHelse.Data;
+using VitalHelse.Models;
+using VitalHelse.Services;
 
 using VitalHelse.Configuration;
 using VitalHelse.Data;
@@ -15,11 +24,13 @@ public class PaymentController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly IOptions<StripeOptions> _stripeOptions;
+    private readonly UserManager<AspNetUsers> _userManager;
 
-    public PaymentController(ApplicationDbContext db, IOptions<StripeOptions> stripeOptions)
+    public PaymentController(ApplicationDbContext db, IOptions<StripeOptions> stripeOptions, UserManager<AspNetUsers> userManager)
     {
         _db = db;
         _stripeOptions = stripeOptions;
+        _userManager = userManager;
     }
 
     /// <summary>
@@ -102,6 +113,46 @@ public class PaymentController : Controller
         }
 
         await _db.SaveChangesAsync();
+        
+        var user = await _userManager.FindByIdAsync(userId);
+        //if (!cartItems.Any()) return RedirectToAction("Index");
+        var method = await _db.ShippingMethods.FirstOrDefaultAsync(s => s.Id == user.DefaultShippingMethodId);
+        decimal beforeDiscount = cartItems.Sum(i => i.Product.ProductPriceInVAT * i.Quantity);
+        decimal productTotal = cartItems.Sum(i => (i.Product.ProductCampaignPrice ?? i.Product.ProductPriceInVAT) * i.Quantity);
+        decimal productDiscount = beforeDiscount - productTotal;
+        
+        // Get the thresholds
+        var thresholds = _db.ShippingPriceThresholds
+            .AsEnumerable()
+            .OrderBy(t => t.MinOrderAmount)
+            .ToList();
+
+        // Get correct shipping price based on cart total
+        decimal basePrice = thresholds
+            .Where(t => productTotal >= t.MinOrderAmount)
+            .Select(t => t.ShippingPrice)
+            .DefaultIfEmpty(0)
+            .Last();
+
+        // Calculate the shipping price based on thresholds and method
+        var shippingPrice = basePrice * method.RateMultiplier;
+        
+        // Convert to smallest currency unit (øre)
+        var shippingPriceMinor = (long)Math.Round(shippingPrice * 100);
+        
+        lineItems.Add(new SessionLineItemOptions
+        {
+            Quantity = 1,
+            PriceData = new SessionLineItemPriceDataOptions
+            {
+                UnitAmount = shippingPriceMinor,
+                Currency = "nok",
+                ProductData = new SessionLineItemPriceDataProductDataOptions
+                {
+                    Name = "Shipping"
+                }
+            }
+        });
 
         // Creates checkout details
         var host = $"{Request.Scheme}://{Request.Host}";
