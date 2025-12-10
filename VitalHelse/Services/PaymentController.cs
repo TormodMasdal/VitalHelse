@@ -62,19 +62,37 @@ public class PaymentController : Controller
                 product.StripeProductId = stripeProduct.Id;
             }
 
-            // If the product price doesn't exist on the owners stripe account, create a new one
-            if (string.IsNullOrEmpty(product.StripePriceId))
+            // Determine the correct price (campaign price if available)
+            var effectivePrice = product.ProductCampaignPrice ?? product.ProductPriceInVAT;
+            var newUnitAmount = (long)(effectivePrice * 100);
+
+            bool needNewPrice = true;
+
+            // If a Stripe price exists, check if it matches current price
+            if (!string.IsNullOrEmpty(product.StripePriceId))
             {
-                // Checks if the price is on campaign, if so use the campaign price, else use the normal price
-                var effectivePrice = product.ProductCampaignPrice ?? product.ProductPriceInVAT;
+                var existingPrice = await priceService.GetAsync(product.StripePriceId);
+
+                // If the price is correct, we can reuse it
+                if (existingPrice.UnitAmount == newUnitAmount)
+                {
+                    needNewPrice = false;
+                }
+            }
+
+            // If no price exists or the price has changed → create a new Stripe Price
+            if (needNewPrice)
+            {
                 var stripePrice = await priceService.CreateAsync(new PriceCreateOptions
                 {
-                    UnitAmount = (long)(effectivePrice * 100),
+                    UnitAmount = newUnitAmount,
                     Currency = "nok",
-                    Product = product.StripeProductId,
+                    Product = product.StripeProductId
                 });
+
                 product.StripePriceId = stripePrice.Id;
             }
+
             
             lineItems.Add(new SessionLineItemOptions
             {
