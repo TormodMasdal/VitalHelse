@@ -285,3 +285,38 @@ a:hover {
         width: 65%;
     }
 }
+.vh-footer {
+    background: #fafafa;
+    padding: 40px 0 0;
+    border-top: 1px solid #e6e6e6;
+    font-family: "Inter", sans-serif;
+    color: #333;
+}
+
+/* Denne er ny – lager et breddebegrenset område */
+.vh-footer .footer-content {
+    max-width: 1200px;   /* du kan endre til 1100, 1300 osv. */
+    margin: 0 auto;      /* sentrerer footeren */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 60px;
+    padding-bottom: 40px;
+}
+
+/* Footer-bottom må også begrenses */
+.footer-bottom .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Mobilvennlig */
+@media (max-width: 768px) {
+    .vh-footer .footer-content {
+        grid-template-columns: 1fr;
+    }
+}
+.vh-footer .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
