@@ -91,8 +91,19 @@ bool isAdminView = ViewData["IsAdminView"] as bool? ?? false;
                         <span class="price-regular">@original.Value.ToString("0.00") kr</span>
                     }
                 </div>
-                <!-- Kjøp knapp -->
-                <button type="button" class="btn-submit" onclick="AddToCart(@product.ProductId)"> Kjøp </button>
+                <!-- Kjøp-linje -->
+                <div class="product-buy-row">
+                    <div class="quantity-controls">
+                        <button type="button" class="qty-btn" onclick="ChangeQty(@product.ProductId, -1)">−</button>
+                        <input id="quantity-@product.ProductId" class="qty-input" value="1" />
+                        <button type="button" class="qty-btn" onclick="ChangeQty(@product.ProductId, 1)">+</button>
+                    </div>
+
+                    <button type="button" class="btn-submit buy-btn" onclick="AddToCart(@product.ProductId)">
+                        Kjøp
+                    </button>
+                </div>
+
             </div>
         }
     </div>
@@ -171,18 +182,16 @@ else
 <script>
     async function AddToCart(productId){
         const isAuthenticated = @( (ViewData["IsAuthenticated"] as bool? ?? false).ToString().ToLower() );
-        const quantityElement = document.getElementById(`quantity-${productId}`);
-        const quantity = quantityElement ? parseInt(quantityElement.value, 10) || 1:1;
 
-        // Saves antiforgerytoken to protect against CSRF-attacks
+        const quantityElement = document.getElementById(`quantity-${productId}`);
+        const quantity = quantityElement ? parseInt(quantityElement.value, 10) || 1 : 1;
+
         const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
         const formData = new FormData();
         formData.append("id", productId);
-        formData.append("quantity", "1");
+        formData.append("quantity", quantity);   // <-- FIX
 
-        // Fetch the delete function from the controller
-        //const response = await fetch(`/ShoppingCart/AddToCart/?id=${productId}&quantity=${quantity}`, {
         const response = await fetch("/ShoppingCart/AddToCart", {
             method: 'POST',
             headers: {
@@ -191,7 +200,6 @@ else
             body: formData
         });
 
-        // Prints the error message if bad request is returned, and keeps it there for 3 seconds
         if (!response.ok) {
             const msg = await response.text();
             document.getElementById("error-box").innerText = msg;
@@ -201,18 +209,10 @@ else
                 window.location.href = "/identity/account/login";
                 return;
             }
-            /*
-            const popup = document.getElementById("cart-popup");
-            popup.style.display = "block";
-            document.getElementById("go-to-cart").onclick = () => {
-                window.location.href = "/checkout";
-            };
-            document.getElementById("continue-shopping").onclick = () => {
-                popup.style.display = "none";
-            }; */
             window.location.reload();
         }
     }
+
 
     // Helper that formats numers as norwegian currency (1000 as 1000,00 kr)
     const nok = new Intl.NumberFormat('no-NO', { style: 'currency', currency: 'NOK' });
@@ -268,3 +268,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </script>
 
+<script>
+    function ChangeQty(productId, delta) {
+        const input = document.getElementById(`quantity-${productId}`);
+        let value = parseInt(input.value) || 1;
+
+        value += delta;
+        if (value < 1) value = 1;
+
+        input.value = value;
+    }
+</script>
