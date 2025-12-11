@@ -8,6 +8,10 @@ html, body {
     padding: 0;
     overflow: hidden;
     font-family: 'Inter', sans-serif;
+   
+    background:
+            linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
+            url("/images/backgrounds/background.jpeg");
 }
 
 body.menu-open {
@@ -191,4 +195,49 @@ body.menu-open {
 
 .dashboard-section-title {
     padding: 1.5rem;
+}
+
+/* ====== BUTTONS ====== */
+.btn-submit {
+    background-color: #e8cfc3;
+    color: #333;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-submit:hover {
+    background-color: #e0bcae;
+    transform: translateY(-2px);
+}
+
+/* Prislinjen */
+.price {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: 16px;
+}
+
+.price-new {
+    color: #d44141;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.price-regular {
+    color: black;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.price-old {
+    text-decoration: line-through;
+    font-size: 14px;
+    color: #999;
 }
