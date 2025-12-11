@@ -126,16 +126,11 @@ public class StripeWebHook : Controller
             int percent = HttpContext.Session.GetInt32("DiscountPercent") ?? 0;
             decimal discountAmount = productTotal * (percent / 100m);
             decimal total = productTotal - discountAmount + shippingPrice;
-
-            var norwegianTime = TimeZoneInfo.ConvertTimeFromUtc(
-                DateTime.UtcNow,
-                TimeZoneInfo.FindSystemTimeZoneById("Europe/Oslo")
-            );
             
             // Create order
             var order = new Order
             {
-                OrderDate = norwegianTime,
+                OrderDate = DateTime.Now,
                 Status = "Paid",
                 TotalCost = total,
                 AspNetUsersId = userId,

@@ -1,8 +1,22 @@
 ﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Http.Extensions
 @inject IAuthorizationService AuthorizationService
 
 
 @inject VitalHelse.Data.ApplicationDbContext _db;
+
+@if (ViewBag.MetaDescription != null)
+{
+    <meta name="description" content="@ViewBag.MetaDescription" />
+}
+
+
+@if (ViewBag.OgTitle != null)
+{
+    <meta property="og:title" content="@ViewBag.OgTitle" />
+    <meta property="og:description" content="@ViewBag.OgDescription" />
+    <meta property="og:image" content="@ViewBag.OgImage" />
+}
 
 
 @{
@@ -10,9 +24,7 @@
         .Where(c => c.ParentCategoryId == null)
         .OrderBy(c => c.CategoryName)
         .ToList();
-}
 
-@{
     var authorized = (await AuthorizationService.AuthorizeAsync(User, "Privileged")).Succeeded;
 }
 
@@ -20,15 +32,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="canonical" href="@Context.Request.GetDisplayUrl()" />
+
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - VitalHelse</title>
     <script type="importmap"></script>
-    
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    
-    <link rel="icon" type="image/png" href="~/leaf_logo.svg" />
-    
+
+    <link rel="icon" type="image/png" href="~/leaf_logo.svg"/>
+
     <link rel="stylesheet" href="~/css/pages/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/pages/HomePage.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/components/layout.css" asp-append-version="true"/>
@@ -47,14 +61,14 @@
 
     <link rel="stylesheet" href="~/VitalHelse.styles.css" asp-append-version="true"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500&family=Raleway:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap" rel="stylesheet">
-    </head>
+</head>
 <body>
 <header>
     <nav id="navbar" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">

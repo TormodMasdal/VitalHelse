@@ -514,7 +514,7 @@ public class CheckoutController : Controller
         // Create order
         var order = new Order
         {
-            OrderDate = DateTime.UtcNow,
+            OrderDate = DateTime.Now,
             Status = "Paid",
             TotalCost = total,
             AspNetUsersId = userId,

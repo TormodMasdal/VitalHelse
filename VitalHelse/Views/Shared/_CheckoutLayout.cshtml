@@ -28,7 +28,6 @@
             btnText = "Fullfør bestilling";
             nextAction = "Complete";
             break;
-        case CheckoutStep.Complete:
         default:
             btnText = "";
             nextAction = null;
@@ -39,7 +38,6 @@
     bool allowAddress = step >= CheckoutStep.Address;
     bool allowShipping = step >= CheckoutStep.Shipping;
     bool allowPayment = step >= CheckoutStep.ReviewOrder;
-    bool allowComplete = step >= CheckoutStep.Complete;
 }
 
 <!-- Checkout steps/Mini navbar -->
@@ -66,16 +64,11 @@
            style="@(allowShipping ? "" : "pointer-events:none; opacity:0.4;")">Levering</a>
     </li>
     
-    <!-- STEP 1: REVIEWORDER -->
+    <!-- STEP 4: REVIEW ORDER -->
     <li class="nav-item">
         <a class="nav-link @(step == CheckoutStep.ReviewOrder ? "active" : "")"
            href="@(allowPayment ? Url.Action("ReviewOrder", "Checkout", new { }) : "javascript:void(0)")"
            style="@(allowPayment ? "" : "pointer-events:none; opacity:0.4;")">Betaling</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(step == CheckoutStep.Complete ? "active" : "")"
-           href="@(allowComplete ? Url.Action("Complete", "Checkout", new { }) : "javascript:void(0)")"
-           style="@(allowComplete ? "" : "pointer-events:none; opacity:0.4;")">Fullført</a>
     </li>
 </ul>
 

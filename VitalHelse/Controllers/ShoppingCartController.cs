@@ -155,25 +155,18 @@ public class ShoppingCartController : Controller
         if (product == null) return NoContent();
 
         // The stock count has to be higher than 0 to add the item to cart.
-        if (product.StockCount <= 0) return NoContent();
+        //if (product.StockCount <= 0) return NoContent();
         
         // If the item already exists in the shoppingcart increment the quantity.
         if (shoppingCart != null)
         { 
             var newQuantity = shoppingCart.Quantity + quantity;
+            /*
             if (newQuantity >= product.StockCount)
             {
                 return BadRequest("Vi har desverre ikke dette antallet tilgjengelig på lager");
             } 
-            
-            /*
-            // If the quantity tries to go higher than the stock count
-            if (shoppingCart.Quantity >= product.StockCount)
-            {
-                // Returns a 400 bad request if the quantity is too low to use this function
-                return BadRequest("Vi har desverre ikke dette antallet tilgjengelig på lager");
-            } */
-            
+            */
             shoppingCart.Quantity = newQuantity;
 
            // shoppingCart.Quantity += 1; 
@@ -182,8 +175,10 @@ public class ShoppingCartController : Controller
         // If not. Create a new row and add the item
         else
         {
+            /*
             if (quantity > product.StockCount)
                 return BadRequest("Vi har desverre ikke dette antallet tilgjengelig på lager");
+            */
             
             // Creates a new row
             CartProduct cartProduct = new CartProduct
