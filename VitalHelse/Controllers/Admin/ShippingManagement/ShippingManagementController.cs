@@ -7,7 +7,7 @@ using VitalHelse.Models.Shipping;
 
 namespace VitalHelse.Controllers.Admin.ShippingManagement;
 
-[Authorize]
+[Authorize(Roles = "Admin,Staff")]
 public class ShippingManagementController : Controller
 {
     private readonly ApplicationDbContext _db;

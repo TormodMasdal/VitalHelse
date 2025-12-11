@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using VitalHelse.Models;
 
 namespace VitalHelse.Controllers.Admin.OrderManagement;
 
+[Authorize(Roles = "Admin,Staff")]
 public class OrderManagementController : Controller
 {
     private readonly ApplicationDbContext _db;
