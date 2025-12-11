@@ -57,7 +57,8 @@ bool isAdminView = ViewData["IsAdminView"] as bool? ?? false;
                 <a href="@SlugHelper.BuildProductPath(product)" class="product-img-wrapper">
                     <img src="@Url.Content(product.ProductPictures.FirstOrDefault()?.PicturePath ?? "~/images/products/default.png")"
                          alt="@product.ProductName"
-                         class="product-img" />
+                         class="product-img" 
+                         loading="lazy" />
                 </a>
 
                 <!-- Navn -->
