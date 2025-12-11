@@ -121,11 +121,15 @@ else
     (function () {
         const isAuthenticated = @( (ViewData["IsAuthenticated"] as bool? ?? false).ToString().ToLower() );
 
-        const grid = document.currentScript.previousElementSibling;
+        const grid = document.querySelector('.product-grid');
+        if (!grid) return;
 
         grid.addEventListener('click', async (e) => {
             const btn = e.target.closest('.heart-btn');
             if (!btn) return;
+
+            // Ikke la klikk på hjertet trigge kort-navigasjon
+            e.stopPropagation();
 
             if (!isAuthenticated) {
                 alert("Du må være logget inn for å legge til favoritter ❤️");
@@ -142,10 +146,12 @@ else
             if (!res.ok) return;
 
             let isFav = null;
-            try { const data = await res.json(); isFav = !!data.isFavorite; } catch {}
-
-            if (isFav === null) isFav = !btn.classList.contains('active');
-
+            try {
+                const data = await res.json();
+                isFav = !!data.isFavorite;
+            } catch {
+                isFav = !btn.classList.contains('active');
+            }
 
             btn.classList.toggle('active', isFav);
             const icon = btn.querySelector('i');
@@ -163,8 +169,14 @@ else
     })();
 </script>
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".qty-btn, .qty-input, .buy-btn").forEach(el => {
+            el.addEventListener("click", (ev) => {
+                ev.stopPropagation(); // forhindrer navigasjon
+            });
+        });
         const productCards = document.querySelectorAll('.product-card');
         productCards.forEach(card => {
             card.addEventListener('click', function(e) {
@@ -202,9 +214,13 @@ else
 
         if (!response.ok) {
             const msg = await response.text();
-            document.getElementById("error-box").innerText = msg;
-            setTimeout(() => document.getElementById("error-box").innerText = "", 3000);
-        } else {
+            const errorBox = document.getElementById("error-box");
+            if (errorBox) {
+                errorBox.innerText = msg;
+                setTimeout(() => errorBox.innerText = "", 3000);
+            }
+        }
+ else {
             if (!isAuthenticated) {
                 window.location.href = "/identity/account/login";
                 return;
