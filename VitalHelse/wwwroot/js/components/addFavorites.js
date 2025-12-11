@@ -1,11 +1,25 @@
 
-document.addEventListener("click", (e) => {
+document.addEventListener("click", async (e) => {
     const btn = e.target.closest('#AddAllToCart');
     if (!btn) return;
-    fetch("/Favorites/QuickAddFavorites/", {
-        method: 'POST',
-    });
+
+    try {
+        const res = await fetch("/Favorites/QuickAddFavorites/", {
+            method: "POST"
+        });
+
+        if (!res.ok) {
+            console.error("Feil ved QuickAddFavorites");
+            return;
+        }
+
+        window.location.reload();
+
+    } catch (err) {
+        console.error("Nettverksfeil:", err);
+    }
 });
+
 
 
 document.addEventListener("DOMContentLoaded", () => {

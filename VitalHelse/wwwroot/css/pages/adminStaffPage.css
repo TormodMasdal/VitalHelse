@@ -82,3 +82,57 @@
 .d-flex.gap-3 > * + * {
     margin-left: 1rem;
 }
+.role-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #f3f4f6;            /* Lys grå, ren */
+    color: #111827;                 /* Mørk nøytral tekst */
+    border-radius: 10px;            /* Myke kanter */
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid #e5e7eb;      /* Lett outline */
+    transition: .2s ease;
+}
+
+.role-badge:hover {
+    background: #e5e7eb;            /* Litt mørkere ved hover */
+}
+/* ============================
+   FIX: Add user page spacing 
+============================ */
+
+.adduser-main-card {
+    margin-bottom: 2rem;    /* Skaper rom før info-card */
+}
+
+.adduser-info-card {
+    margin-bottom: 3rem;    /* Mer rom under */
+}
+
+/* Header collision fix */
+.adduser-header-section h4 {
+    margin: 0;
+    padding: 0;
+}
+
+/* Input fields too close to icons fix */
+.adduser-input-field {
+    padding-left: 2.5rem !important;
+}
+
+/* Checkbox wrapper spacing fix */
+.adduser-role-checkbox-wrapper {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+}
+
+/* Validation summary spacing fix */
+.adduser-validation-alert {
+    margin-bottom: 1.5rem;
+}
+.content {
+    margin-left: 250px;
+    min-height: 100vh;
+    padding: 2rem 3rem;
+    overflow-y: visible !important;  /* Fixer at lange skjemaer ikke cuttes */
+}

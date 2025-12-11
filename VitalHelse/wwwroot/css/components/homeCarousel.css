@@ -1,20 +1,25 @@
-
+/* === 16:9 RESPONSIVE CAROUSEL CONTAINER === */
 .hp-banner-carousel-container {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1920px;
     margin: 0 auto 3rem auto;
     overflow: hidden;
+    aspect-ratio: 21 / 9; /* Holder alltid 16:9 */
 }
 
+
+/* === CAROUSEL WRAPPER === */
 .hp-banner-carousel {
     position: relative;
     width: 100%;
-    height: 500px;
+    height: 100%; /* Viktig for 16:9 */
     overflow: hidden;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+
+/* === TRACK & SLIDES === */
 .hp-carousel-track {
     display: flex;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -32,7 +37,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Holder bildene riktig */
     cursor: pointer;
 }
 
@@ -40,6 +45,8 @@
     text-decoration: none;
 }
 
+
+/* === CONTROLS (PILENE) === */
 .hp-carousel-control {
     position: absolute;
     top: 50%;
@@ -77,6 +84,8 @@
     height: 24px;
 }
 
+
+/* === INDICATORS (DOTS) === */
 .hp-carousel-indicators {
     position: absolute;
     bottom: 20px;
@@ -109,15 +118,19 @@
     border-radius: 6px;
 }
 
+
+/* === RESPONSIVE BREAKPOINTS === */
+
+/* Nettbrett */
 @media (max-width: 1024px) {
     .hp-banner-carousel {
-        height: 400px;
+        border-radius: 10px;
     }
 }
 
+/* Mobil */
 @media (max-width: 768px) {
     .hp-banner-carousel {
-        height: 300px;
         border-radius: 8px;
     }
 
@@ -149,11 +162,8 @@
     }
 }
 
+/* Ekstra små skjermer */
 @media (max-width: 576px) {
-    .hp-banner-carousel {
-        height: 250px;
-    }
-
     .hp-banner-carousel-container {
         margin-bottom: 2rem;
     }
