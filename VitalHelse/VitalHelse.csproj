@@ -34,7 +34,6 @@
     <ItemGroup>
       <Folder Include="wwwroot\css\temp\" />
       <Folder Include="wwwroot\images\banners\" />
-      <Folder Include="wwwroot\images\products\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -55,6 +54,11 @@
       <_ContentIncludedByDefault Remove="Views\Discount\Campaign.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Discount\CategoryDiscount.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Discount\DiscountCodes.cshtml" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\components\product\product-form-dropdown.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\components\product\product-form-images.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\components\product\product-form-tags.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\components\product\productgrid.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\components\product\productpage.css" />
     </ItemGroup>
 
     <ItemGroup>

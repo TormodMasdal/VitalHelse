@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="~/css/pages/editroles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/components/homeCarousel.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/components/homePageManagement.css" asp-append-version="true"/>
+    
+    <link rel="stylesheet" href="~/css/components/account.css" asp-append-version="true"/>
+    
 
     <link rel="stylesheet" href="~/css/pages/adminStockCount.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/components/excelExportButtonStockCountFilter.css" asp-append-version="true" />
@@ -64,11 +67,17 @@
             <a asp-controller="UserManagement" asp-action="Index"
                class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Banners" ? "active" : "")">Ansatte</a>
         </nav>
-
     </aside>
+
+    <!-- Overlay for mobilmeny -->
+    <div class="sidebar-overlay"></div>
 
     <main class="content">
         <header class="topbar">
+            <button id="admin-hamburger" class="admin-hamburger mobile-only">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
             <h1>@ViewData["Title"]</h1>
             <span class="admin-user">Admin ⚙️ Vitalhelse</span>
         </header>
@@ -84,6 +93,24 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/js/temp/sidebarFilter.js"></script>
+
+<script>
+    (function () {
+        const burger = document.getElementById('admin-hamburger');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        if (!burger || !sidebar || !overlay) return;
+
+        function toggleMenu() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+            document.body.classList.toggle('menu-open');
+        }
+
+        burger.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+    })();
+</script>
 
 @RenderSection("Scripts", required: false)
 </body>
