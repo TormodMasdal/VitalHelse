@@ -7,58 +7,92 @@
 
 @if (!Model.Orders.Any())
 {
-    <div class="alert alert-secondary">Du har ingen ordre enda.</div>
+    <div class="alert alert-secondary text-center py-4">
+        Du har ingen ordre enda.
+    </div>
 }
 else
 {
+    int index = 0;
+
     foreach (var order in Model.Orders)
     {
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between">
-                <strong>Ordre #@order.OrderId</strong>
-                <span>@order.OrderDate?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+        var collapseId = $"order_{index}";
+        index++;
+
+        <div class="card mb-3 shadow-sm border-0">
+            
+            <div class="card-header bg-light d-flex justify-content-between align-items-center"
+                 data-bs-toggle="collapse"
+                 data-bs-target="#@collapseId"
+                 role="button">
+
+                <div class="fw-semibold">Ordre #@order.OrderId</div>
+                <div class="d-flex align-items-center gap-2">
+                    <small class="text-muted">@order.OrderDate?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+                    <i class="bi bi-chevron-down"></i>
+                </div>
             </div>
 
-            <div class="card-body">
+          
+            <div id="@collapseId" class="collapse">
 
-                <h5 class="mb-2">Produkter</h5>
-                <ul class="list-group mb-3">
-                    @foreach (var item in order.OrderProducts)
-                    {
-                        <li class="list-group-item d-flex justify-content-between">
-                            <div>
-                                <strong>@item.Product.ProductName</strong><br />
-                                Antall: @item.Quantity
-                            </div>
-                            <span>@((item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT).ToString("N2")) kr</span>
+                <div class="card-body">
+
+                    <!-- PRODUKTER -->
+                    <h6 class="text-uppercase text-muted mb-2">Produkter</h6>
+                    <ul class="list-group mb-3">
+                        @foreach (var item in order.OrderProducts)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <div>
+                                    <div class="fw-semibold">@item.Product.ProductName x @item.Quantity stk</div>
+                                </div>
+                                <div class="fw-semibold">
+                                    @(((item.Product.ProductCampaignPrice ?? item.Product.ProductPriceInVAT)*item.Quantity).ToString("N2")) kr
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- LEVERING -->
+                    <h6 class="text-uppercase text-muted mb-2">Leveringsinformasjon</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item">
+                            <strong>@order.ShippingFirstName @order.ShippingLastName</strong><br />
+                            @order.ShippingStreet <br />
+                            @order.ShippingPostalCode @order.ShippingCity <br />
+                            <span class="small text-muted">Tlf: @order.ShippingPhoneNumber</span>
+
+                            @if (!string.IsNullOrEmpty(order.TrackingNumber))
+                            {
+                                <div class="mt-1 small">
+                                    Sporingsnummer: <strong>@order.TrackingNumber</strong>
+                                </div>
+                            }
                         </li>
-                    }
-                </ul>
+                    </ul>
 
-                <h5 class="mb-2">Leveringsinformasjon</h5>
-                <p>
-                    @order.ShippingFirstName @order.ShippingLastName <br />
-                    @order.ShippingStreet <br />
-                    @order.ShippingPostalCode @order.ShippingCity <br />
-                    @order.TrackingNumber <br />
-                    Tlf: @order.ShippingPhoneNumber
-                </p>
+                    <!-- FRAKT -->
+                    <h6 class="text-uppercase text-muted mb-2">Frakt</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Metode: <strong>@order.ShippingMethodName</strong></span>
+                            <span>Pris: <strong>@order.ShippingPrice.ToString("N2") kr</strong></span>
+                        </li>
+                    </ul>
 
-                <h5 class="mb-2">Frakt</h5>
-                <p>
-                    Metode: @order.ShippingMethodName <br />
-                    Pris: @order.ShippingPrice.ToString("N2") kr
-                </p>
+                    <!-- TOTALSUM -->
+                    <div class="d-flex justify-content-between border-top pt-3">
+                        <span class="fw-semibold">Totalsum:</span>
+                        <span class="fw-bold">@order.TotalCost.ToString("N2") kr</span>
+                    </div>
+                </div>
 
-                <h4 class="mt-3">Totalsum: @order.TotalCost.ToString("N2") kr</h4>
-            </div>
+                <div class="card-footer bg-white text-muted">
+                    Status: <strong>@order.Status</strong>
+                </div>
 
-            <div class="card-footer text-muted">
-                Status: <strong>@order.Status</strong>
-                @if (!string.IsNullOrEmpty(order.TrackingNumber))
-                {
-                    <span> | Sporingsnummer: @order.TrackingNumber</span>
-                }
             </div>
         </div>
     }
