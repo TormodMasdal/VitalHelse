@@ -5,7 +5,7 @@ using VitalHelse.Data;
 
 namespace VitalHelse.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Staff")]
 public class AdminController : Controller
 {
     private readonly ApplicationDbContext _db;
